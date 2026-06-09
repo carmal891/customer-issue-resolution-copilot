@@ -1,0 +1,44 @@
+{
+  "test_cases": [
+    {
+      "test_id": "kb_rag_001",
+      "category": "policy",
+      "question": "What is the cancellation policy for bookings made less than 48 hours before check-in?",
+      "relevant_doc_ids": ["cancellation_refund_policy"],
+      "expected_answer_contains": ["48 hours", "non-refundable", "cancellation fee"],
+      "difficulty": "easy"
+    },
+    {
+      "test_id": "kb_rag_002",
+      "category": "policy",
+      "question": "Can a guest get a full refund if they cancel 7 days before arrival?",
+      "relevant_doc_ids": ["cancellation_refund_policy"],
+      "expected_answer_contains": ["full refund", "7 days", "advance notice"],
+      "difficulty": "easy"
+    },
+    {
+      "test_id": "kb_rag_003",
+      "category": "policy",
+      "question": "What are the eligibility criteria for a complimentary room upgrade?",
+      "relevant_doc_ids": ["room_upgrade_policy", "loyalty_program_policy"],
+      "expected_answer_contains": ["loyalty status", "availability", "check-in"],
+      "difficulty": "medium"
+    },
+    {
+      "test_id": "kb_rag_004",
+      "category": "procedure",
+      "question": "How do I process a late checkout request for a guest?",
+      "relevant_doc_ids": ["late_checkout_policy"],
+      "expected_answer_contains": ["availability", "housekeeping schedule", "approval", "fee"],
+      "difficulty": "easy"
+    },
+    {
+      "test_id": "kb_rag_005",
+      "category": "procedure",
+      "question": "What steps should I follow to handle a billing dispute?",
+      "relevant_doc_ids": ["complaint_handling_policy", "cancellation_refund_policy"],
+      "expected_answer_contains": ["verify charges", "review invoice", "manager approval", "documentation"],
+      "difficulty": "medium"
+    }
+  ]
+}

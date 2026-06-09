@@ -1,0 +1,138 @@
+skill_id: skill_a7bcad64
+name: I Want A Cradle For Handler
+version: '1.0'
+description: 'Automatically generated skill for: I want a cradle for baby'
+triggers:
+- I want a cradle for baby
+- I need a baby cradle
+- Could you provide a crib for my baby?
+- Request for an infant cot
+- I would like a baby bed in the room
+- Can you arrange a crib for my child?
+- Need a cradle for the baby
+- Please provide a cot for an infant
+steps:
+- step_id: step_1
+  step_type: reasoning
+  description: LLM analyzed issue and retrieved 5 relevant context pieces from policy
+    knowledge base
+  tool_name: null
+  parameters:
+    query: "I want a baby cradle\n The core request is for a baby cradle/crib to be\
+      \ provided for the stay. To resolve it, we need the guest\u2019s booking details\
+      \ or room reservation to check availability, confirm whether a cradle can be\
+      \ arranged, and determine delivery timing and any special setup instructions.\
+      \ Relevant policies may include infant equipment availability, advance-request\
+      \ requirements, age/safety restrictions, and whether the cradle is complimentary\
+      \ or subject to an additional fee."
+    analysis: "The core request is for a baby cradle/crib to be provided for the stay.\
+      \ To resolve it, we need the guest\u2019s booking details or room reservation\
+      \ to check availability, confirm whether a cradle can be arranged, and determine\
+      \ delivery timing and any special setup instructions. Relevant policies may\
+      \ include infant equipment availability, advance-request requirements, age/safety\
+      \ restrictions, and whether the cradle is complimentary or subject to an additional\
+      \ fee."
+    top_k: 5
+  requires_approval: false
+  approval_reason: null
+  expected_output: '{"num_results": 5, "avg_score": 0.6175160884857178, "llm_tokens":
+    217, "citations": [{"source_id": 1, "source_name": "Room Upgrade Policy", "doc_type":
+    "policy", "relevance_score": 1.0, "content_preview": "\nGuests may request paid
+    upgrades at the time of booking or any time prior to arrival. Advance upgrade
+    requests are subject to availability and the quoted price may change if the request
+    is made close"}, {"source_id": 2, "source_name": "Room Upgrade Policy", "doc_type":
+    "policy", "relevance_score": 0.793, "content_preview": "\nGuests may request paid
+    upgrades at any time from booking through check-in. Paid upgrades are subject
+    to availability and pricing varies based on demand, season, and the specific room
+    categories invo"}, {"source_id": 3, "source_name": "Late Checkout Policy", "doc_type":
+    "policy", "relevance_score": 0.616, "content_preview": "\nGuests who wish to request
+    a late checkout should contact the front desk as early as possible, ideally the
+    evening before their departure or early on the morning of checkout. Early requests
+    allow the"}]}'
+- step_id: step_2
+  step_type: reasoning
+  description: LLM generated plan with 3 actions
+  tool_name: null
+  parameters:
+    context_length: 1170
+    available_tools: []
+  requires_approval: false
+  approval_reason: null
+  expected_output: '{"num_actions": 3, "actions": [{"step_id": "step_1", "description":
+    "Acknowledge the guest''s request and clarify that a baby cradle/cot is a special
+    amenity request, not a room upgrade. Ask for the booking ID, arrival date, and
+    the number/age of the child so the request can be checked against availability.",
+    "tool_name": null, "parameters": {}, "requires_approval": false, "reasoning":
+    "The booking ID is not provided, and the request cannot be verified or fulfilled
+    without reservation details."}, {"step_id": "step_2", "description": "Check the
+    reservation and hotel inventory for availability of a baby cradle/cot for the
+    stay dates once booking details are provided.", "tool_name": "lookup_booking",
+    "parameters": {"booking_id": "REQUIRED_FROM_GUEST"}, "requires_approval": false,
+    "reasoning": "Need to confirm the reservation and determine whether the requested
+    baby cradle can be assigned."}, {"step_id": "step_3", "description": "If a baby
+    cradle/cot is available, add the request to the booking and confirm the arrangement
+    to the guest. If unavailable, offer to place the request on a waitlist or suggest
+    an alternative such as a baby bed/crib if the property has one.", "tool_name":
+    "modify_booking", "parameters": {"booking_id": "REQUIRED_FROM_GUEST", "special_request":
+    "baby cradle/cot"}, "requires_approval": true, "reasoning": "Modifying a booking
+    or adding a special request may require hotel approval and operational coordination."}]}'
+- step_id: step_3
+  step_type: reasoning
+  description: Acknowledge the guest's request and clarify that a baby cradle/cot
+    is a special amenity request, not a room upgrade. Ask for the booking ID, arrival
+    date, and the number/age of the child so the request can be checked against availability.
+  tool_name: null
+  parameters:
+    parameters: {}
+    reasoning: The booking ID is not provided, and the request cannot be verified
+      or fulfilled without reservation details.
+  requires_approval: false
+  approval_reason: null
+  expected_output: '{"requires_approval": false}'
+- step_id: step_4
+  step_type: tool_call
+  description: Check the reservation and hotel inventory for availability of a baby
+    cradle/cot for the stay dates once booking details are provided.
+  tool_name: lookup_booking
+  parameters:
+    parameters:
+      booking_id: REQUIRED_FROM_GUEST
+    reasoning: Need to confirm the reservation and determine whether the requested
+      baby cradle can be assigned.
+  requires_approval: false
+  approval_reason: null
+  expected_output: '{"requires_approval": false}'
+- step_id: step_5
+  step_type: tool_call
+  description: If a baby cradle/cot is available, add the request to the booking and
+    confirm the arrangement to the guest. If unavailable, offer to place the request
+    on a waitlist or suggest an alternative such as a baby bed/crib if the property
+    has one.
+  tool_name: modify_booking
+  parameters:
+    parameters:
+      booking_id: REQUIRED_FROM_GUEST
+      special_request: baby cradle/cot
+    reasoning: Modifying a booking or adding a special request may require hotel approval
+      and operational coordination.
+  requires_approval: false
+  approval_reason: null
+  expected_output: '{"requires_approval": true}'
+- step_id: step_6
+  step_type: reasoning
+  description: Prepared 3 actions for approval
+  tool_name: null
+  parameters:
+    num_actions: 3
+  requires_approval: false
+  approval_reason: null
+  expected_output: '{"requires_approval": true, "action_count": 3}'
+guardrails: {}
+metadata:
+  created_from: tpao_trace
+  source_issue_id: ISS-0001
+  source_resolution_id: RES-ISS-0001-ReAct
+  domain: hotel_operations
+  no_policy_match: false
+  using_general_knowledge: false
+  requires_policy_review: false

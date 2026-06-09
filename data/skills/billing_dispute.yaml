@@ -1,0 +1,346 @@
+skill_id: "billing_dispute"
+version: "1.0"
+name: "Billing Dispute Handler"
+description: "Investigates and resolves billing disputes and charge discrepancies"
+
+metadata:
+  domain: "billing"
+  created_at: "2024-01-15T10:45:00Z"
+  created_by: "manual"
+  last_updated: "2024-01-15T10:45:00Z"
+  usage_count: 0
+  success_rate: 0.0
+  avg_resolution_time_minutes: 0.0
+
+triggers:
+  semantic_patterns:
+    - "incorrect charge on my bill"
+    - "billing error"
+    - "charged wrong amount"
+    - "dispute this charge"
+    - "overcharged for room"
+    - "bill doesn't match quote"
+  
+  issue_types:
+    - "billing_dispute"
+    - "charge_discrepancy"
+    - "billing_error"
+  
+  required_context:
+    - "booking_id"
+  
+  optional_context:
+    - "disputed_amount"
+    - "disputed_item"
+    - "expected_amount"
+
+steps:
+  - step_id: 1
+    name: "Retrieve booking and billing details"
+    action_type: "tool_call"
+    tool: "lookup_booking"
+    inputs:
+      booking_id: "${context.booking_id}"
+      include_billing: true
+    outputs:
+      - "booking_details"
+      - "billing_details"
+    required: true
+    
+  - step_id: 2
+    name: "Retrieve original quote"
+    action_type: "tool_call"
+    tool: "lookup_booking"
+    inputs:
+      booking_id: "${context.booking_id}"
+      get_original_quote: true
+    outputs:
+      - "original_quote"
+    required: true
+    
+  - step_id: 3
+    name: "Analyze billing discrepancy"
+    action_type: "decision"
+    logic: |
+      # Compare actual charges vs original quote
+      discrepancies = []
+      
+      # Check room rate
+      if billing_details.room_charges != original_quote.room_rate:
+          discrepancies.append({
+              "item": "room_rate",
+              "quoted": original_quote.room_rate,
+              "charged": billing_details.room_charges,
+              "difference": billing_details.room_charges - original_quote.room_rate
+          })
+      
+      # Check taxes
+      expected_tax = original_quote.subtotal * original_quote.tax_rate
+      if abs(billing_details.taxes - expected_tax) > 1.0:  # Allow $1 rounding
+          discrepancies.append({
+              "item": "taxes",
+              "quoted": expected_tax,
+              "charged": billing_details.taxes,
+              "difference": billing_details.taxes - expected_tax
+          })
+      
+      # Check for unexpected charges
+      for charge in billing_details.additional_charges:
+          if charge.type not in original_quote.included_items:
+              discrepancies.append({
+                  "item": charge.description,
+                  "quoted": 0,
+                  "charged": charge.amount,
+                  "difference": charge.amount,
+                  "unexpected": true
+              })
+      
+      # Determine if dispute is valid
+      if len(discrepancies) > 0:
+          total_discrepancy = sum(d["difference"] for d in discrepancies)
+          dispute_valid = True
+      else:
+          total_discrepancy = 0
+          dispute_valid = False
+      
+      # Check for legitimate reasons for differences
+      legitimate_reasons = []
+      for disc in discrepancies:
+          if disc["item"] == "room_rate":
+              # Check for rate changes
+              if booking_details.rate_changes:
+                  legitimate_reasons.append("Room rate changed due to: " + booking_details.rate_changes.reason)
+          
+          if disc.get("unexpected"):
+              # Check if charge was authorized
+              if disc["item"] in billing_details.authorized_charges:
+                  legitimate_reasons.append(f"{disc['item']} was authorized during stay")
+    outputs:
+      - "discrepancies"
+      - "total_discrepancy"
+      - "dispute_valid"
+      - "legitimate_reasons"
+    
+  - step_id: 4
+    name: "Retrieve policy for disputed charges"
+    action_type: "tool_call"
+    tool: "check_policy"
+    inputs:
+      policy_type: "billing"
+      query: "charge dispute resolution"
+    outputs:
+      - "billing_policy"
+    required: true
+    condition: "dispute_valid == True"
+    
+  - step_id: 5
+    name: "Calculate adjustment amount"
+    action_type: "decision"
+    logic: |
+      if not dispute_valid:
+          adjustment_amount = 0
+          adjustment_reason = "No billing discrepancy found"
+      else:
+          # Determine what should be adjusted
+          adjustment_amount = 0
+          adjustment_items = []
+          
+          for disc in discrepancies:
+              # Check if charge is legitimate
+              is_legitimate = any(disc["item"] in reason for reason in legitimate_reasons)
+              
+              if not is_legitimate:
+                  # Charge should be adjusted
+                  adjustment_amount += disc["difference"]
+                  adjustment_items.append({
+                      "item": disc["item"],
+                      "amount": disc["difference"],
+                      "reason": "Billing error - charge not authorized or incorrect"
+                  })
+          
+          if adjustment_amount > 0:
+              adjustment_reason = "Billing adjustment for: " + ", ".join(item["item"] for item in adjustment_items)
+          else:
+              adjustment_reason = "All charges are legitimate and authorized"
+    outputs:
+      - "adjustment_amount"
+      - "adjustment_reason"
+      - "adjustment_items"
+    condition: "dispute_valid == True"
+    
+  - step_id: 6
+    name: "Process billing adjustment"
+    action_type: "tool_call"
+    tool: "process_refund"
+    inputs:
+      booking_id: "${context.booking_id}"
+      amount: "${adjustment_amount}"
+      reason: "${adjustment_reason}"
+      adjustment_type: "billing_correction"
+    outputs:
+      - "adjustment_result"
+    required: true
+    requires_approval: true
+    approval_reason: "Billing adjustment and refund"
+    condition: "adjustment_amount > 0"
+    
+  - step_id: 7
+    name: "Update billing records"
+    action_type: "tool_call"
+    tool: "update_booking"
+    inputs:
+      booking_id: "${context.booking_id}"
+      billing_adjustments: "${adjustment_items}"
+      final_amount: "${billing_details.total - adjustment_amount}"
+      notes: "Billing dispute resolved - ${adjustment_reason}"
+    outputs:
+      - "update_result"
+    required: true
+    condition: "adjustment_amount > 0"
+    
+  - step_id: 8
+    name: "Send resolution email with adjustment"
+    action_type: "tool_call"
+    tool: "send_email"
+    inputs:
+      to: "${booking_details.guest_email}"
+      template: "billing_dispute_resolved"
+      data:
+        guest_name: "${booking_details.guest_name}"
+        booking_id: "${context.booking_id}"
+        original_amount: "${billing_details.total}"
+        adjustment_amount: "${adjustment_amount}"
+        final_amount: "${billing_details.total - adjustment_amount}"
+        adjustment_items: "${adjustment_items}"
+        refund_timeline: "5-7 business days"
+    outputs:
+      - "email_sent"
+    required: false
+    condition: "adjustment_amount > 0"
+    
+  - step_id: 9
+    name: "Send explanation email (no adjustment)"
+    action_type: "tool_call"
+    tool: "send_email"
+    inputs:
+      to: "${booking_details.guest_email}"
+      template: "billing_dispute_explained"
+      data:
+        guest_name: "${booking_details.guest_name}"
+        booking_id: "${context.booking_id}"
+        disputed_items: "${discrepancies}"
+        legitimate_reasons: "${legitimate_reasons}"
+        billing_policy: "${billing_policy}"
+    outputs:
+      - "email_sent"
+    required: false
+    condition: "adjustment_amount == 0"
+
+approval_gates:
+  - gate_id: "billing_adjustment_approval"
+    required_for_steps: [6]
+    approval_type: "financial"
+    risk_level: "high"
+    auto_approve_conditions:
+      - "adjustment_amount <= 50"
+      - "dispute_valid == True AND len(legitimate_reasons) == 0"
+    human_review_required:
+      - "adjustment_amount > 50"
+      - "len(legitimate_reasons) > 0"
+      - "total_discrepancy > 200"
+    approval_context:
+      - "booking_details"
+      - "discrepancies"
+      - "adjustment_amount"
+      - "legitimate_reasons"
+
+guardrails:
+  - type: "input_validation"
+    rules:
+      - "booking_id must be valid"
+      - "booking must have billing records"
+      - "adjustment_amount must be >= 0"
+  
+  - type: "business_rules"
+    rules:
+      - "cannot adjust charges more than 30 days after checkout"
+      - "adjustment cannot exceed total billed amount"
+      - "must have original quote for comparison"
+      - "authorized charges cannot be disputed without manager approval"
+  
+  - type: "financial"
+    rules:
+      - "all adjustments must be documented"
+      - "refunds must go to original payment method"
+      - "must maintain audit trail"
+  
+  - type: "safety"
+    rules:
+      - "verify guest identity"
+      - "check for fraud patterns"
+      - "escalate if multiple disputes from same guest"
+
+error_handling:
+  - error_type: "booking_not_found"
+    action: "escalate"
+    message: "Booking {booking_id} not found. Please verify booking reference."
+    user_facing: true
+  
+  - error_type: "no_billing_records"
+    action: "escalate"
+    message: "No billing records found for this booking. Please contact billing department."
+    user_facing: true
+  
+  - error_type: "dispute_too_old"
+    action: "escalate"
+    message: "Billing disputes must be filed within 30 days of checkout. Requires manager review."
+    user_facing: false
+  
+  - error_type: "refund_processing_failed"
+    action: "escalate"
+    message: "Adjustment approved but refund processing failed. Finance team will process manually."
+    user_facing: false
+  
+  - error_type: "tool_failure"
+    action: "retry"
+    max_retries: 2
+    fallback: "escalate"
+  
+  - error_type: "approval_rejected"
+    action: "inform"
+    message: "Billing adjustment was not approved. Original charges stand. You may appeal this decision."
+    user_facing: true
+
+success_criteria:
+  - "adjustment_result.status == 'success' OR adjustment_amount == 0"
+  - "email_sent == true"
+
+rollback_steps:
+  - step_id: 6
+    rollback_action: "reverse_adjustment"
+    rollback_tool: "process_refund"
+    rollback_inputs:
+      booking_id: "${context.booking_id}"
+      amount: "-${adjustment_amount}"
+      reason: "Adjustment reversal"
+
+source_trace:
+  origin: "manual"
+  original_issue_id: null
+  react_trace_id: null
+  human_validated: true
+  validation_date: "2024-01-15T10:45:00Z"
+  validator: "ops_team"
+
+performance_metrics:
+  avg_execution_time_ms: 0
+  success_count: 0
+  failure_count: 0
+  approval_rejection_count: 0
+  last_used: null
+
+tags:
+  - "billing"
+  - "dispute"
+  - "financial"
+  - "customer_service"

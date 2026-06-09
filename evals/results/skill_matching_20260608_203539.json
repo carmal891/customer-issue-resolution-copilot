@@ -1,0 +1,59 @@
+{
+  "summary": {
+    "total_cases": 10,
+    "passed_cases": 7,
+    "failed_cases": 3,
+    "pass_rate": 0.7
+  },
+  "accuracy_metrics": {
+    "top_1_accuracy": 0.7,
+    "top_3_accuracy": 0.8,
+    "top_5_accuracy": 0.8,
+    "mean_reciprocal_rank": 0.75
+  },
+  "error_analysis": {
+    "false_positive_rate": 0.0,
+    "false_negative_rate": 0.3,
+    "avg_confidence_when_correct": 0.3,
+    "avg_confidence_when_incorrect": 0.3
+  },
+  "targets": {
+    "top_1_accuracy": 0.9,
+    "top_3_accuracy": 0.95
+  },
+  "meets_targets": {
+    "top_1_accuracy": false,
+    "top_3_accuracy": false
+  },
+  "confidence_calibration": {
+    "0.2-0.4": {
+      "count": 10,
+      "accuracy": 0.7,
+      "avg_confidence": 0.3,
+      "calibration_error": 0.39999999999999997
+    }
+  },
+  "category_breakdown": {
+    "booking": {
+      "count": 6,
+      "passed": 5,
+      "top_1_accuracy": 0.8333333333333334,
+      "top_3_accuracy": 1.0,
+      "avg_confidence": 0.3
+    },
+    "billing": {
+      "count": 2,
+      "passed": 0,
+      "top_1_accuracy": 0.0,
+      "top_3_accuracy": 0.0,
+      "avg_confidence": 0.3
+    },
+    "amenity": {
+      "count": 2,
+      "passed": 2,
+      "top_1_accuracy": 1.0,
+      "top_3_accuracy": 1.0,
+      "avg_confidence": 0.3
+    }
+  }
+}

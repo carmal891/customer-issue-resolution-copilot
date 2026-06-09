@@ -1,0 +1,240 @@
+skill_id: "late_checkout_request"
+version: "1.0"
+name: "Late Checkout Request Handler"
+description: "Handles guest requests for late checkout based on room availability and loyalty status"
+
+metadata:
+  domain: "booking"
+  created_at: "2024-01-15T10:30:00Z"
+  created_by: "manual"
+  last_updated: "2024-01-15T10:30:00Z"
+  usage_count: 0
+  success_rate: 0.0
+  avg_resolution_time_minutes: 0.0
+
+triggers:
+  semantic_patterns:
+    - "guest wants to check out late"
+    - "requesting late checkout"
+    - "can I stay past checkout time"
+    - "extend checkout time"
+    - "need extra time before checkout"
+    - "late departure request"
+  
+  issue_types:
+    - "late_checkout_request"
+    - "checkout_extension"
+  
+  required_context:
+    - "booking_id"
+  
+  optional_context:
+    - "loyalty_tier"
+    - "room_type"
+    - "requested_time"
+
+steps:
+  - step_id: 1
+    name: "Retrieve booking details"
+    action_type: "tool_call"
+    tool: "lookup_booking"
+    inputs:
+      booking_id: "${context.booking_id}"
+    outputs:
+      - "booking_details"
+    required: true
+    
+  - step_id: 2
+    name: "Check room availability for late checkout"
+    action_type: "tool_call"
+    tool: "check_room_availability"
+    inputs:
+      room_number: "${booking_details.room_number}"
+      date: "${booking_details.checkout_date}"
+      time_range: "12:00-16:00"
+    outputs:
+      - "availability_status"
+    required: true
+    
+  - step_id: 3
+    name: "Determine late checkout eligibility and fee"
+    action_type: "decision"
+    logic: |
+      # Check if room is available for late checkout
+      if availability_status.next_booking_time is None or availability_status.next_booking_time > "14:00":
+          # Room available - determine time and fee based on loyalty
+          if booking_details.loyalty_tier in ["platinum", "diamond"]:
+              late_checkout_time = "14:00"
+              fee = 0
+              reason = "Complimentary late checkout for loyalty member"
+          elif booking_details.loyalty_tier == "gold":
+              late_checkout_time = "13:00"
+              fee = 0
+              reason = "Complimentary late checkout for gold member"
+          else:
+              late_checkout_time = "13:00"
+              fee = 25
+              reason = "Standard late checkout fee applies"
+          eligible = True
+      else:
+          # Room not available
+          late_checkout_time = None
+          fee = None
+          eligible = False
+          reason = "Room needed for incoming guest"
+    outputs:
+      - "eligible"
+      - "late_checkout_time"
+      - "fee"
+      - "reason"
+    
+  - step_id: 4
+    name: "Update booking with late checkout"
+    action_type: "tool_call"
+    tool: "update_booking"
+    inputs:
+      booking_id: "${context.booking_id}"
+      checkout_time: "${late_checkout_time}"
+      additional_charges: "${fee}"
+      notes: "Late checkout approved - ${reason}"
+    outputs:
+      - "update_result"
+    required: true
+    requires_approval: true
+    approval_reason: "Booking modification with potential charges"
+    condition: "eligible == True"
+    
+  - step_id: 5
+    name: "Send confirmation email to guest"
+    action_type: "tool_call"
+    tool: "send_email"
+    inputs:
+      to: "${booking_details.guest_email}"
+      template: "late_checkout_confirmation"
+      data:
+        guest_name: "${booking_details.guest_name}"
+        booking_id: "${context.booking_id}"
+        checkout_time: "${late_checkout_time}"
+        fee: "${fee}"
+        room_number: "${booking_details.room_number}"
+    outputs:
+      - "email_sent"
+    required: false
+    condition: "eligible == True AND update_result.status == 'success'"
+    
+  - step_id: 6
+    name: "Send unavailability notification"
+    action_type: "tool_call"
+    tool: "send_email"
+    inputs:
+      to: "${booking_details.guest_email}"
+      template: "late_checkout_unavailable"
+      data:
+        guest_name: "${booking_details.guest_name}"
+        booking_id: "${context.booking_id}"
+        standard_checkout_time: "${booking_details.checkout_time}"
+        reason: "${reason}"
+    outputs:
+      - "email_sent"
+    required: false
+    condition: "eligible == False"
+
+approval_gates:
+  - gate_id: "booking_modification"
+    required_for_steps: [4]
+    approval_type: "operational"
+    risk_level: "medium"
+    auto_approve_conditions:
+      - "fee == 0 AND loyalty_tier in ['platinum', 'diamond']"
+    human_review_required:
+      - "fee > 0"
+      - "availability_status.has_conflict == true"
+    approval_context:
+      - "booking_details"
+      - "late_checkout_time"
+      - "fee"
+      - "reason"
+
+guardrails:
+  - type: "input_validation"
+    rules:
+      - "booking_id must be valid format"
+      - "booking_id must exist in system"
+      - "checkout_time must be between 12:00 and 16:00"
+  
+  - type: "business_rules"
+    rules:
+      - "late_checkout_time must not exceed 16:00"
+      - "fee must be >= 0 and <= 100"
+      - "cannot grant late checkout if next booking starts before 12:00"
+      - "booking must be active (not cancelled or completed)"
+  
+  - type: "safety"
+    rules:
+      - "must verify booking belongs to requesting guest"
+      - "must check for existing late checkout request"
+      - "must not override existing late checkout without approval"
+
+error_handling:
+  - error_type: "booking_not_found"
+    action: "escalate"
+    message: "Unable to locate booking {booking_id}. Please verify the booking reference."
+    user_facing: true
+  
+  - error_type: "booking_already_checked_out"
+    action: "inform"
+    message: "This booking has already been checked out. Late checkout cannot be applied."
+    user_facing: true
+  
+  - error_type: "room_not_available"
+    action: "inform"
+    message: "Late checkout is not available due to an incoming reservation. Standard checkout time of {standard_time} applies."
+    user_facing: true
+  
+  - error_type: "tool_failure"
+    action: "retry"
+    max_retries: 2
+    fallback: "escalate"
+    message: "System error occurred. Please try again or contact support."
+  
+  - error_type: "approval_rejected"
+    action: "inform"
+    message: "Late checkout request was not approved. Standard checkout time applies."
+    user_facing: true
+
+success_criteria:
+  - "update_result.status == 'success' OR eligible == False"
+  - "email_sent == true OR email_sent == 'not_required'"
+
+rollback_steps:
+  - step_id: 4
+    rollback_action: "revert_booking_update"
+    rollback_tool: "update_booking"
+    rollback_inputs:
+      booking_id: "${context.booking_id}"
+      checkout_time: "${booking_details.original_checkout_time}"
+      additional_charges: 0
+      notes: "Late checkout reverted"
+
+source_trace:
+  origin: "manual"
+  original_issue_id: null
+  react_trace_id: null
+  human_validated: true
+  validation_date: "2024-01-15T10:30:00Z"
+  validator: "ops_team"
+  notes: "Created from standard operating procedure for late checkout requests"
+
+performance_metrics:
+  avg_execution_time_ms: 0
+  success_count: 0
+  failure_count: 0
+  approval_rejection_count: 0
+  last_used: null
+  avg_approval_time_minutes: 0
+
+tags:
+  - "checkout"
+  - "booking_modification"
+  - "time_sensitive"
+  - "loyalty_benefits"

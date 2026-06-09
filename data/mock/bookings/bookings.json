@@ -1,0 +1,1664 @@
+[
+  {
+    "booking_id": "BK-2024-001",
+    "confirmation_number": "BKNG-789456",
+    "guest": {
+      "guest_id": "G-10234",
+      "first_name": "Donald",
+      "last_name": "Allen",
+      "email": "donald.allen@university.edu",
+      "phone": "+1-555-0123",
+      "loyalty_tier": "PLATINUM",
+      "loyalty_number": "GP-PLAT-1000"
+    },
+    "room": {
+      "room_number": "917",
+      "room_type": "EXECUTIVE_SUITE",
+      "floor": 9,
+      "rate_per_night": 349.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-04-08",
+    "check_out_date": "2024-04-13",
+    "nights": 5,
+    "total_amount": 1745.0,
+    "status": "CONFIRMED",
+    "booking_channel": "BOOKING_COM",
+    "special_requests": "Express checkout",
+    "created_at": "2024-04-04T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-002",
+    "confirmation_number": "HOTELS-556790",
+    "guest": {
+      "guest_id": "G-10235",
+      "first_name": "Timothy",
+      "last_name": "Wright",
+      "email": "timothy.wright@company.com",
+      "phone": "+1-555-0124",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-1123"
+    },
+    "room": {
+      "room_number": "415",
+      "room_type": "EXECUTIVE_SUITE",
+      "floor": 4,
+      "rate_per_night": 349.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-03-21",
+    "check_out_date": "2024-03-24",
+    "nights": 3,
+    "total_amount": 1047.0,
+    "status": "CHECKED_IN",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "Crib needed for infant",
+    "created_at": "2024-03-04T00:00:00Z",
+    "checked_in_at": "2024-03-21T15:46:00Z",
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-003",
+    "confirmation_number": "EXP-334523",
+    "guest": {
+      "guest_id": "G-10236",
+      "first_name": "Daniel",
+      "last_name": "Nelson",
+      "email": "daniel.nelson@university.edu",
+      "phone": "+1-555-0125",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-1246"
+    },
+    "room": {
+      "room_number": "712",
+      "room_type": "DELUXE_DOUBLE",
+      "floor": 7,
+      "rate_per_night": 209.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-04-03",
+    "check_out_date": "2024-04-08",
+    "nights": 5,
+    "total_amount": 1045.0,
+    "status": "CONFIRMED",
+    "booking_channel": "EXPEDIA",
+    "special_requests": "Late checkout requested",
+    "created_at": "2024-03-22T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-004",
+    "confirmation_number": "EXP-334524",
+    "guest": {
+      "guest_id": "G-10237",
+      "first_name": "Cynthia",
+      "last_name": "Mitchell",
+      "email": "cynthia.mitchell@healthcare.org",
+      "phone": "+1-555-0126",
+      "loyalty_tier": "NONE",
+      "loyalty_number": null
+    },
+    "room": {
+      "room_number": "522",
+      "room_type": "STANDARD_DOUBLE",
+      "floor": 5,
+      "rate_per_night": 129.0,
+      "view": "Courtyard View"
+    },
+    "check_in_date": "2024-03-13",
+    "check_out_date": "2024-03-16",
+    "nights": 3,
+    "total_amount": 387.0,
+    "status": "CHECKED_OUT",
+    "booking_channel": "EXPEDIA",
+    "special_requests": "VIP arrival, airport transfer arranged",
+    "created_at": "2024-03-12T00:00:00Z",
+    "checked_in_at": "2024-03-13T14:26:00Z",
+    "checked_out_at": "2024-03-16T10:38:00Z"
+  },
+  {
+    "booking_id": "BK-2024-005",
+    "confirmation_number": "GPH-45786-E",
+    "guest": {
+      "guest_id": "G-10238",
+      "first_name": "Angela",
+      "last_name": "Scott",
+      "email": "angela.scott@tech.com",
+      "phone": "+1-555-0127",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-1492"
+    },
+    "room": {
+      "room_number": "802",
+      "room_type": "DELUXE_DOUBLE",
+      "floor": 8,
+      "rate_per_night": 209.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-04-03",
+    "check_out_date": "2024-04-05",
+    "nights": 2,
+    "total_amount": 418.0,
+    "status": "CONFIRMED",
+    "booking_channel": "DIRECT",
+    "special_requests": "VIP arrival, airport transfer arranged",
+    "created_at": "2024-03-21T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-006",
+    "confirmation_number": "EXP-334526",
+    "guest": {
+      "guest_id": "G-10239",
+      "first_name": "Donald",
+      "last_name": "Hall",
+      "email": "donald.hall@startup.io",
+      "phone": "+1-555-0128",
+      "loyalty_tier": "PLATINUM",
+      "loyalty_number": "GP-PLAT-1615"
+    },
+    "room": {
+      "room_number": "903",
+      "room_type": "PRESIDENTIAL_SUITE",
+      "floor": 9,
+      "rate_per_night": 599.0,
+      "view": "Panoramic Ocean View"
+    },
+    "check_in_date": "2024-04-02",
+    "check_out_date": "2024-04-07",
+    "nights": 5,
+    "total_amount": 2995.0,
+    "status": "CONFIRMED",
+    "booking_channel": "EXPEDIA",
+    "special_requests": null,
+    "created_at": "2024-03-15T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-007",
+    "confirmation_number": "HOTELS-556795",
+    "guest": {
+      "guest_id": "G-10240",
+      "first_name": "Dorothy",
+      "last_name": "Kim",
+      "email": "dorothy.kim@consulting.com",
+      "phone": "+1-555-0129",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-1738"
+    },
+    "room": {
+      "room_number": "418",
+      "room_type": "ACCESSIBLE_KING",
+      "floor": 4,
+      "rate_per_night": 169.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-03-12",
+    "check_out_date": "2024-03-14",
+    "nights": 2,
+    "total_amount": 338.0,
+    "status": "CHECKED_OUT",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "Pet-friendly room - small dog",
+    "created_at": "2024-02-27T00:00:00Z",
+    "checked_in_at": "2024-03-12T15:09:00Z",
+    "checked_out_at": "2024-03-14T10:47:00Z"
+  },
+  {
+    "booking_id": "BK-2024-008",
+    "confirmation_number": "HOTELS-556796",
+    "guest": {
+      "guest_id": "G-10241",
+      "first_name": "Jason",
+      "last_name": "Taylor",
+      "email": "jason.taylor@gmail.com",
+      "phone": "+1-555-0130",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-1861"
+    },
+    "room": {
+      "room_number": "803",
+      "room_type": "STANDARD_DOUBLE",
+      "floor": 8,
+      "rate_per_night": 129.0,
+      "view": "Courtyard View"
+    },
+    "check_in_date": "2024-03-13",
+    "check_out_date": "2024-03-16",
+    "nights": 3,
+    "total_amount": 387.0,
+    "status": "CHECKED_OUT",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "Late checkout granted",
+    "created_at": "2024-03-08T00:00:00Z",
+    "checked_in_at": "2024-03-13T17:21:00Z",
+    "checked_out_at": "2024-03-16T11:26:00Z"
+  },
+  {
+    "booking_id": "BK-2024-009",
+    "confirmation_number": "EXP-334529",
+    "guest": {
+      "guest_id": "G-10242",
+      "first_name": "Stephen",
+      "last_name": "Nelson",
+      "email": "stephen.nelson@marketing.com",
+      "phone": "+1-555-0131",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-1984"
+    },
+    "room": {
+      "room_number": "802",
+      "room_type": "STANDARD_QUEEN",
+      "floor": 8,
+      "rate_per_night": 149.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-03-25",
+    "check_out_date": "2024-03-30",
+    "nights": 5,
+    "total_amount": 745.0,
+    "status": "CONFIRMED",
+    "booking_channel": "EXPEDIA",
+    "special_requests": "Quiet room away from elevators",
+    "created_at": "2024-03-10T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-010",
+    "confirmation_number": "HOTELS-556798",
+    "guest": {
+      "guest_id": "G-10243",
+      "first_name": "Michael",
+      "last_name": "Evans",
+      "email": "michael.evans@startup.io",
+      "phone": "+1-555-0132",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-2107"
+    },
+    "room": {
+      "room_number": "822",
+      "room_type": "DELUXE_DOUBLE",
+      "floor": 8,
+      "rate_per_night": 209.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-04-04",
+    "check_out_date": "2024-04-09",
+    "nights": 5,
+    "total_amount": 1045.0,
+    "status": "CONFIRMED",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "Late checkout requested",
+    "created_at": "2024-03-27T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-011",
+    "confirmation_number": "GPH-45792-K",
+    "guest": {
+      "guest_id": "G-10244",
+      "first_name": "Scott",
+      "last_name": "Baker",
+      "email": "scott.baker@lawfirm.com",
+      "phone": "+1-555-0133",
+      "loyalty_tier": "NONE",
+      "loyalty_number": null
+    },
+    "room": {
+      "room_number": "424",
+      "room_type": "ACCESSIBLE_KING",
+      "floor": 4,
+      "rate_per_night": 169.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-04-05",
+    "check_out_date": "2024-04-09",
+    "nights": 4,
+    "total_amount": 676.0,
+    "status": "CONFIRMED",
+    "booking_channel": "DIRECT",
+    "special_requests": "Late checkout requested",
+    "created_at": "2024-03-25T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-012",
+    "confirmation_number": "GPH-45793-L",
+    "guest": {
+      "guest_id": "G-10245",
+      "first_name": "Laura",
+      "last_name": "Martinez",
+      "email": "laura.martinez@email.com",
+      "phone": "+1-555-0134",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-2353"
+    },
+    "room": {
+      "room_number": "319",
+      "room_type": "STANDARD_DOUBLE",
+      "floor": 3,
+      "rate_per_night": 129.0,
+      "view": "Courtyard View"
+    },
+    "check_in_date": "2024-04-08",
+    "check_out_date": "2024-04-13",
+    "nights": 5,
+    "total_amount": 645.0,
+    "status": "CONFIRMED",
+    "booking_channel": "DIRECT",
+    "special_requests": null,
+    "created_at": "2024-04-03T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-013",
+    "confirmation_number": "HOTELS-556801",
+    "guest": {
+      "guest_id": "G-10246",
+      "first_name": "Laura",
+      "last_name": "White",
+      "email": "laura.white@tech.com",
+      "phone": "+1-555-0135",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-2476"
+    },
+    "room": {
+      "room_number": "421",
+      "room_type": "STANDARD_DOUBLE",
+      "floor": 4,
+      "rate_per_night": 129.0,
+      "view": "Courtyard View"
+    },
+    "check_in_date": "2024-03-30",
+    "check_out_date": "2024-04-01",
+    "nights": 2,
+    "total_amount": 258.0,
+    "status": "CONFIRMED",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "Pet-friendly room - small dog",
+    "created_at": "2024-03-27T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-014",
+    "confirmation_number": "BKNG-789469",
+    "guest": {
+      "guest_id": "G-10247",
+      "first_name": "Donna",
+      "last_name": "Thompson",
+      "email": "donna.thompson@gmail.com",
+      "phone": "+1-555-0136",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-2599"
+    },
+    "room": {
+      "room_number": "525",
+      "room_type": "EXECUTIVE_SUITE",
+      "floor": 5,
+      "rate_per_night": 349.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-03-28",
+    "check_out_date": "2024-03-30",
+    "nights": 2,
+    "total_amount": 698.0,
+    "status": "CONFIRMED",
+    "booking_channel": "BOOKING_COM",
+    "special_requests": "Hypoallergenic bedding",
+    "created_at": "2024-03-19T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-015",
+    "confirmation_number": "HOTELS-556803",
+    "guest": {
+      "guest_id": "G-10248",
+      "first_name": "Amy",
+      "last_name": "Hall",
+      "email": "amy.hall@university.edu",
+      "phone": "+1-555-0137",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-2722"
+    },
+    "room": {
+      "room_number": "414",
+      "room_type": "ACCESSIBLE_KING",
+      "floor": 4,
+      "rate_per_night": 169.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-03-16",
+    "check_out_date": "2024-03-18",
+    "nights": 2,
+    "total_amount": 338.0,
+    "status": "CHECKED_OUT",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "Express checkout",
+    "created_at": "2024-02-25T00:00:00Z",
+    "checked_in_at": "2024-03-16T18:26:00Z",
+    "checked_out_at": "2024-03-18T13:57:00Z"
+  },
+  {
+    "booking_id": "BK-2024-016",
+    "confirmation_number": "HOTELS-556804",
+    "guest": {
+      "guest_id": "G-10249",
+      "first_name": "Mark",
+      "last_name": "Reed",
+      "email": "mark.reed@university.edu",
+      "phone": "+1-555-0138",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-2845"
+    },
+    "room": {
+      "room_number": "309",
+      "room_type": "DELUXE_KING",
+      "floor": 3,
+      "rate_per_night": 189.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-04-02",
+    "check_out_date": "2024-04-05",
+    "nights": 3,
+    "total_amount": 567.0,
+    "status": "CONFIRMED",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "Extra workspace, printer access needed",
+    "created_at": "2024-03-30T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-017",
+    "confirmation_number": "GPH-45798-Q",
+    "guest": {
+      "guest_id": "G-10250",
+      "first_name": "Brenda",
+      "last_name": "Lopez",
+      "email": "brenda.lopez@healthcare.org",
+      "phone": "+1-555-0139",
+      "loyalty_tier": "NONE",
+      "loyalty_number": null
+    },
+    "room": {
+      "room_number": "317",
+      "room_type": "STANDARD_QUEEN",
+      "floor": 3,
+      "rate_per_night": 149.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-04-04",
+    "check_out_date": "2024-04-07",
+    "nights": 3,
+    "total_amount": 447.0,
+    "status": "CONFIRMED",
+    "booking_channel": "DIRECT",
+    "special_requests": "Crib needed for infant",
+    "created_at": "2024-03-19T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-018",
+    "confirmation_number": "HOTELS-556806",
+    "guest": {
+      "guest_id": "G-10251",
+      "first_name": "Betty",
+      "last_name": "Wilson",
+      "email": "betty.wilson@consulting.com",
+      "phone": "+1-555-0140",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-3091"
+    },
+    "room": {
+      "room_number": "504",
+      "room_type": "DELUXE_KING",
+      "floor": 5,
+      "rate_per_night": 189.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-03-13",
+    "check_out_date": "2024-03-18",
+    "nights": 5,
+    "total_amount": 945.0,
+    "status": "CHECKED_OUT",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "Champagne and flowers in room",
+    "created_at": "2024-03-10T00:00:00Z",
+    "checked_in_at": "2024-03-13T17:00:00Z",
+    "checked_out_at": "2024-03-18T13:46:00Z"
+  },
+  {
+    "booking_id": "BK-2024-019",
+    "confirmation_number": "BKNG-789474",
+    "guest": {
+      "guest_id": "G-10252",
+      "first_name": "Amy",
+      "last_name": "Mitchell",
+      "email": "amy.mitchell@startup.io",
+      "phone": "+1-555-0141",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-3214"
+    },
+    "room": {
+      "room_number": "511",
+      "room_type": "STANDARD_QUEEN",
+      "floor": 5,
+      "rate_per_night": 149.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-04-03",
+    "check_out_date": "2024-04-05",
+    "nights": 2,
+    "total_amount": 298.0,
+    "status": "CONFIRMED",
+    "booking_channel": "BOOKING_COM",
+    "special_requests": "Crib needed for infant",
+    "created_at": "2024-03-31T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-020",
+    "confirmation_number": "GPH-45801-T",
+    "guest": {
+      "guest_id": "G-10253",
+      "first_name": "Sarah",
+      "last_name": "Garcia",
+      "email": "sarah.garcia@email.com",
+      "phone": "+1-555-0142",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-3337"
+    },
+    "room": {
+      "room_number": "905",
+      "room_type": "STANDARD_DOUBLE",
+      "floor": 9,
+      "rate_per_night": 129.0,
+      "view": "Courtyard View"
+    },
+    "check_in_date": "2024-04-05",
+    "check_out_date": "2024-04-09",
+    "nights": 4,
+    "total_amount": 516.0,
+    "status": "CONFIRMED",
+    "booking_channel": "DIRECT",
+    "special_requests": "Pet-friendly room - small dog",
+    "created_at": "2024-03-20T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-021",
+    "confirmation_number": "HOTELS-556809",
+    "guest": {
+      "guest_id": "G-10254",
+      "first_name": "Michael",
+      "last_name": "Wilson",
+      "email": "michael.wilson@company.com",
+      "phone": "+1-555-0143",
+      "loyalty_tier": "NONE",
+      "loyalty_number": null
+    },
+    "room": {
+      "room_number": "915",
+      "room_type": "ACCESSIBLE_KING",
+      "floor": 9,
+      "rate_per_night": 169.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-03-29",
+    "check_out_date": "2024-04-01",
+    "nights": 3,
+    "total_amount": 507.0,
+    "status": "CONFIRMED",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "VIP arrival, airport transfer arranged",
+    "created_at": "2024-03-10T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-022",
+    "confirmation_number": "BKNG-789477",
+    "guest": {
+      "guest_id": "G-10255",
+      "first_name": "Larry",
+      "last_name": "Kim",
+      "email": "larry.kim@marketing.com",
+      "phone": "+1-555-0144",
+      "loyalty_tier": "PLATINUM",
+      "loyalty_number": "GP-PLAT-3583"
+    },
+    "room": {
+      "room_number": "803",
+      "room_type": "DELUXE_DOUBLE",
+      "floor": 8,
+      "rate_per_night": 209.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-03-17",
+    "check_out_date": "2024-03-21",
+    "nights": 4,
+    "total_amount": 836.0,
+    "status": "CHECKED_OUT",
+    "booking_channel": "BOOKING_COM",
+    "special_requests": "Late checkout requested",
+    "created_at": "2024-03-05T00:00:00Z",
+    "checked_in_at": "2024-03-17T15:32:00Z",
+    "checked_out_at": "2024-03-21T13:16:00Z"
+  },
+  {
+    "booking_id": "BK-2024-023",
+    "confirmation_number": "GPH-45804-W",
+    "guest": {
+      "guest_id": "G-10256",
+      "first_name": "Virginia",
+      "last_name": "Martinez",
+      "email": "virginia.martinez@healthcare.org",
+      "phone": "+1-555-0145",
+      "loyalty_tier": "PLATINUM",
+      "loyalty_number": "GP-PLAT-3706"
+    },
+    "room": {
+      "room_number": "721",
+      "room_type": "EXECUTIVE_SUITE",
+      "floor": 7,
+      "rate_per_night": 349.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-03-30",
+    "check_out_date": "2024-04-02",
+    "nights": 3,
+    "total_amount": 1047.0,
+    "status": "CANCELLED",
+    "booking_channel": "DIRECT",
+    "special_requests": "Extra workspace, printer access needed",
+    "created_at": "2024-03-19T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null,
+    "cancelled_at": "2024-03-29T00:00:00Z",
+    "cancellation_reason": "Guest cancelled - personal reasons"
+  },
+  {
+    "booking_id": "BK-2024-024",
+    "confirmation_number": "BKNG-789479",
+    "guest": {
+      "guest_id": "G-10257",
+      "first_name": "Daniel",
+      "last_name": "Garcia",
+      "email": "daniel.garcia@consulting.com",
+      "phone": "+1-555-0146",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-3829"
+    },
+    "room": {
+      "room_number": "206",
+      "room_type": "PRESIDENTIAL_SUITE",
+      "floor": 2,
+      "rate_per_night": 599.0,
+      "view": "Panoramic Ocean View"
+    },
+    "check_in_date": "2024-03-19",
+    "check_out_date": "2024-03-24",
+    "nights": 5,
+    "total_amount": 2995.0,
+    "status": "CHECKED_IN",
+    "booking_channel": "BOOKING_COM",
+    "special_requests": "Crib needed for infant",
+    "created_at": "2024-03-12T00:00:00Z",
+    "checked_in_at": "2024-03-19T17:16:00Z",
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-025",
+    "confirmation_number": "EXP-334545",
+    "guest": {
+      "guest_id": "G-10258",
+      "first_name": "Gary",
+      "last_name": "Stewart",
+      "email": "gary.stewart@marketing.com",
+      "phone": "+1-555-0147",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-3952"
+    },
+    "room": {
+      "room_number": "619",
+      "room_type": "ACCESSIBLE_KING",
+      "floor": 6,
+      "rate_per_night": 169.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-03-10",
+    "check_out_date": "2024-03-12",
+    "nights": 2,
+    "total_amount": 338.0,
+    "status": "CHECKED_OUT",
+    "booking_channel": "EXPEDIA",
+    "special_requests": "Early check-in if possible",
+    "created_at": "2024-02-22T00:00:00Z",
+    "checked_in_at": "2024-03-10T18:48:00Z",
+    "checked_out_at": "2024-03-12T09:13:00Z"
+  },
+  {
+    "booking_id": "BK-2024-026",
+    "confirmation_number": "EXP-334546",
+    "guest": {
+      "guest_id": "G-10259",
+      "first_name": "Donald",
+      "last_name": "Rivera",
+      "email": "donald.rivera@healthcare.org",
+      "phone": "+1-555-0148",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-4075"
+    },
+    "room": {
+      "room_number": "703",
+      "room_type": "PRESIDENTIAL_SUITE",
+      "floor": 7,
+      "rate_per_night": 599.0,
+      "view": "Panoramic Ocean View"
+    },
+    "check_in_date": "2024-03-21",
+    "check_out_date": "2024-03-24",
+    "nights": 3,
+    "total_amount": 1797.0,
+    "status": "CHECKED_IN",
+    "booking_channel": "EXPEDIA",
+    "special_requests": null,
+    "created_at": "2024-03-12T00:00:00Z",
+    "checked_in_at": "2024-03-21T16:52:00Z",
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-027",
+    "confirmation_number": "GPH-45808-A",
+    "guest": {
+      "guest_id": "G-10260",
+      "first_name": "Robert",
+      "last_name": "Allen",
+      "email": "robert.allen@tech.com",
+      "phone": "+1-555-0149",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-4198"
+    },
+    "room": {
+      "room_number": "603",
+      "room_type": "STANDARD_QUEEN",
+      "floor": 6,
+      "rate_per_night": 149.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-04-03",
+    "check_out_date": "2024-04-05",
+    "nights": 2,
+    "total_amount": 298.0,
+    "status": "CONFIRMED",
+    "booking_channel": "DIRECT",
+    "special_requests": "Quiet room away from elevators",
+    "created_at": "2024-03-21T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-028",
+    "confirmation_number": "HOTELS-556816",
+    "guest": {
+      "guest_id": "G-10261",
+      "first_name": "Angela",
+      "last_name": "Stewart",
+      "email": "angela.stewart@university.edu",
+      "phone": "+1-555-0150",
+      "loyalty_tier": "NONE",
+      "loyalty_number": null
+    },
+    "room": {
+      "room_number": "618",
+      "room_type": "ACCESSIBLE_KING",
+      "floor": 6,
+      "rate_per_night": 169.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-03-29",
+    "check_out_date": "2024-03-31",
+    "nights": 2,
+    "total_amount": 338.0,
+    "status": "CONFIRMED",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "Ground floor preferred",
+    "created_at": "2024-03-11T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-029",
+    "confirmation_number": "EXP-334549",
+    "guest": {
+      "guest_id": "G-10262",
+      "first_name": "Jeffrey",
+      "last_name": "Reed",
+      "email": "jeffrey.reed@tech.com",
+      "phone": "+1-555-0151",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-4444"
+    },
+    "room": {
+      "room_number": "904",
+      "room_type": "STANDARD_DOUBLE",
+      "floor": 9,
+      "rate_per_night": 129.0,
+      "view": "Courtyard View"
+    },
+    "check_in_date": "2024-03-25",
+    "check_out_date": "2024-03-30",
+    "nights": 5,
+    "total_amount": 645.0,
+    "status": "CONFIRMED",
+    "booking_channel": "EXPEDIA",
+    "special_requests": "Pet-friendly room - small dog",
+    "created_at": "2024-03-14T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-030",
+    "confirmation_number": "HOTELS-556818",
+    "guest": {
+      "guest_id": "G-10263",
+      "first_name": "Betty",
+      "last_name": "Turner",
+      "email": "betty.turner@email.com",
+      "phone": "+1-555-0152",
+      "loyalty_tier": "NONE",
+      "loyalty_number": null
+    },
+    "room": {
+      "room_number": "812",
+      "room_type": "STANDARD_QUEEN",
+      "floor": 8,
+      "rate_per_night": 149.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-04-08",
+    "check_out_date": "2024-04-10",
+    "nights": 2,
+    "total_amount": 298.0,
+    "status": "CONFIRMED",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "VIP arrival, airport transfer arranged",
+    "created_at": "2024-04-06T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-031",
+    "confirmation_number": "HOTELS-556819",
+    "guest": {
+      "guest_id": "G-10264",
+      "first_name": "Helen",
+      "last_name": "Harris",
+      "email": "helen.harris@tech.com",
+      "phone": "+1-555-0153",
+      "loyalty_tier": "PLATINUM",
+      "loyalty_number": "GP-PLAT-4690"
+    },
+    "room": {
+      "room_number": "711",
+      "room_type": "DELUXE_KING",
+      "floor": 7,
+      "rate_per_night": 189.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-04-07",
+    "check_out_date": "2024-04-11",
+    "nights": 4,
+    "total_amount": 756.0,
+    "status": "CONFIRMED",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "Hypoallergenic bedding",
+    "created_at": "2024-04-03T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-032",
+    "confirmation_number": "GPH-45813-F",
+    "guest": {
+      "guest_id": "G-10265",
+      "first_name": "Jennifer",
+      "last_name": "Collins",
+      "email": "jennifer.collins@gmail.com",
+      "phone": "+1-555-0154",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-4813"
+    },
+    "room": {
+      "room_number": "912",
+      "room_type": "PRESIDENTIAL_SUITE",
+      "floor": 9,
+      "rate_per_night": 599.0,
+      "view": "Panoramic Ocean View"
+    },
+    "check_in_date": "2024-03-29",
+    "check_out_date": "2024-04-02",
+    "nights": 4,
+    "total_amount": 2396.0,
+    "status": "CONFIRMED",
+    "booking_channel": "DIRECT",
+    "special_requests": "Pet-friendly room - small dog",
+    "created_at": "2024-03-23T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-033",
+    "confirmation_number": "HOTELS-556821",
+    "guest": {
+      "guest_id": "G-10266",
+      "first_name": "Emily",
+      "last_name": "Cook",
+      "email": "emily.cook@tech.com",
+      "phone": "+1-555-0155",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-4936"
+    },
+    "room": {
+      "room_number": "221",
+      "room_type": "STANDARD_QUEEN",
+      "floor": 2,
+      "rate_per_night": 149.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-03-11",
+    "check_out_date": "2024-03-13",
+    "nights": 2,
+    "total_amount": 298.0,
+    "status": "CHECKED_OUT",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "Business center access, meeting room needed",
+    "created_at": "2024-02-28T00:00:00Z",
+    "checked_in_at": "2024-03-11T16:57:00Z",
+    "checked_out_at": "2024-03-13T13:27:00Z"
+  },
+  {
+    "booking_id": "BK-2024-034",
+    "confirmation_number": "EXP-334554",
+    "guest": {
+      "guest_id": "G-10267",
+      "first_name": "Barbara",
+      "last_name": "King",
+      "email": "barbara.king@startup.io",
+      "phone": "+1-555-0156",
+      "loyalty_tier": "PLATINUM",
+      "loyalty_number": "GP-PLAT-5059"
+    },
+    "room": {
+      "room_number": "415",
+      "room_type": "STANDARD_DOUBLE",
+      "floor": 4,
+      "rate_per_night": 129.0,
+      "view": "Courtyard View"
+    },
+    "check_in_date": "2024-04-07",
+    "check_out_date": "2024-04-12",
+    "nights": 5,
+    "total_amount": 645.0,
+    "status": "CONFIRMED",
+    "booking_channel": "EXPEDIA",
+    "special_requests": "High floor, quiet room",
+    "created_at": "2024-03-19T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-035",
+    "confirmation_number": "HOTELS-556823",
+    "guest": {
+      "guest_id": "G-10268",
+      "first_name": "Cynthia",
+      "last_name": "Hill",
+      "email": "cynthia.hill@startup.io",
+      "phone": "+1-555-0157",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-5182"
+    },
+    "room": {
+      "room_number": "419",
+      "room_type": "ACCESSIBLE_KING",
+      "floor": 4,
+      "rate_per_night": 169.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-03-13",
+    "check_out_date": "2024-03-15",
+    "nights": 2,
+    "total_amount": 338.0,
+    "status": "CHECKED_OUT",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "High floor, quiet room",
+    "created_at": "2024-03-11T00:00:00Z",
+    "checked_in_at": "2024-03-13T18:35:00Z",
+    "checked_out_at": "2024-03-15T13:34:00Z"
+  },
+  {
+    "booking_id": "BK-2024-036",
+    "confirmation_number": "HOTELS-556824",
+    "guest": {
+      "guest_id": "G-10269",
+      "first_name": "James",
+      "last_name": "Evans",
+      "email": "james.evans@healthcare.org",
+      "phone": "+1-555-0158",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-5305"
+    },
+    "room": {
+      "room_number": "523",
+      "room_type": "EXECUTIVE_SUITE",
+      "floor": 5,
+      "rate_per_night": 349.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-03-27",
+    "check_out_date": "2024-03-31",
+    "nights": 4,
+    "total_amount": 1396.0,
+    "status": "CONFIRMED",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "Medical conference attendee, quiet floor preferred",
+    "created_at": "2024-03-12T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-037",
+    "confirmation_number": "BKNG-789492",
+    "guest": {
+      "guest_id": "G-10270",
+      "first_name": "Joshua",
+      "last_name": "Green",
+      "email": "joshua.green@startup.io",
+      "phone": "+1-555-0159",
+      "loyalty_tier": "NONE",
+      "loyalty_number": null
+    },
+    "room": {
+      "room_number": "411",
+      "room_type": "STANDARD_QUEEN",
+      "floor": 4,
+      "rate_per_night": 149.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-03-14",
+    "check_out_date": "2024-03-19",
+    "nights": 5,
+    "total_amount": 745.0,
+    "status": "CANCELLED",
+    "booking_channel": "BOOKING_COM",
+    "special_requests": "Extra towels",
+    "created_at": "2024-03-05T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null,
+    "cancelled_at": "2024-03-07T00:00:00Z",
+    "cancellation_reason": "Hotel cancelled - overbooking"
+  },
+  {
+    "booking_id": "BK-2024-038",
+    "confirmation_number": "GPH-45819-L",
+    "guest": {
+      "guest_id": "G-10271",
+      "first_name": "Betty",
+      "last_name": "Morgan",
+      "email": "betty.morgan@consulting.com",
+      "phone": "+1-555-0160",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-5551"
+    },
+    "room": {
+      "room_number": "813",
+      "room_type": "EXECUTIVE_SUITE",
+      "floor": 8,
+      "rate_per_night": 349.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-04-02",
+    "check_out_date": "2024-04-04",
+    "nights": 2,
+    "total_amount": 698.0,
+    "status": "CONFIRMED",
+    "booking_channel": "DIRECT",
+    "special_requests": "Medical conference attendee, quiet floor preferred",
+    "created_at": "2024-03-23T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-039",
+    "confirmation_number": "HOTELS-556827",
+    "guest": {
+      "guest_id": "G-10272",
+      "first_name": "David",
+      "last_name": "Edwards",
+      "email": "david.edwards@gmail.com",
+      "phone": "+1-555-0161",
+      "loyalty_tier": "NONE",
+      "loyalty_number": null
+    },
+    "room": {
+      "room_number": "410",
+      "room_type": "EXECUTIVE_SUITE",
+      "floor": 4,
+      "rate_per_night": 349.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-03-14",
+    "check_out_date": "2024-03-19",
+    "nights": 5,
+    "total_amount": 1745.0,
+    "status": "CHECKED_OUT",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "Wheelchair accessible room required, roll-in shower",
+    "created_at": "2024-02-26T00:00:00Z",
+    "checked_in_at": "2024-03-14T18:00:00Z",
+    "checked_out_at": "2024-03-19T13:37:00Z"
+  },
+  {
+    "booking_id": "BK-2024-040",
+    "confirmation_number": "EXP-334560",
+    "guest": {
+      "guest_id": "G-10273",
+      "first_name": "Stephen",
+      "last_name": "Roberts",
+      "email": "stephen.roberts@healthcare.org",
+      "phone": "+1-555-0162",
+      "loyalty_tier": "PLATINUM",
+      "loyalty_number": "GP-PLAT-5797"
+    },
+    "room": {
+      "room_number": "910",
+      "room_type": "PRESIDENTIAL_SUITE",
+      "floor": 9,
+      "rate_per_night": 599.0,
+      "view": "Panoramic Ocean View"
+    },
+    "check_in_date": "2024-04-01",
+    "check_out_date": "2024-04-06",
+    "nights": 5,
+    "total_amount": 2995.0,
+    "status": "CANCELLED",
+    "booking_channel": "EXPEDIA",
+    "special_requests": "Non-smoking room",
+    "created_at": "2024-03-12T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null,
+    "cancelled_at": "2024-03-30T00:00:00Z",
+    "cancellation_reason": "Guest cancelled - schedule change"
+  },
+  {
+    "booking_id": "BK-2024-041",
+    "confirmation_number": "EXP-334561",
+    "guest": {
+      "guest_id": "G-10274",
+      "first_name": "Michael",
+      "last_name": "Cox",
+      "email": "michael.cox@tech.com",
+      "phone": "+1-555-0163",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-5920"
+    },
+    "room": {
+      "room_number": "912",
+      "room_type": "PRESIDENTIAL_SUITE",
+      "floor": 9,
+      "rate_per_night": 599.0,
+      "view": "Panoramic Ocean View"
+    },
+    "check_in_date": "2024-03-25",
+    "check_out_date": "2024-03-29",
+    "nights": 4,
+    "total_amount": 2396.0,
+    "status": "CONFIRMED",
+    "booking_channel": "EXPEDIA",
+    "special_requests": "Extra towels",
+    "created_at": "2024-03-15T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-042",
+    "confirmation_number": "HOTELS-556830",
+    "guest": {
+      "guest_id": "G-10275",
+      "first_name": "Jose",
+      "last_name": "Allen",
+      "email": "jose.allen@tech.com",
+      "phone": "+1-555-0164",
+      "loyalty_tier": "NONE",
+      "loyalty_number": null
+    },
+    "room": {
+      "room_number": "325",
+      "room_type": "DELUXE_DOUBLE",
+      "floor": 3,
+      "rate_per_night": 209.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-03-22",
+    "check_out_date": "2024-03-26",
+    "nights": 4,
+    "total_amount": 836.0,
+    "status": "CHECKED_IN",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "Express checkout",
+    "created_at": "2024-03-07T00:00:00Z",
+    "checked_in_at": "2024-03-22T16:11:00Z",
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-043",
+    "confirmation_number": "EXP-334563",
+    "guest": {
+      "guest_id": "G-10276",
+      "first_name": "Jennifer",
+      "last_name": "Howard",
+      "email": "jennifer.howard@company.com",
+      "phone": "+1-555-0165",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-6166"
+    },
+    "room": {
+      "room_number": "616",
+      "room_type": "EXECUTIVE_SUITE",
+      "floor": 6,
+      "rate_per_night": 349.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-04-02",
+    "check_out_date": "2024-04-07",
+    "nights": 5,
+    "total_amount": 1745.0,
+    "status": "CANCELLED",
+    "booking_channel": "EXPEDIA",
+    "special_requests": "Late checkout requested",
+    "created_at": "2024-03-23T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null,
+    "cancelled_at": "2024-03-26T00:00:00Z",
+    "cancellation_reason": "Guest cancelled - personal reasons"
+  },
+  {
+    "booking_id": "BK-2024-044",
+    "confirmation_number": "EXP-334564",
+    "guest": {
+      "guest_id": "G-10277",
+      "first_name": "Nancy",
+      "last_name": "Rodriguez",
+      "email": "nancy.rodriguez@company.com",
+      "phone": "+1-555-0166",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-6289"
+    },
+    "room": {
+      "room_number": "603",
+      "room_type": "STANDARD_DOUBLE",
+      "floor": 6,
+      "rate_per_night": 129.0,
+      "view": "Courtyard View"
+    },
+    "check_in_date": "2024-04-08",
+    "check_out_date": "2024-04-13",
+    "nights": 5,
+    "total_amount": 645.0,
+    "status": "CANCELLED",
+    "booking_channel": "EXPEDIA",
+    "special_requests": "Business center access, meeting room needed",
+    "created_at": "2024-03-28T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null,
+    "cancelled_at": "2024-04-04T00:00:00Z",
+    "cancellation_reason": "Guest cancelled - personal reasons"
+  },
+  {
+    "booking_id": "BK-2024-045",
+    "confirmation_number": "EXP-334565",
+    "guest": {
+      "guest_id": "G-10278",
+      "first_name": "Sharon",
+      "last_name": "Harris",
+      "email": "sharon.harris@gmail.com",
+      "phone": "+1-555-0167",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-6412"
+    },
+    "room": {
+      "room_number": "221",
+      "room_type": "STANDARD_DOUBLE",
+      "floor": 2,
+      "rate_per_night": 129.0,
+      "view": "Courtyard View"
+    },
+    "check_in_date": "2024-03-19",
+    "check_out_date": "2024-03-23",
+    "nights": 4,
+    "total_amount": 516.0,
+    "status": "CHECKED_IN",
+    "booking_channel": "EXPEDIA",
+    "special_requests": "Foam pillows preferred",
+    "created_at": "2024-03-05T00:00:00Z",
+    "checked_in_at": "2024-03-19T17:05:00Z",
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-046",
+    "confirmation_number": "GPH-45827-T",
+    "guest": {
+      "guest_id": "G-10279",
+      "first_name": "Scott",
+      "last_name": "Morgan",
+      "email": "scott.morgan@university.edu",
+      "phone": "+1-555-0168",
+      "loyalty_tier": "NONE",
+      "loyalty_number": null
+    },
+    "room": {
+      "room_number": "921",
+      "room_type": "STANDARD_QUEEN",
+      "floor": 9,
+      "rate_per_night": 149.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-03-24",
+    "check_out_date": "2024-03-29",
+    "nights": 5,
+    "total_amount": 745.0,
+    "status": "CONFIRMED",
+    "booking_channel": "DIRECT",
+    "special_requests": "Ground floor preferred",
+    "created_at": "2024-03-07T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-047",
+    "confirmation_number": "GPH-45828-U",
+    "guest": {
+      "guest_id": "G-10280",
+      "first_name": "George",
+      "last_name": "Thompson",
+      "email": "george.thompson@marketing.com",
+      "phone": "+1-555-0169",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-6658"
+    },
+    "room": {
+      "room_number": "520",
+      "room_type": "EXECUTIVE_SUITE",
+      "floor": 5,
+      "rate_per_night": 349.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-03-20",
+    "check_out_date": "2024-03-23",
+    "nights": 3,
+    "total_amount": 1047.0,
+    "status": "CHECKED_IN",
+    "booking_channel": "DIRECT",
+    "special_requests": "Hypoallergenic bedding",
+    "created_at": "2024-03-08T00:00:00Z",
+    "checked_in_at": "2024-03-20T15:09:00Z",
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-048",
+    "confirmation_number": "BKNG-789503",
+    "guest": {
+      "guest_id": "G-10281",
+      "first_name": "Sarah",
+      "last_name": "Evans",
+      "email": "sarah.evans@lawfirm.com",
+      "phone": "+1-555-0170",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-6781"
+    },
+    "room": {
+      "room_number": "401",
+      "room_type": "PRESIDENTIAL_SUITE",
+      "floor": 4,
+      "rate_per_night": 599.0,
+      "view": "Panoramic Ocean View"
+    },
+    "check_in_date": "2024-03-24",
+    "check_out_date": "2024-03-27",
+    "nights": 3,
+    "total_amount": 1797.0,
+    "status": "CONFIRMED",
+    "booking_channel": "BOOKING_COM",
+    "special_requests": "Foam pillows preferred",
+    "created_at": "2024-03-18T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-049",
+    "confirmation_number": "BKNG-789504",
+    "guest": {
+      "guest_id": "G-10282",
+      "first_name": "Timothy",
+      "last_name": "Hill",
+      "email": "timothy.hill@finance.com",
+      "phone": "+1-555-0171",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-6904"
+    },
+    "room": {
+      "room_number": "711",
+      "room_type": "DELUXE_KING",
+      "floor": 7,
+      "rate_per_night": 189.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-03-24",
+    "check_out_date": "2024-03-29",
+    "nights": 5,
+    "total_amount": 945.0,
+    "status": "CANCELLED",
+    "booking_channel": "BOOKING_COM",
+    "special_requests": "Champagne and flowers in room",
+    "created_at": "2024-03-17T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null,
+    "cancelled_at": "2024-03-22T00:00:00Z",
+    "cancellation_reason": "Hotel cancelled - overbooking"
+  },
+  {
+    "booking_id": "BK-2024-050",
+    "confirmation_number": "HOTELS-556838",
+    "guest": {
+      "guest_id": "G-10283",
+      "first_name": "Betty",
+      "last_name": "Campbell",
+      "email": "betty.campbell@email.com",
+      "phone": "+1-555-0172",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-7027"
+    },
+    "room": {
+      "room_number": "722",
+      "room_type": "EXECUTIVE_SUITE",
+      "floor": 7,
+      "rate_per_night": 349.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-03-17",
+    "check_out_date": "2024-03-19",
+    "nights": 2,
+    "total_amount": 698.0,
+    "status": "CHECKED_OUT",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "Hypoallergenic bedding",
+    "created_at": "2024-03-15T00:00:00Z",
+    "checked_in_at": "2024-03-17T14:14:00Z",
+    "checked_out_at": "2024-03-19T13:26:00Z"
+  },
+  {
+    "booking_id": "BK-2024-051",
+    "confirmation_number": "HOTELS-556839",
+    "guest": {
+      "guest_id": "G-10284",
+      "first_name": "Barbara",
+      "last_name": "Cox",
+      "email": "barbara.cox@lawfirm.com",
+      "phone": "+1-555-0173",
+      "loyalty_tier": "PLATINUM",
+      "loyalty_number": "GP-PLAT-7150"
+    },
+    "room": {
+      "room_number": "521",
+      "room_type": "DELUXE_DOUBLE",
+      "floor": 5,
+      "rate_per_night": 209.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-03-10",
+    "check_out_date": "2024-03-13",
+    "nights": 3,
+    "total_amount": 627.0,
+    "status": "CHECKED_OUT",
+    "booking_channel": "HOTELS_COM",
+    "special_requests": "Complimentary upgrade applied, Complimentary breakfast included, Late checkout granted",
+    "created_at": "2024-03-01T00:00:00Z",
+    "checked_in_at": "2024-03-10T16:04:00Z",
+    "checked_out_at": "2024-03-13T09:59:00Z"
+  },
+  {
+    "booking_id": "BK-2024-052",
+    "confirmation_number": "EXP-334572",
+    "guest": {
+      "guest_id": "G-10285",
+      "first_name": "Lisa",
+      "last_name": "Taylor",
+      "email": "lisa.taylor@marketing.com",
+      "phone": "+1-555-0174",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-7273"
+    },
+    "room": {
+      "room_number": "403",
+      "room_type": "EXECUTIVE_SUITE",
+      "floor": 4,
+      "rate_per_night": 349.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-03-23",
+    "check_out_date": "2024-03-28",
+    "nights": 5,
+    "total_amount": 1745.0,
+    "status": "CONFIRMED",
+    "booking_channel": "EXPEDIA",
+    "special_requests": "Wheelchair accessible room required, roll-in shower",
+    "created_at": "2024-03-06T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-053",
+    "confirmation_number": "GPH-45834-A",
+    "guest": {
+      "guest_id": "G-10286",
+      "first_name": "Dorothy",
+      "last_name": "Cook",
+      "email": "dorothy.cook@university.edu",
+      "phone": "+1-555-0175",
+      "loyalty_tier": "GOLD",
+      "loyalty_number": "GP-GOLD-7396"
+    },
+    "room": {
+      "room_number": "803",
+      "room_type": "DELUXE_DOUBLE",
+      "floor": 8,
+      "rate_per_night": 209.0,
+      "view": "Ocean View"
+    },
+    "check_in_date": "2024-04-01",
+    "check_out_date": "2024-04-04",
+    "nights": 3,
+    "total_amount": 627.0,
+    "status": "CONFIRMED",
+    "booking_channel": "DIRECT",
+    "special_requests": "Ground floor preferred",
+    "created_at": "2024-03-22T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-054",
+    "confirmation_number": "EXP-334574",
+    "guest": {
+      "guest_id": "G-10287",
+      "first_name": "Gary",
+      "last_name": "Rivera",
+      "email": "gary.rivera@company.com",
+      "phone": "+1-555-0176",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-7519"
+    },
+    "room": {
+      "room_number": "415",
+      "room_type": "DELUXE_KING",
+      "floor": 4,
+      "rate_per_night": 189.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-03-28",
+    "check_out_date": "2024-04-02",
+    "nights": 5,
+    "total_amount": 945.0,
+    "status": "CONFIRMED",
+    "booking_channel": "EXPEDIA",
+    "special_requests": "Crib needed for infant",
+    "created_at": "2024-03-26T00:00:00Z",
+    "checked_in_at": null,
+    "checked_out_at": null
+  },
+  {
+    "booking_id": "BK-2024-055",
+    "confirmation_number": "GPH-45836-C",
+    "guest": {
+      "guest_id": "G-10288",
+      "first_name": "Michael",
+      "last_name": "Wright",
+      "email": "michael.wright@university.edu",
+      "phone": "+1-555-0177",
+      "loyalty_tier": "SILVER",
+      "loyalty_number": "GP-SILV-7642"
+    },
+    "room": {
+      "room_number": "518",
+      "room_type": "ACCESSIBLE_KING",
+      "floor": 5,
+      "rate_per_night": 169.0,
+      "view": "City View"
+    },
+    "check_in_date": "2024-03-21",
+    "check_out_date": "2024-03-25",
+    "nights": 4,
+    "total_amount": 676.0,
+    "status": "CHECKED_IN",
+    "booking_channel": "DIRECT",
+    "special_requests": "Late checkout requested",
+    "created_at": "2024-03-13T00:00:00Z",
+    "checked_in_at": "2024-03-21T14:30:00Z",
+    "checked_out_at": null
+  }
+]

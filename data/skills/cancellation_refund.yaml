@@ -1,0 +1,315 @@
+skill_id: "cancellation_refund"
+version: "1.0"
+name: "Cancellation and Refund Handler"
+description: "Processes booking cancellations and calculates refunds based on cancellation policy and timing"
+
+metadata:
+  domain: "billing"
+  created_at: "2024-01-15T10:40:00Z"
+  created_by: "manual"
+  last_updated: "2024-01-15T10:40:00Z"
+  usage_count: 0
+  success_rate: 0.0
+  avg_resolution_time_minutes: 0.0
+
+triggers:
+  semantic_patterns:
+    - "cancel my booking"
+    - "need to cancel reservation"
+    - "refund my booking"
+    - "cancellation request"
+    - "can't make it need refund"
+    - "cancel and get money back"
+  
+  issue_types:
+    - "cancellation_request"
+    - "refund_request"
+    - "booking_cancellation"
+  
+  required_context:
+    - "booking_id"
+  
+  optional_context:
+    - "cancellation_reason"
+    - "emergency"
+
+steps:
+  - step_id: 1
+    name: "Retrieve booking details"
+    action_type: "tool_call"
+    tool: "lookup_booking"
+    inputs:
+      booking_id: "${context.booking_id}"
+    outputs:
+      - "booking_details"
+    required: true
+    
+  - step_id: 2
+    name: "Retrieve cancellation policy"
+    action_type: "tool_call"
+    tool: "check_policy"
+    inputs:
+      policy_type: "cancellation"
+      room_type: "${booking_details.room_type}"
+      rate_plan: "${booking_details.rate_plan}"
+    outputs:
+      - "cancellation_policy"
+    required: true
+    
+  - step_id: 3
+    name: "Calculate refund amount"
+    action_type: "decision"
+    logic: |
+      import datetime
+      
+      # Calculate days until check-in
+      check_in = datetime.fromisoformat(booking_details.check_in_date)
+      today = datetime.now()
+      days_until_checkin = (check_in - today).days
+      
+      total_paid = booking_details.total_amount
+      
+      # Apply cancellation policy
+      if booking_details.rate_plan == "non_refundable":
+          refund_amount = 0
+          refund_percentage = 0
+          policy_reason = "Non-refundable rate - no refund available"
+          
+      elif days_until_checkin >= 7:
+          # Full refund if cancelled 7+ days before
+          refund_amount = total_paid
+          refund_percentage = 100
+          policy_reason = "Cancelled 7+ days before check-in - full refund"
+          
+      elif days_until_checkin >= 3:
+          # 50% refund if cancelled 3-6 days before
+          refund_amount = total_paid * 0.5
+          refund_percentage = 50
+          policy_reason = "Cancelled 3-6 days before check-in - 50% refund"
+          
+      elif days_until_checkin >= 1:
+          # 25% refund if cancelled 1-2 days before
+          refund_amount = total_paid * 0.25
+          refund_percentage = 25
+          policy_reason = "Cancelled 1-2 days before check-in - 25% refund"
+          
+      else:
+          # No refund for same-day cancellation
+          refund_amount = 0
+          refund_percentage = 0
+          policy_reason = "Same-day cancellation - no refund per policy"
+      
+      # Check for emergency override
+      if context.get("emergency") == True and refund_percentage < 100:
+          emergency_eligible = True
+          policy_reason += " (Emergency override may apply - requires manager approval)"
+      else:
+          emergency_eligible = False
+      
+      cancellation_fee = total_paid - refund_amount
+    outputs:
+      - "refund_amount"
+      - "refund_percentage"
+      - "cancellation_fee"
+      - "policy_reason"
+      - "emergency_eligible"
+      - "days_until_checkin"
+    
+  - step_id: 4
+    name: "Cancel booking in system"
+    action_type: "tool_call"
+    tool: "update_booking"
+    inputs:
+      booking_id: "${context.booking_id}"
+      status: "cancelled"
+      cancellation_date: "${today}"
+      cancellation_reason: "${context.cancellation_reason}"
+      refund_amount: "${refund_amount}"
+    outputs:
+      - "cancellation_result"
+    required: true
+    requires_approval: true
+    approval_reason: "Booking cancellation with financial impact"
+    
+  - step_id: 5
+    name: "Process refund"
+    action_type: "tool_call"
+    tool: "process_refund"
+    inputs:
+      booking_id: "${context.booking_id}"
+      amount: "${refund_amount}"
+      payment_method: "${booking_details.payment_method}"
+      reason: "Booking cancellation"
+    outputs:
+      - "refund_result"
+    required: true
+    requires_approval: true
+    approval_reason: "Financial transaction - refund processing"
+    condition: "refund_amount > 0"
+    
+  - step_id: 6
+    name: "Send cancellation confirmation"
+    action_type: "tool_call"
+    tool: "send_email"
+    inputs:
+      to: "${booking_details.guest_email}"
+      template: "cancellation_confirmation"
+      data:
+        guest_name: "${booking_details.guest_name}"
+        booking_id: "${context.booking_id}"
+        check_in_date: "${booking_details.check_in_date}"
+        check_out_date: "${booking_details.checkout_date}"
+        total_paid: "${booking_details.total_amount}"
+        refund_amount: "${refund_amount}"
+        refund_percentage: "${refund_percentage}"
+        cancellation_fee: "${cancellation_fee}"
+        policy_reason: "${policy_reason}"
+        refund_timeline: "5-7 business days"
+    outputs:
+      - "confirmation_sent"
+    required: false
+    condition: "cancellation_result.status == 'success'"
+    
+  - step_id: 7
+    name: "Update room inventory"
+    action_type: "tool_call"
+    tool: "update_pms"
+    inputs:
+      action: "release_room"
+      room_number: "${booking_details.room_number}"
+      dates: "${booking_details.check_in_date} to ${booking_details.checkout_date}"
+    outputs:
+      - "inventory_updated"
+    required: false
+
+approval_gates:
+  - gate_id: "cancellation_approval"
+    required_for_steps: [4]
+    approval_type: "operational"
+    risk_level: "medium"
+    auto_approve_conditions:
+      - "refund_amount == 0"
+      - "days_until_checkin >= 7 AND refund_amount <= 500"
+    human_review_required:
+      - "refund_amount > 500"
+      - "emergency_eligible == True"
+      - "booking_details.rate_plan == 'non_refundable' AND refund_amount > 0"
+    approval_context:
+      - "booking_details"
+      - "refund_amount"
+      - "policy_reason"
+      - "days_until_checkin"
+  
+  - gate_id: "refund_approval"
+    required_for_steps: [5]
+    approval_type: "financial"
+    risk_level: "high"
+    auto_approve_conditions:
+      - "refund_amount <= 100"
+    human_review_required:
+      - "refund_amount > 100"
+      - "emergency_eligible == True"
+    approval_context:
+      - "refund_amount"
+      - "booking_details.payment_method"
+      - "policy_reason"
+
+guardrails:
+  - type: "input_validation"
+    rules:
+      - "booking_id must be valid"
+      - "booking must exist and not already cancelled"
+      - "refund_amount must be >= 0 and <= total_paid"
+  
+  - type: "business_rules"
+    rules:
+      - "cannot cancel booking after check-in"
+      - "refund cannot exceed amount paid"
+      - "must follow cancellation policy unless emergency override"
+      - "non-refundable bookings require manager approval for any refund"
+  
+  - type: "financial"
+    rules:
+      - "refund must go to original payment method"
+      - "refund amount must match policy calculation"
+      - "must log all financial transactions"
+  
+  - type: "safety"
+    rules:
+      - "verify guest identity before cancellation"
+      - "check for group booking dependencies"
+      - "ensure no active check-in for booking"
+
+error_handling:
+  - error_type: "booking_not_found"
+    action: "escalate"
+    message: "Booking {booking_id} not found. Please verify booking reference."
+    user_facing: true
+  
+  - error_type: "booking_already_cancelled"
+    action: "inform"
+    message: "This booking has already been cancelled. Refund status: {refund_status}"
+    user_facing: true
+  
+  - error_type: "booking_checked_in"
+    action: "escalate"
+    message: "Cannot cancel booking - guest has already checked in. Please contact front desk."
+    user_facing: true
+  
+  - error_type: "refund_processing_failed"
+    action: "escalate"
+    message: "Booking cancelled but refund processing failed. Finance team will process manually."
+    user_facing: false
+  
+  - error_type: "tool_failure"
+    action: "retry"
+    max_retries: 2
+    fallback: "escalate"
+  
+  - error_type: "approval_rejected"
+    action: "inform"
+    message: "Cancellation request was not approved. Your booking remains active."
+    user_facing: true
+
+success_criteria:
+  - "cancellation_result.status == 'success'"
+  - "refund_result.status == 'success' OR refund_amount == 0"
+  - "confirmation_sent == true"
+
+rollback_steps:
+  - step_id: 4
+    rollback_action: "reactivate_booking"
+    rollback_tool: "update_booking"
+    rollback_inputs:
+      booking_id: "${context.booking_id}"
+      status: "confirmed"
+      notes: "Cancellation rolled back"
+  
+  - step_id: 5
+    rollback_action: "reverse_refund"
+    rollback_tool: "process_refund"
+    rollback_inputs:
+      booking_id: "${context.booking_id}"
+      amount: "-${refund_amount}"
+      reason: "Refund reversal"
+
+source_trace:
+  origin: "manual"
+  original_issue_id: null
+  react_trace_id: null
+  human_validated: true
+  validation_date: "2024-01-15T10:40:00Z"
+  validator: "ops_team"
+
+performance_metrics:
+  avg_execution_time_ms: 0
+  success_count: 0
+  failure_count: 0
+  approval_rejection_count: 0
+  last_used: null
+
+tags:
+  - "cancellation"
+  - "refund"
+  - "financial"
+  - "policy_enforcement"

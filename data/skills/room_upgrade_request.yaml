@@ -1,0 +1,263 @@
+skill_id: "room_upgrade_request"
+version: "1.0"
+name: "Room Upgrade Request Handler"
+description: "Handles guest requests for room upgrades based on availability, loyalty status, and pricing"
+
+metadata:
+  domain: "booking"
+  created_at: "2024-01-15T10:35:00Z"
+  created_by: "manual"
+  last_updated: "2024-01-15T10:35:00Z"
+  usage_count: 0
+  success_rate: 0.0
+  avg_resolution_time_minutes: 0.0
+
+triggers:
+  semantic_patterns:
+    - "upgrade my room"
+    - "better room available"
+    - "move to suite"
+    - "room upgrade request"
+    - "can I get a nicer room"
+    - "upgrade to premium room"
+  
+  issue_types:
+    - "room_upgrade_request"
+    - "room_change_upgrade"
+  
+  required_context:
+    - "booking_id"
+  
+  optional_context:
+    - "loyalty_tier"
+    - "desired_room_type"
+    - "willing_to_pay"
+
+steps:
+  - step_id: 1
+    name: "Retrieve current booking"
+    action_type: "tool_call"
+    tool: "lookup_booking"
+    inputs:
+      booking_id: "${context.booking_id}"
+    outputs:
+      - "booking_details"
+    required: true
+    
+  - step_id: 2
+    name: "Check available room upgrades"
+    action_type: "tool_call"
+    tool: "check_room_availability"
+    inputs:
+      check_in_date: "${booking_details.check_in_date}"
+      check_out_date: "${booking_details.checkout_date}"
+      current_room_type: "${booking_details.room_type}"
+    outputs:
+      - "available_upgrades"
+    required: true
+    
+  - step_id: 3
+    name: "Calculate upgrade pricing"
+    action_type: "decision"
+    logic: |
+      if len(available_upgrades) == 0:
+          upgrade_available = False
+          upgrade_options = []
+      else:
+          upgrade_available = True
+          upgrade_options = []
+          
+          for room in available_upgrades:
+              # Calculate price difference
+              price_diff = room.rate - booking_details.room_rate
+              
+              # Apply loyalty discounts
+              if booking_details.loyalty_tier == "diamond":
+                  discount = 0.50  # 50% off upgrade
+              elif booking_details.loyalty_tier == "platinum":
+                  discount = 0.30  # 30% off upgrade
+              elif booking_details.loyalty_tier == "gold":
+                  discount = 0.15  # 15% off upgrade
+              else:
+                  discount = 0.0
+              
+              final_price = price_diff * (1 - discount)
+              
+              upgrade_options.append({
+                  "room_type": room.type,
+                  "room_number": room.number,
+                  "original_price_diff": price_diff,
+                  "discount_percent": discount * 100,
+                  "final_price": final_price,
+                  "amenities": room.amenities
+              })
+    outputs:
+      - "upgrade_available"
+      - "upgrade_options"
+    
+  - step_id: 4
+    name: "Present upgrade options to guest"
+    action_type: "tool_call"
+    tool: "send_email"
+    inputs:
+      to: "${booking_details.guest_email}"
+      template: "room_upgrade_options"
+      data:
+        guest_name: "${booking_details.guest_name}"
+        booking_id: "${context.booking_id}"
+        current_room: "${booking_details.room_type}"
+        upgrade_options: "${upgrade_options}"
+        loyalty_discount: "${booking_details.loyalty_tier}"
+    outputs:
+      - "options_sent"
+    required: false
+    condition: "upgrade_available == True"
+    
+  - step_id: 5
+    name: "Process upgrade selection"
+    action_type: "tool_call"
+    tool: "update_booking"
+    inputs:
+      booking_id: "${context.booking_id}"
+      new_room_type: "${selected_upgrade.room_type}"
+      new_room_number: "${selected_upgrade.room_number}"
+      additional_charges: "${selected_upgrade.final_price}"
+      notes: "Room upgraded from ${booking_details.room_type} to ${selected_upgrade.room_type}"
+    outputs:
+      - "update_result"
+    required: true
+    requires_approval: true
+    approval_reason: "Room upgrade with pricing change"
+    condition: "upgrade_available == True AND selected_upgrade is not None"
+    
+  - step_id: 6
+    name: "Send upgrade confirmation"
+    action_type: "tool_call"
+    tool: "send_email"
+    inputs:
+      to: "${booking_details.guest_email}"
+      template: "room_upgrade_confirmation"
+      data:
+        guest_name: "${booking_details.guest_name}"
+        booking_id: "${context.booking_id}"
+        new_room_type: "${selected_upgrade.room_type}"
+        new_room_number: "${selected_upgrade.room_number}"
+        additional_charge: "${selected_upgrade.final_price}"
+        check_in_date: "${booking_details.check_in_date}"
+    outputs:
+      - "confirmation_sent"
+    required: false
+    condition: "update_result.status == 'success'"
+    
+  - step_id: 7
+    name: "Send unavailability notification"
+    action_type: "tool_call"
+    tool: "send_email"
+    inputs:
+      to: "${booking_details.guest_email}"
+      template: "room_upgrade_unavailable"
+      data:
+        guest_name: "${booking_details.guest_name}"
+        booking_id: "${context.booking_id}"
+        current_room_type: "${booking_details.room_type}"
+    outputs:
+      - "notification_sent"
+    required: false
+    condition: "upgrade_available == False"
+
+approval_gates:
+  - gate_id: "room_upgrade_approval"
+    required_for_steps: [5]
+    approval_type: "operational"
+    risk_level: "medium"
+    auto_approve_conditions:
+      - "selected_upgrade.final_price == 0"
+      - "selected_upgrade.final_price < 50 AND loyalty_tier in ['platinum', 'diamond']"
+    human_review_required:
+      - "selected_upgrade.final_price > 100"
+      - "booking_details.check_in_date < today + 2 days"
+    approval_context:
+      - "booking_details"
+      - "selected_upgrade"
+      - "upgrade_options"
+
+guardrails:
+  - type: "input_validation"
+    rules:
+      - "booking_id must be valid"
+      - "booking must be confirmed status"
+      - "check_in_date must be in future"
+  
+  - type: "business_rules"
+    rules:
+      - "upgrade price must be >= 0"
+      - "cannot downgrade room category"
+      - "new room must be available for entire stay"
+      - "loyalty discounts must be within policy limits"
+  
+  - type: "safety"
+    rules:
+      - "verify guest identity before processing"
+      - "check for existing upgrade requests"
+      - "ensure room change doesn't conflict with group bookings"
+
+error_handling:
+  - error_type: "booking_not_found"
+    action: "escalate"
+    message: "Booking {booking_id} not found. Please verify booking reference."
+    user_facing: true
+  
+  - error_type: "no_upgrades_available"
+    action: "inform"
+    message: "No room upgrades are currently available for your dates. We'll notify you if availability changes."
+    user_facing: true
+  
+  - error_type: "check_in_too_soon"
+    action: "escalate"
+    message: "Room changes within 48 hours of check-in require manager approval."
+    user_facing: false
+  
+  - error_type: "tool_failure"
+    action: "retry"
+    max_retries: 2
+    fallback: "escalate"
+  
+  - error_type: "approval_rejected"
+    action: "inform"
+    message: "Upgrade request was not approved. Your original room reservation remains active."
+    user_facing: true
+
+success_criteria:
+  - "update_result.status == 'success' OR upgrade_available == False"
+  - "confirmation_sent == true OR notification_sent == true"
+
+rollback_steps:
+  - step_id: 5
+    rollback_action: "revert_room_change"
+    rollback_tool: "update_booking"
+    rollback_inputs:
+      booking_id: "${context.booking_id}"
+      room_type: "${booking_details.original_room_type}"
+      room_number: "${booking_details.original_room_number}"
+      additional_charges: 0
+
+source_trace:
+  origin: "manual"
+  original_issue_id: null
+  react_trace_id: null
+  human_validated: true
+  validation_date: "2024-01-15T10:35:00Z"
+  validator: "ops_team"
+
+performance_metrics:
+  avg_execution_time_ms: 0
+  success_count: 0
+  failure_count: 0
+  approval_rejection_count: 0
+  last_used: null
+
+tags:
+  - "room_upgrade"
+  - "booking_modification"
+  - "upsell"
+  - "loyalty_benefits"

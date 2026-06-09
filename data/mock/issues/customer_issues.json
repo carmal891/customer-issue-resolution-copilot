@@ -1,0 +1,443 @@
+[
+  {
+    "issue_id": "ISS-2024-1000",
+    "booking_id": "BK-2024-010",
+    "guest_name": "Christopher Brown",
+    "issue_type": "BOOKING_MODIFICATION",
+    "channel": "CHAT",
+    "priority": "MEDIUM",
+    "status": "IN_PROGRESS",
+    "description": "Can I extend my stay by 2 more nights? Currently checking out 2024-03-25 but would like to stay until 2024-03-31. Room 520.",
+    "created_at": "2024-03-20T08:00:00Z",
+    "metadata": {
+      "room_number": "520",
+      "confirmation_number": "GPH-45788-G",
+      "loyalty_tier": "GOLD"
+    },
+    "assigned_to": "agent_john_d"
+  },
+  {
+    "issue_id": "ISS-2024-1001",
+    "booking_id": "BK-2024-006",
+    "guest_name": "David Kim",
+    "issue_type": "LATE_CHECKOUT",
+    "channel": "EMAIL",
+    "priority": "MEDIUM",
+    "status": "IN_PROGRESS",
+    "description": "Can I please have late checkout? I'm a GOLD member staying in room 612. Would really appreciate staying until 2 PM tomorrow.",
+    "created_at": "2024-03-20T14:00:00Z",
+    "metadata": {
+      "room_number": "612",
+      "confirmation_number": "GPH-45785-D",
+      "loyalty_tier": "GOLD",
+      "email_subject": "Re: Booking GPH-45785-D - Late Checkout",
+      "from_email": "david.kim@email.com"
+    },
+    "assigned_to": "agent_david_l"
+  },
+  {
+    "issue_id": "ISS-2024-1002",
+    "booking_id": "BK-2024-010",
+    "guest_name": "Christopher Brown",
+    "issue_type": "AMENITY_REQUEST",
+    "channel": "CHAT",
+    "priority": "LOW",
+    "status": "OPEN",
+    "description": "Can I get extra towels and pillows sent to room 520? Thanks!",
+    "created_at": "2024-03-20T05:00:00Z",
+    "metadata": {
+      "room_number": "520",
+      "confirmation_number": "GPH-45788-G",
+      "loyalty_tier": "GOLD"
+    }
+  },
+  {
+    "issue_id": "ISS-2024-1003",
+    "booking_id": "BK-2024-020",
+    "guest_name": "Paul Young",
+    "issue_type": "ROOM_ISSUE",
+    "channel": "CHAT",
+    "priority": "HIGH",
+    "status": "RESOLVED",
+    "description": "The AC in room 525 isn't working and it's very hot. Can someone come fix this ASAP?",
+    "created_at": "2024-03-20T03:00:00Z",
+    "metadata": {
+      "room_number": "525",
+      "confirmation_number": "GPH-45794-M",
+      "loyalty_tier": "SILVER"
+    },
+    "resolved_at": "2024-03-20T04:00:00Z",
+    "resolution_summary": "Issue resolved via chat. Guest satisfied with outcome.",
+    "assigned_to": "agent_john_d"
+  },
+  {
+    "issue_id": "ISS-2024-1004",
+    "booking_id": "BK-2024-020",
+    "guest_name": "Paul Young",
+    "issue_type": "CANCELLATION_REFUND",
+    "channel": "BOOKING_COM",
+    "priority": "MEDIUM",
+    "status": "OPEN",
+    "description": "I need to cancel my reservation GPH-45794-M for 2024-03-23. Can I get a full refund? I booked 3 weeks ago.",
+    "created_at": "2024-03-19T13:00:00Z",
+    "metadata": {
+      "room_number": "525",
+      "confirmation_number": "GPH-45794-M",
+      "loyalty_tier": "SILVER",
+      "platform_message_id": "BKNG-MSG-5004"
+    }
+  },
+  {
+    "issue_id": "ISS-2024-1005",
+    "booking_id": "BK-2024-009",
+    "guest_name": "Amanda Taylor",
+    "issue_type": "LOST_ITEM",
+    "channel": "PHONE",
+    "priority": "MEDIUM",
+    "status": "OPEN",
+    "description": "I checked out yesterday from room 714 and left my phone charger. Can you check if housekeeping found it?",
+    "created_at": "2024-03-19T00:00:00Z",
+    "metadata": {
+      "room_number": "714",
+      "confirmation_number": "GPH-45787-F",
+      "loyalty_tier": "SILVER"
+    }
+  },
+  {
+    "issue_id": "ISS-2024-1006",
+    "booking_id": "BK-2024-009",
+    "guest_name": "Amanda Taylor",
+    "issue_type": "LOST_ITEM",
+    "channel": "CHAT",
+    "priority": "MEDIUM",
+    "status": "RESOLVED",
+    "description": "I left a jacket in room 714 after checkout. Black leather jacket. Has it been turned in to lost and found?",
+    "created_at": "2024-03-21T08:00:00Z",
+    "metadata": {
+      "room_number": "714",
+      "confirmation_number": "GPH-45787-F",
+      "loyalty_tier": "SILVER"
+    },
+    "resolved_at": "2024-03-21T11:00:00Z",
+    "resolution_summary": "Issue resolved via chat. Guest satisfied with outcome.",
+    "assigned_to": "agent_john_d"
+  },
+  {
+    "issue_id": "ISS-2024-1007",
+    "booking_id": "BK-2024-005",
+    "guest_name": "Lisa Anderson",
+    "issue_type": "LATE_CHECKOUT",
+    "channel": "PHONE",
+    "priority": "MEDIUM",
+    "status": "OPEN",
+    "description": "Hi, I'm checking out tomorrow but my flight isn't until 6 PM. Is it possible to get a late checkout until 2 PM? I'm in room 318. Booking EXP-334521.",
+    "created_at": "2024-03-20T10:00:00Z",
+    "metadata": {
+      "room_number": "318",
+      "confirmation_number": "EXP-334521",
+      "loyalty_tier": "NONE"
+    }
+  },
+  {
+    "issue_id": "ISS-2024-1008",
+    "booking_id": "BK-2024-005",
+    "guest_name": "Lisa Anderson",
+    "issue_type": "ACCESSIBILITY",
+    "channel": "PHONE",
+    "priority": "HIGH",
+    "status": "IN_PROGRESS",
+    "description": "My booking EXP-334521 is for an accessible room but I want to make sure it has visual fire alarms. I'm hearing impaired.",
+    "created_at": "2024-03-21T18:00:00Z",
+    "metadata": {
+      "room_number": "318",
+      "confirmation_number": "EXP-334521",
+      "loyalty_tier": "NONE"
+    },
+    "assigned_to": "agent_david_l"
+  },
+  {
+    "issue_id": "ISS-2024-1009",
+    "booking_id": "BK-2024-010",
+    "guest_name": "Christopher Brown",
+    "issue_type": "BOOKING_MODIFICATION",
+    "channel": "EMAIL",
+    "priority": "MEDIUM",
+    "status": "OPEN",
+    "description": "Can I extend my stay by 2 more nights? Currently checking out 2024-03-27 but would like to stay until 2024-04-03. Room 520.",
+    "created_at": "2024-03-21T18:00:00Z",
+    "metadata": {
+      "room_number": "520",
+      "confirmation_number": "GPH-45788-G",
+      "loyalty_tier": "GOLD",
+      "email_subject": "Re: Booking GPH-45788-G - Booking Modification",
+      "from_email": "christopher.brown@email.com"
+    }
+  },
+  {
+    "issue_id": "ISS-2024-1010",
+    "booking_id": "BK-2024-014",
+    "guest_name": "Daniel Harris",
+    "issue_type": "CANCELLATION_REFUND",
+    "channel": "PHONE",
+    "priority": "MEDIUM",
+    "status": "OPEN",
+    "description": "Unfortunately I have to cancel my booking EXP-334522 due to a family emergency. What is your cancellation policy? Check-in was supposed to be 2024-03-29.",
+    "created_at": "2024-03-21T17:00:00Z",
+    "metadata": {
+      "room_number": "405",
+      "confirmation_number": "EXP-334522",
+      "loyalty_tier": "NONE"
+    }
+  },
+  {
+    "issue_id": "ISS-2024-1011",
+    "booking_id": "BK-2024-006",
+    "guest_name": "David Kim",
+    "issue_type": "AMENITY_REQUEST",
+    "channel": "CHAT",
+    "priority": "LOW",
+    "status": "OPEN",
+    "description": "Hi, I need hypoallergenic bedding for room 612. I have allergies and the current bedding is causing issues.",
+    "created_at": "2024-03-20T08:00:00Z",
+    "metadata": {
+      "room_number": "612",
+      "confirmation_number": "GPH-45785-D",
+      "loyalty_tier": "GOLD"
+    }
+  },
+  {
+    "issue_id": "ISS-2024-1012",
+    "booking_id": "BK-2024-002",
+    "guest_name": "James Rodriguez",
+    "issue_type": "CANCELLATION_REFUND",
+    "channel": "EMAIL",
+    "priority": "MEDIUM",
+    "status": "OPEN",
+    "description": "I need to cancel my reservation GPH-45783-B for 2024-03-27. Can I get a full refund? I booked 3 weeks ago.",
+    "created_at": "2024-03-21T10:00:00Z",
+    "metadata": {
+      "room_number": "815",
+      "confirmation_number": "GPH-45783-B",
+      "loyalty_tier": "PLATINUM",
+      "email_subject": "Re: Booking GPH-45783-B - Cancellation Refund",
+      "from_email": "james.rodriguez@email.com"
+    }
+  },
+  {
+    "issue_id": "ISS-2024-1013",
+    "booking_id": "BK-2024-002",
+    "guest_name": "James Rodriguez",
+    "issue_type": "CANCELLATION_REFUND",
+    "channel": "BOOKING_COM",
+    "priority": "MEDIUM",
+    "status": "OPEN",
+    "description": "Unfortunately I have to cancel my booking GPH-45783-B due to a family emergency. What is your cancellation policy? Check-in was supposed to be 2024-03-27.",
+    "created_at": "2024-03-19T13:00:00Z",
+    "metadata": {
+      "room_number": "815",
+      "confirmation_number": "GPH-45783-B",
+      "loyalty_tier": "PLATINUM",
+      "platform_message_id": "BKNG-MSG-5013"
+    }
+  },
+  {
+    "issue_id": "ISS-2024-1014",
+    "booking_id": "BK-2024-009",
+    "guest_name": "Amanda Taylor",
+    "issue_type": "ACCESSIBILITY",
+    "channel": "BOOKING_COM",
+    "priority": "HIGH",
+    "status": "OPEN",
+    "description": "I need to change my room to an accessible one. I didn't realize I booked a standard room. Can you help? Booking GPH-45787-F.",
+    "created_at": "2024-03-19T13:00:00Z",
+    "metadata": {
+      "room_number": "714",
+      "confirmation_number": "GPH-45787-F",
+      "loyalty_tier": "SILVER",
+      "platform_message_id": "BKNG-MSG-5014"
+    }
+  },
+  {
+    "issue_id": "ISS-2024-1015",
+    "booking_id": "BK-2024-020",
+    "guest_name": "Paul Young",
+    "issue_type": "AMENITY_REQUEST",
+    "channel": "CHAT",
+    "priority": "LOW",
+    "status": "IN_PROGRESS",
+    "description": "Can I get extra towels and pillows sent to room 525? Thanks!",
+    "created_at": "2024-03-21T05:00:00Z",
+    "metadata": {
+      "room_number": "525",
+      "confirmation_number": "GPH-45794-M",
+      "loyalty_tier": "SILVER"
+    },
+    "assigned_to": "agent_john_d"
+  },
+  {
+    "issue_id": "ISS-2024-1016",
+    "booking_id": "BK-2024-006",
+    "guest_name": "David Kim",
+    "issue_type": "CANCELLATION_REFUND",
+    "channel": "BOOKING_COM",
+    "priority": "MEDIUM",
+    "status": "RESOLVED",
+    "description": "I need to cancel my reservation GPH-45785-D for 2024-03-28. Can I get a full refund? I booked 3 weeks ago.",
+    "created_at": "2024-03-19T04:00:00Z",
+    "metadata": {
+      "room_number": "612",
+      "confirmation_number": "GPH-45785-D",
+      "loyalty_tier": "GOLD",
+      "platform_message_id": "BKNG-MSG-5016"
+    },
+    "resolved_at": "2024-03-21T19:00:00Z",
+    "resolution_summary": "Issue resolved via booking_com. Guest satisfied with outcome.",
+    "assigned_to": "agent_john_d"
+  },
+  {
+    "issue_id": "ISS-2024-1017",
+    "booking_id": "BK-2024-005",
+    "guest_name": "Lisa Anderson",
+    "issue_type": "COMPLAINT",
+    "channel": "BOOKING_COM",
+    "priority": "HIGH",
+    "status": "RESOLVED",
+    "description": "Very disappointed with the service at check-in. The staff was rude and unhelpful. Booking EXP-334521. I expect better from a hotel of this caliber.",
+    "created_at": "2024-03-19T23:00:00Z",
+    "metadata": {
+      "room_number": "318",
+      "confirmation_number": "EXP-334521",
+      "loyalty_tier": "NONE",
+      "platform_message_id": "BKNG-MSG-5017"
+    },
+    "resolved_at": "2024-03-21T13:00:00Z",
+    "resolution_summary": "Issue resolved via booking_com. Guest satisfied with outcome.",
+    "assigned_to": "agent_john_d"
+  },
+  {
+    "issue_id": "ISS-2024-1018",
+    "booking_id": "BK-2024-009",
+    "guest_name": "Amanda Taylor",
+    "issue_type": "CANCELLATION_REFUND",
+    "channel": "EMAIL",
+    "priority": "MEDIUM",
+    "status": "OPEN",
+    "description": "I need to cancel my reservation GPH-45787-F for 2024-03-29. Can I get a full refund? I booked 3 weeks ago.",
+    "created_at": "2024-03-21T08:00:00Z",
+    "metadata": {
+      "room_number": "714",
+      "confirmation_number": "GPH-45787-F",
+      "loyalty_tier": "SILVER",
+      "email_subject": "Re: Booking GPH-45787-F - Cancellation Refund",
+      "from_email": "amanda.taylor@email.com"
+    }
+  },
+  {
+    "issue_id": "ISS-2024-1019",
+    "booking_id": "BK-2024-020",
+    "guest_name": "Paul Young",
+    "issue_type": "LATE_CHECKOUT",
+    "channel": "PHONE",
+    "priority": "MEDIUM",
+    "status": "RESOLVED",
+    "description": "Hello, I need to request late checkout for tomorrow. My meeting runs until 1 PM and I'd like to checkout around 3 PM if possible. Room 525, confirmation GPH-45794-M.",
+    "created_at": "2024-03-20T08:00:00Z",
+    "metadata": {
+      "room_number": "525",
+      "confirmation_number": "GPH-45794-M",
+      "loyalty_tier": "SILVER"
+    },
+    "resolved_at": "2024-03-21T03:00:00Z",
+    "resolution_summary": "Issue resolved via phone. Guest satisfied with outcome.",
+    "assigned_to": "agent_john_d"
+  },
+  {
+    "issue_id": "ISS-2024-1020",
+    "booking_id": "BK-2024-020",
+    "guest_name": "Paul Young",
+    "issue_type": "AMENITY_REQUEST",
+    "channel": "PHONE",
+    "priority": "LOW",
+    "status": "IN_PROGRESS",
+    "description": "Can I get extra towels and pillows sent to room 525? Thanks!",
+    "created_at": "2024-03-19T11:00:00Z",
+    "metadata": {
+      "room_number": "525",
+      "confirmation_number": "GPH-45794-M",
+      "loyalty_tier": "SILVER"
+    },
+    "assigned_to": "agent_john_d"
+  },
+  {
+    "issue_id": "ISS-2024-1021",
+    "booking_id": "BK-2024-005",
+    "guest_name": "Lisa Anderson",
+    "issue_type": "ROOM_ISSUE",
+    "channel": "SLACK",
+    "priority": "HIGH",
+    "status": "OPEN",
+    "description": "Hi, I'm in room 318 and the WiFi password isn't working. I've tried multiple times. Can you help?",
+    "created_at": "2024-03-21T10:00:00Z",
+    "metadata": {
+      "room_number": "318",
+      "confirmation_number": "EXP-334521",
+      "loyalty_tier": "NONE",
+      "slack_channel": "#guest-services",
+      "slack_thread_ts": "1710433600.705293"
+    }
+  },
+  {
+    "issue_id": "ISS-2024-1022",
+    "booking_id": "BK-2024-014",
+    "guest_name": "Daniel Harris",
+    "issue_type": "COMPLAINT",
+    "channel": "TWITTER",
+    "priority": "HIGH",
+    "status": "OPEN",
+    "description": "I've been waiting 45 minutes for room service. This is ridiculous. Room 405. Where is my order?",
+    "created_at": "2024-03-19T15:00:00Z",
+    "metadata": {
+      "room_number": "405",
+      "confirmation_number": "EXP-334522",
+      "loyalty_tier": "NONE",
+      "tweet_id": "tw_1234567912",
+      "handle": "@daniel319"
+    }
+  },
+  {
+    "issue_id": "ISS-2024-1023",
+    "booking_id": "BK-2024-014",
+    "guest_name": "Daniel Harris",
+    "issue_type": "ROOM_UPGRADE",
+    "channel": "EMAIL",
+    "priority": "LOW",
+    "status": "OPEN",
+    "description": "Hi! I'm celebrating my anniversary and would love to upgrade to an ocean view room if possible. Currently in 405. Confirmation EXP-334522.",
+    "created_at": "2024-03-20T17:00:00Z",
+    "metadata": {
+      "room_number": "405",
+      "confirmation_number": "EXP-334522",
+      "loyalty_tier": "NONE",
+      "email_subject": "Re: Booking EXP-334522 - Room Upgrade",
+      "from_email": "daniel.harris@email.com"
+    }
+  },
+  {
+    "issue_id": "ISS-2024-1024",
+    "booking_id": "BK-2024-009",
+    "guest_name": "Amanda Taylor",
+    "issue_type": "LATE_CHECKOUT",
+    "channel": "EMAIL",
+    "priority": "MEDIUM",
+    "status": "OPEN",
+    "description": "Can I please have late checkout? I'm a SILVER member staying in room 714. Would really appreciate staying until 2 PM tomorrow.",
+    "created_at": "2024-03-19T19:00:00Z",
+    "metadata": {
+      "room_number": "714",
+      "confirmation_number": "GPH-45787-F",
+      "loyalty_tier": "SILVER",
+      "email_subject": "Re: Booking GPH-45787-F - Late Checkout",
+      "from_email": "amanda.taylor@email.com"
+    }
+  }
+]

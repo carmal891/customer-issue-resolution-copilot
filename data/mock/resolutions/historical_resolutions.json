@@ -1,0 +1,2170 @@
+[
+  {
+    "resolution_id": "RES-2024-2000",
+    "issue_id": "ISS-2024-1309",
+    "booking_id": "BK-2024-050",
+    "issue_type": "COMPLAINT",
+    "priority": "MEDIUM",
+    "created_at": "2024-02-28T00:00:00Z",
+    "resolved_at": "2024-02-28T07:08:00Z",
+    "resolution_time_minutes": 428,
+    "assigned_agent": "agent_john_d",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Documented complaint details thoroughly",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-28T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Escalated to Guest Services manager",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-28T01:25:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Conducted service recovery discussion with guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-28T02:50:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Offered $100 compensation and complimentary breakfast",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-28T04:15:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Followed up to ensure guest satisfaction",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-28T05:40:00Z"
+      }
+    ],
+    "tools_used": [
+      "update_pms",
+      "send_email",
+      "notify_team"
+    ],
+    "outcome": "Complaint resolved. Guest accepted $100 compensation plus complimentary breakfast.",
+    "approval_required": true,
+    "guest_satisfaction": "NEUTRAL",
+    "metadata": {
+      "room_number": "925",
+      "booking_id": "BK-2024-050",
+      "channel": "CHAT"
+    },
+    "approval_details": {
+      "requested_at": "2024-02-28T00:10:00Z",
+      "approved_by": "manager_susan_l",
+      "approved_at": "2024-02-28T00:15:00Z",
+      "approval_notes": "Approved within policy guidelines"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2001",
+    "issue_id": "ISS-2024-1422",
+    "booking_id": "BK-2024-006",
+    "issue_type": "LATE_CHECKOUT",
+    "priority": "HIGH",
+    "created_at": "2024-02-16T00:00:00Z",
+    "resolved_at": "2024-02-16T05:15:00Z",
+    "resolution_time_minutes": 315,
+    "assigned_agent": "agent_david_l",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Verified guest loyalty status and current occupancy",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-16T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Checked room availability for extended stay",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-16T01:03:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Approved late checkout until 2:00 PM",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-16T02:06:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Updated PMS with late checkout flag",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-16T03:09:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Sent confirmation email to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-16T04:12:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "update_pms",
+      "send_email"
+    ],
+    "outcome": "Late checkout approved until 2:00 PM. Guest notified via email.",
+    "approval_required": false,
+    "guest_satisfaction": "VERY_SATISFIED",
+    "metadata": {
+      "room_number": "509",
+      "booking_id": "BK-2024-006",
+      "channel": "PHONE"
+    },
+    "follow_up": {
+      "conducted_at": "2024-02-17T05:15:00Z",
+      "method": "EMAIL",
+      "notes": "Guest confirmed satisfaction with resolution"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2002",
+    "issue_id": "ISS-2024-1187",
+    "booking_id": "BK-2024-048",
+    "issue_type": "LATE_CHECKOUT",
+    "priority": "MEDIUM",
+    "created_at": "2024-03-11T00:00:00Z",
+    "resolved_at": "2024-03-11T07:07:00Z",
+    "resolution_time_minutes": 427,
+    "assigned_agent": "agent_maria_g",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Verified guest loyalty status and current occupancy",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-11T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Checked room availability for extended stay",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-11T01:25:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Approved late checkout until 3:00 PM",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-11T02:50:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Updated PMS with late checkout flag",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-11T04:15:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Sent confirmation email to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-11T05:40:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "update_pms",
+      "send_email"
+    ],
+    "outcome": "Late checkout approved until 3:00 PM. Guest notified via email.",
+    "approval_required": false,
+    "guest_satisfaction": "VERY_SATISFIED",
+    "metadata": {
+      "room_number": "614",
+      "booking_id": "BK-2024-048",
+      "channel": "CHAT"
+    },
+    "follow_up": {
+      "conducted_at": "2024-03-12T07:07:00Z",
+      "method": "EMAIL",
+      "notes": "Guest confirmed satisfaction with resolution"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2003",
+    "issue_id": "ISS-2024-1247",
+    "booking_id": "BK-2024-043",
+    "issue_type": "CANCELLATION_REFUND",
+    "priority": "HIGH",
+    "created_at": "2024-02-02T00:00:00Z",
+    "resolved_at": "2024-02-02T05:34:00Z",
+    "resolution_time_minutes": 334,
+    "assigned_agent": "agent_sarah_m",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Retrieved booking details and cancellation policy",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-02T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Verified cancellation timeline against policy",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-02T00:55:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Calculated refund amount based on policy",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-02T01:50:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Requested approval for $500.0 refund",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-02T02:45:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Processed refund to original payment method",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-02T03:40:00Z"
+      },
+      {
+        "step_number": 6,
+        "description": "Sent cancellation confirmation email",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-02T04:35:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "process_refund",
+      "send_email"
+    ],
+    "outcome": "Booking cancelled. Full refund of $500.0 processed within policy guidelines.",
+    "approval_required": true,
+    "guest_satisfaction": "NEUTRAL",
+    "metadata": {
+      "room_number": "705",
+      "booking_id": "BK-2024-043",
+      "channel": "PHONE"
+    },
+    "approval_details": {
+      "requested_at": "2024-02-02T00:56:00Z",
+      "approved_by": "manager_robert_k",
+      "approved_at": "2024-02-02T01:01:00Z",
+      "approval_notes": "Approved within policy guidelines"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2004",
+    "issue_id": "ISS-2024-1391",
+    "booking_id": "BK-2024-011",
+    "issue_type": "AMENITY_REQUEST",
+    "priority": "LOW",
+    "created_at": "2024-01-24T00:00:00Z",
+    "resolved_at": "2024-01-24T07:20:00Z",
+    "resolution_time_minutes": 440,
+    "assigned_agent": "agent_john_d",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Verified amenity availability",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-24T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Dispatched housekeeping to room 305",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-24T01:50:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Confirmed delivery with guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-24T03:40:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Updated guest preferences in system",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-24T05:30:00Z"
+      }
+    ],
+    "tools_used": [
+      "update_pms",
+      "notify_team"
+    ],
+    "outcome": "Amenity request fulfilled. Items delivered to room 305.",
+    "approval_required": false,
+    "guest_satisfaction": "NEUTRAL",
+    "metadata": {
+      "room_number": "305",
+      "booking_id": "BK-2024-011",
+      "channel": "EMAIL"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2005",
+    "issue_id": "ISS-2024-1021",
+    "booking_id": "BK-2024-035",
+    "issue_type": "COMPLAINT",
+    "priority": "MEDIUM",
+    "created_at": "2024-02-23T00:00:00Z",
+    "resolved_at": "2024-02-23T01:38:00Z",
+    "resolution_time_minutes": 98,
+    "assigned_agent": "agent_sarah_m",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Documented complaint details thoroughly",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Escalated to Guest Services manager",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T00:19:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Conducted service recovery discussion with guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T00:38:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Offered $100 compensation and complimentary breakfast",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T00:57:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Followed up to ensure guest satisfaction",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T01:16:00Z"
+      }
+    ],
+    "tools_used": [
+      "update_pms",
+      "send_email",
+      "notify_team"
+    ],
+    "outcome": "Complaint resolved. Guest accepted $100 compensation plus complimentary breakfast.",
+    "approval_required": true,
+    "guest_satisfaction": "SATISFIED",
+    "metadata": {
+      "room_number": "608",
+      "booking_id": "BK-2024-035",
+      "channel": "PHONE"
+    },
+    "approval_details": {
+      "requested_at": "2024-02-23T00:21:00Z",
+      "approved_by": "manager_robert_k",
+      "approved_at": "2024-02-23T00:26:00Z",
+      "approval_notes": "Approved within policy guidelines"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2006",
+    "issue_id": "ISS-2024-1190",
+    "booking_id": "BK-2024-023",
+    "issue_type": "ROOM_UPGRADE",
+    "priority": "LOW",
+    "created_at": "2024-02-02T00:00:00Z",
+    "resolved_at": "2024-02-02T02:51:00Z",
+    "resolution_time_minutes": 171,
+    "assigned_agent": "agent_sarah_m",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Verified guest loyalty tier and benefits",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-02T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Checked availability of upgrade rooms",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-02T00:28:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Calculated upgrade cost differential",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-02T00:56:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Processed complimentary upgrade for PLATINUM member",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-02T01:24:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Updated room assignment in PMS",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-02T01:52:00Z"
+      },
+      {
+        "step_number": 6,
+        "description": "Sent upgrade confirmation to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-02T02:20:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "update_pms",
+      "send_email"
+    ],
+    "outcome": "Complimentary upgrade to Executive Suite approved. Guest moved to room 924.",
+    "approval_required": false,
+    "guest_satisfaction": "SATISFIED",
+    "metadata": {
+      "room_number": "913",
+      "booking_id": "BK-2024-023",
+      "channel": "SLACK"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2007",
+    "issue_id": "ISS-2024-1037",
+    "booking_id": "BK-2024-033",
+    "issue_type": "LOST_ITEM",
+    "priority": "HIGH",
+    "created_at": "2024-03-05T00:00:00Z",
+    "resolved_at": "2024-03-05T06:08:00Z",
+    "resolution_time_minutes": 368,
+    "assigned_agent": "agent_john_d",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Checked lost and found database",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-05T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Contacted housekeeping for room 424",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-05T01:13:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Located item: phone charger",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-05T02:26:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Arranged shipping to guest address",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-05T03:39:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Sent tracking information to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-05T04:52:00Z"
+      }
+    ],
+    "tools_used": [
+      "update_pms",
+      "send_email",
+      "notify_team"
+    ],
+    "outcome": "Item located and shipped to guest. Tracking: 1Z836705.",
+    "approval_required": false,
+    "guest_satisfaction": "VERY_SATISFIED",
+    "metadata": {
+      "room_number": "424",
+      "booking_id": "BK-2024-033",
+      "channel": "CHAT"
+    },
+    "follow_up": {
+      "conducted_at": "2024-03-06T06:08:00Z",
+      "method": "EMAIL",
+      "notes": "Guest confirmed satisfaction with resolution"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2008",
+    "issue_id": "ISS-2024-1439",
+    "booking_id": "BK-2024-023",
+    "issue_type": "ACCESSIBILITY",
+    "priority": "HIGH",
+    "created_at": "2024-03-10T00:00:00Z",
+    "resolved_at": "2024-03-10T07:55:00Z",
+    "resolution_time_minutes": 475,
+    "assigned_agent": "agent_john_d",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Reviewed accessibility requirements",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-10T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Verified accessible room availability",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-10T01:35:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Processed room change to accessible room 709",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-10T03:10:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Confirmed accessibility features meet guest needs",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-10T04:45:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Updated booking with accessibility notes",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-10T06:20:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "update_pms",
+      "send_email"
+    ],
+    "outcome": "Guest moved to accessible room 709 with required features.",
+    "approval_required": false,
+    "guest_satisfaction": "SATISFIED",
+    "metadata": {
+      "room_number": "406",
+      "booking_id": "BK-2024-023",
+      "channel": "EMAIL"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2009",
+    "issue_id": "ISS-2024-1285",
+    "booking_id": "BK-2024-018",
+    "issue_type": "BOOKING_MODIFICATION",
+    "priority": "HIGH",
+    "created_at": "2024-01-26T00:00:00Z",
+    "resolved_at": "2024-01-26T05:12:00Z",
+    "resolution_time_minutes": 312,
+    "assigned_agent": "agent_maria_g",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Retrieved current booking details",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-26T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Checked availability for requested dates",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-26T01:02:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Calculated any rate differences",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-26T02:04:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Updated booking dates in PMS",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-26T03:06:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Sent modified confirmation to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-26T04:08:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "update_pms",
+      "send_email"
+    ],
+    "outcome": "Booking modified successfully. New dates: 2024-02-05 to 2024-02-08.",
+    "approval_required": false,
+    "guest_satisfaction": "VERY_SATISFIED",
+    "metadata": {
+      "room_number": "411",
+      "booking_id": "BK-2024-018",
+      "channel": "PHONE"
+    },
+    "follow_up": {
+      "conducted_at": "2024-01-27T05:12:00Z",
+      "method": "EMAIL",
+      "notes": "Guest confirmed satisfaction with resolution"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2010",
+    "issue_id": "ISS-2024-1374",
+    "booking_id": "BK-2024-022",
+    "issue_type": "COMPLAINT",
+    "priority": "HIGH",
+    "created_at": "2024-01-26T00:00:00Z",
+    "resolved_at": "2024-01-26T00:43:00Z",
+    "resolution_time_minutes": 43,
+    "assigned_agent": "agent_sarah_m",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Documented complaint details thoroughly",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-26T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Escalated to Front Office manager",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-26T00:08:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Conducted service recovery discussion with guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-26T00:16:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Offered $75 compensation and spa credit",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-26T00:24:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Followed up to ensure guest satisfaction",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-26T00:32:00Z"
+      }
+    ],
+    "tools_used": [
+      "update_pms",
+      "send_email",
+      "notify_team"
+    ],
+    "outcome": "Complaint resolved. Guest accepted $75 compensation plus spa credit.",
+    "approval_required": true,
+    "guest_satisfaction": "SATISFIED",
+    "metadata": {
+      "room_number": "202",
+      "booking_id": "BK-2024-022",
+      "channel": "CHAT"
+    },
+    "approval_details": {
+      "requested_at": "2024-01-26T00:40:00Z",
+      "approved_by": "manager_susan_l",
+      "approved_at": "2024-01-26T00:45:00Z",
+      "approval_notes": "Approved within policy guidelines"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2011",
+    "issue_id": "ISS-2024-1226",
+    "booking_id": "BK-2024-010",
+    "issue_type": "ROOM_ISSUE",
+    "priority": "HIGH",
+    "created_at": "2024-03-09T00:00:00Z",
+    "resolved_at": "2024-03-09T05:54:00Z",
+    "resolution_time_minutes": 354,
+    "assigned_agent": "agent_david_l",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Logged maintenance request for room 216",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-09T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Dispatched maintenance team immediately",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-09T01:10:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Verified issue resolution with guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-09T02:20:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Offered $100 service recovery credit",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-09T03:30:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Updated room maintenance log",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-09T04:40:00Z"
+      }
+    ],
+    "tools_used": [
+      "update_pms",
+      "notify_team",
+      "send_email"
+    ],
+    "outcome": "WiFi connectivity resolved. Guest satisfied. $100 credit applied.",
+    "approval_required": false,
+    "guest_satisfaction": "NEUTRAL",
+    "metadata": {
+      "room_number": "216",
+      "booking_id": "BK-2024-010",
+      "channel": "SLACK"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2012",
+    "issue_id": "ISS-2024-1123",
+    "booking_id": "BK-2024-006",
+    "issue_type": "COMPLAINT",
+    "priority": "MEDIUM",
+    "created_at": "2024-03-07T00:00:00Z",
+    "resolved_at": "2024-03-07T06:51:00Z",
+    "resolution_time_minutes": 411,
+    "assigned_agent": "agent_john_d",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Documented complaint details thoroughly",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-07T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Escalated to Operations manager",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-07T01:22:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Conducted service recovery discussion with guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-07T02:44:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Offered $100 compensation and complimentary breakfast",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-07T04:06:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Followed up to ensure guest satisfaction",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-07T05:28:00Z"
+      }
+    ],
+    "tools_used": [
+      "update_pms",
+      "send_email",
+      "notify_team"
+    ],
+    "outcome": "Complaint resolved. Guest accepted $100 compensation plus complimentary breakfast.",
+    "approval_required": true,
+    "guest_satisfaction": "VERY_SATISFIED",
+    "metadata": {
+      "room_number": "222",
+      "booking_id": "BK-2024-006",
+      "channel": "EMAIL"
+    },
+    "approval_details": {
+      "requested_at": "2024-03-07T00:36:00Z",
+      "approved_by": "manager_susan_l",
+      "approved_at": "2024-03-07T00:41:00Z",
+      "approval_notes": "Approved within policy guidelines"
+    },
+    "follow_up": {
+      "conducted_at": "2024-03-08T06:51:00Z",
+      "method": "EMAIL",
+      "notes": "Guest confirmed satisfaction with resolution"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2013",
+    "issue_id": "ISS-2024-1375",
+    "booking_id": "BK-2024-028",
+    "issue_type": "ROOM_UPGRADE",
+    "priority": "LOW",
+    "created_at": "2024-02-23T00:00:00Z",
+    "resolved_at": "2024-02-23T03:11:00Z",
+    "resolution_time_minutes": 191,
+    "assigned_agent": "agent_david_l",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Verified guest loyalty tier and benefits",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Checked availability of upgrade rooms",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T00:31:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Calculated upgrade cost differential",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T01:02:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Processed complimentary upgrade for SILVER member",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T01:33:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Updated room assignment in PMS",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T02:04:00Z"
+      },
+      {
+        "step_number": 6,
+        "description": "Sent upgrade confirmation to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T02:35:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "update_pms",
+      "send_email"
+    ],
+    "outcome": "Complimentary upgrade to Executive Suite approved. Guest moved to room 712.",
+    "approval_required": false,
+    "guest_satisfaction": "SATISFIED",
+    "metadata": {
+      "room_number": "913",
+      "booking_id": "BK-2024-028",
+      "channel": "SLACK"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2014",
+    "issue_id": "ISS-2024-1223",
+    "booking_id": "BK-2024-052",
+    "issue_type": "ROOM_ISSUE",
+    "priority": "MEDIUM",
+    "created_at": "2024-02-11T00:00:00Z",
+    "resolved_at": "2024-02-11T05:35:00Z",
+    "resolution_time_minutes": 335,
+    "assigned_agent": "agent_sarah_m",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Logged maintenance request for room 304",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-11T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Dispatched maintenance team immediately",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-11T01:07:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Verified issue resolution with guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-11T02:14:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Offered $50 service recovery credit",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-11T03:21:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Updated room maintenance log",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-11T04:28:00Z"
+      }
+    ],
+    "tools_used": [
+      "update_pms",
+      "notify_team",
+      "send_email"
+    ],
+    "outcome": "AC malfunction resolved. Guest satisfied. $50 credit applied.",
+    "approval_required": false,
+    "guest_satisfaction": "SATISFIED",
+    "metadata": {
+      "room_number": "304",
+      "booking_id": "BK-2024-052",
+      "channel": "EMAIL"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2015",
+    "issue_id": "ISS-2024-1269",
+    "booking_id": "BK-2024-049",
+    "issue_type": "CANCELLATION_REFUND",
+    "priority": "HIGH",
+    "created_at": "2024-03-07T00:00:00Z",
+    "resolved_at": "2024-03-07T03:54:00Z",
+    "resolution_time_minutes": 234,
+    "assigned_agent": "agent_john_d",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Retrieved booking details and cancellation policy",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-07T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Verified cancellation timeline against policy",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-07T00:39:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Calculated refund amount based on policy",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-07T01:18:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Requested approval for $350.0 refund",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-07T01:57:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Processed refund to original payment method",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-07T02:36:00Z"
+      },
+      {
+        "step_number": 6,
+        "description": "Sent cancellation confirmation email",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-07T03:15:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "process_refund",
+      "send_email"
+    ],
+    "outcome": "Booking cancelled. Full refund of $350.0 processed within policy guidelines.",
+    "approval_required": true,
+    "guest_satisfaction": "VERY_SATISFIED",
+    "metadata": {
+      "room_number": "211",
+      "booking_id": "BK-2024-049",
+      "channel": "EMAIL"
+    },
+    "approval_details": {
+      "requested_at": "2024-03-07T00:56:00Z",
+      "approved_by": "manager_alice_j",
+      "approved_at": "2024-03-07T01:01:00Z",
+      "approval_notes": "Approved within policy guidelines"
+    },
+    "follow_up": {
+      "conducted_at": "2024-03-08T03:54:00Z",
+      "method": "EMAIL",
+      "notes": "Guest confirmed satisfaction with resolution"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2016",
+    "issue_id": "ISS-2024-1255",
+    "booking_id": "BK-2024-022",
+    "issue_type": "LOST_ITEM",
+    "priority": "HIGH",
+    "created_at": "2024-01-25T00:00:00Z",
+    "resolved_at": "2024-01-25T03:09:00Z",
+    "resolution_time_minutes": 189,
+    "assigned_agent": "agent_david_l",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Checked lost and found database",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-25T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Contacted housekeeping for room 522",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-25T00:37:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Located item: laptop",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-25T01:14:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Arranged shipping to guest address",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-25T01:51:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Sent tracking information to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-25T02:28:00Z"
+      }
+    ],
+    "tools_used": [
+      "update_pms",
+      "send_email",
+      "notify_team"
+    ],
+    "outcome": "Item located and shipped to guest. Tracking: 1Z209865.",
+    "approval_required": false,
+    "guest_satisfaction": "SATISFIED",
+    "metadata": {
+      "room_number": "522",
+      "booking_id": "BK-2024-022",
+      "channel": "PHONE"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2017",
+    "issue_id": "ISS-2024-1306",
+    "booking_id": "BK-2024-037",
+    "issue_type": "BOOKING_MODIFICATION",
+    "priority": "MEDIUM",
+    "created_at": "2024-02-01T00:00:00Z",
+    "resolved_at": "2024-02-01T02:28:00Z",
+    "resolution_time_minutes": 148,
+    "assigned_agent": "agent_maria_g",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Retrieved current booking details",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-01T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Checked availability for requested dates",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-01T00:29:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Calculated any rate differences",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-01T00:58:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Updated booking dates in PMS",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-01T01:27:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Sent modified confirmation to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-01T01:56:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "update_pms",
+      "send_email"
+    ],
+    "outcome": "Booking modified successfully. New dates: 2024-02-11 to 2024-02-14.",
+    "approval_required": false,
+    "guest_satisfaction": "NEUTRAL",
+    "metadata": {
+      "room_number": "302",
+      "booking_id": "BK-2024-037",
+      "channel": "CHAT"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2018",
+    "issue_id": "ISS-2024-1178",
+    "booking_id": "BK-2024-046",
+    "issue_type": "LOST_ITEM",
+    "priority": "MEDIUM",
+    "created_at": "2024-03-06T00:00:00Z",
+    "resolved_at": "2024-03-06T03:40:00Z",
+    "resolution_time_minutes": 220,
+    "assigned_agent": "agent_maria_g",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Checked lost and found database",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-06T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Contacted housekeeping for room 703",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-06T00:44:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Located item: laptop",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-06T01:28:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Arranged shipping to guest address",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-06T02:12:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Sent tracking information to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-06T02:56:00Z"
+      }
+    ],
+    "tools_used": [
+      "update_pms",
+      "send_email",
+      "notify_team"
+    ],
+    "outcome": "Item located and shipped to guest. Tracking: 1Z988655.",
+    "approval_required": false,
+    "guest_satisfaction": "VERY_SATISFIED",
+    "metadata": {
+      "room_number": "703",
+      "booking_id": "BK-2024-046",
+      "channel": "CHAT"
+    },
+    "follow_up": {
+      "conducted_at": "2024-03-07T03:40:00Z",
+      "method": "EMAIL",
+      "notes": "Guest confirmed satisfaction with resolution"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2019",
+    "issue_id": "ISS-2024-1215",
+    "booking_id": "BK-2024-029",
+    "issue_type": "ROOM_ISSUE",
+    "priority": "HIGH",
+    "created_at": "2024-03-02T00:00:00Z",
+    "resolved_at": "2024-03-02T05:11:00Z",
+    "resolution_time_minutes": 311,
+    "assigned_agent": "agent_maria_g",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Logged maintenance request for room 613",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-02T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Dispatched maintenance team immediately",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-02T01:02:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Verified issue resolution with guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-02T02:04:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Offered $75 service recovery credit",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-02T03:06:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Updated room maintenance log",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-02T04:08:00Z"
+      }
+    ],
+    "tools_used": [
+      "update_pms",
+      "notify_team",
+      "send_email"
+    ],
+    "outcome": "WiFi connectivity resolved. Guest satisfied. $75 credit applied.",
+    "approval_required": false,
+    "guest_satisfaction": "SATISFIED",
+    "metadata": {
+      "room_number": "613",
+      "booking_id": "BK-2024-029",
+      "channel": "EMAIL"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2020",
+    "issue_id": "ISS-2024-1116",
+    "booking_id": "BK-2024-026",
+    "issue_type": "ROOM_UPGRADE",
+    "priority": "MEDIUM",
+    "created_at": "2024-02-19T00:00:00Z",
+    "resolved_at": "2024-02-19T04:08:00Z",
+    "resolution_time_minutes": 248,
+    "assigned_agent": "agent_sarah_m",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Verified guest loyalty tier and benefits",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-19T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Checked availability of upgrade rooms",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-19T00:41:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Calculated upgrade cost differential",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-19T01:22:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Processed complimentary upgrade for SILVER member",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-19T02:03:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Updated room assignment in PMS",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-19T02:44:00Z"
+      },
+      {
+        "step_number": 6,
+        "description": "Sent upgrade confirmation to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-19T03:25:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "update_pms",
+      "send_email"
+    ],
+    "outcome": "Complimentary upgrade to Deluxe Ocean View approved. Guest moved to room 806.",
+    "approval_required": false,
+    "guest_satisfaction": "VERY_SATISFIED",
+    "metadata": {
+      "room_number": "819",
+      "booking_id": "BK-2024-026",
+      "channel": "EMAIL"
+    },
+    "follow_up": {
+      "conducted_at": "2024-02-20T04:08:00Z",
+      "method": "EMAIL",
+      "notes": "Guest confirmed satisfaction with resolution"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2021",
+    "issue_id": "ISS-2024-1034",
+    "booking_id": "BK-2024-044",
+    "issue_type": "CANCELLATION_REFUND",
+    "priority": "HIGH",
+    "created_at": "2024-03-01T00:00:00Z",
+    "resolved_at": "2024-03-01T03:22:00Z",
+    "resolution_time_minutes": 202,
+    "assigned_agent": "agent_maria_g",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Retrieved booking details and cancellation policy",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-01T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Verified cancellation timeline against policy",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-01T00:33:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Calculated refund amount based on policy",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-01T01:06:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Requested approval for $250.0 refund",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-01T01:39:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Processed refund to original payment method",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-01T02:12:00Z"
+      },
+      {
+        "step_number": 6,
+        "description": "Sent cancellation confirmation email",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-01T02:45:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "process_refund",
+      "send_email"
+    ],
+    "outcome": "Booking cancelled. Full refund of $250.0 processed within policy guidelines.",
+    "approval_required": true,
+    "guest_satisfaction": "VERY_SATISFIED",
+    "metadata": {
+      "room_number": "608",
+      "booking_id": "BK-2024-044",
+      "channel": "CHAT"
+    },
+    "approval_details": {
+      "requested_at": "2024-03-01T00:13:00Z",
+      "approved_by": "manager_alice_j",
+      "approved_at": "2024-03-01T00:18:00Z",
+      "approval_notes": "Approved within policy guidelines"
+    },
+    "follow_up": {
+      "conducted_at": "2024-03-02T03:22:00Z",
+      "method": "EMAIL",
+      "notes": "Guest confirmed satisfaction with resolution"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2022",
+    "issue_id": "ISS-2024-1184",
+    "booking_id": "BK-2024-050",
+    "issue_type": "BILLING_DISPUTE",
+    "priority": "LOW",
+    "created_at": "2024-02-13T00:00:00Z",
+    "resolved_at": "2024-02-13T07:21:00Z",
+    "resolution_time_minutes": 441,
+    "assigned_agent": "agent_john_d",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Retrieved detailed billing records",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-13T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Compared charges against booking confirmation",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-13T01:13:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Identified billing error: incorrect rate applied",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-13T02:26:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Requested approval for $250.0 adjustment",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-13T03:39:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Processed credit to guest account",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-13T04:52:00Z"
+      },
+      {
+        "step_number": 6,
+        "description": "Sent corrected invoice to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-13T06:05:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "process_refund",
+      "send_email"
+    ],
+    "outcome": "Billing error corrected. $250.0 credited to guest account.",
+    "approval_required": true,
+    "guest_satisfaction": "SATISFIED",
+    "metadata": {
+      "room_number": "224",
+      "booking_id": "BK-2024-050",
+      "channel": "EMAIL"
+    },
+    "approval_details": {
+      "requested_at": "2024-02-13T00:55:00Z",
+      "approved_by": "manager_susan_l",
+      "approved_at": "2024-02-13T01:00:00Z",
+      "approval_notes": "Approved within policy guidelines"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2023",
+    "issue_id": "ISS-2024-1142",
+    "booking_id": "BK-2024-014",
+    "issue_type": "LATE_CHECKOUT",
+    "priority": "LOW",
+    "created_at": "2024-01-30T00:00:00Z",
+    "resolved_at": "2024-01-30T07:28:00Z",
+    "resolution_time_minutes": 448,
+    "assigned_agent": "agent_maria_g",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Verified guest loyalty status and current occupancy",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-30T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Checked room availability for extended stay",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-30T01:29:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Approved late checkout until 1:00 PM",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-30T02:58:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Updated PMS with late checkout flag",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-30T04:27:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Sent confirmation email to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-30T05:56:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "update_pms",
+      "send_email"
+    ],
+    "outcome": "Late checkout approved until 1:00 PM. Guest notified via email.",
+    "approval_required": false,
+    "guest_satisfaction": "SATISFIED",
+    "metadata": {
+      "room_number": "410",
+      "booking_id": "BK-2024-014",
+      "channel": "CHAT"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2024",
+    "issue_id": "ISS-2024-1202",
+    "booking_id": "BK-2024-017",
+    "issue_type": "LATE_CHECKOUT",
+    "priority": "LOW",
+    "created_at": "2024-03-08T00:00:00Z",
+    "resolved_at": "2024-03-08T04:38:00Z",
+    "resolution_time_minutes": 278,
+    "assigned_agent": "agent_maria_g",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Verified guest loyalty status and current occupancy",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-08T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Checked room availability for extended stay",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-08T00:55:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Approved late checkout until 1:00 PM",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-08T01:50:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Updated PMS with late checkout flag",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-08T02:45:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Sent confirmation email to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-08T03:40:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "update_pms",
+      "send_email"
+    ],
+    "outcome": "Late checkout approved until 1:00 PM. Guest notified via email.",
+    "approval_required": false,
+    "guest_satisfaction": "SATISFIED",
+    "metadata": {
+      "room_number": "821",
+      "booking_id": "BK-2024-017",
+      "channel": "CHAT"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2025",
+    "issue_id": "ISS-2024-1261",
+    "booking_id": "BK-2024-029",
+    "issue_type": "AMENITY_REQUEST",
+    "priority": "HIGH",
+    "created_at": "2024-02-12T00:00:00Z",
+    "resolved_at": "2024-02-12T03:08:00Z",
+    "resolution_time_minutes": 188,
+    "assigned_agent": "agent_david_l",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Verified amenity availability",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-12T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Dispatched housekeeping to room 709",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-12T00:47:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Confirmed delivery with guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-12T01:34:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Updated guest preferences in system",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-12T02:21:00Z"
+      }
+    ],
+    "tools_used": [
+      "update_pms",
+      "notify_team"
+    ],
+    "outcome": "Amenity request fulfilled. Items delivered to room 709.",
+    "approval_required": false,
+    "guest_satisfaction": "NEUTRAL",
+    "metadata": {
+      "room_number": "709",
+      "booking_id": "BK-2024-029",
+      "channel": "PHONE"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2026",
+    "issue_id": "ISS-2024-1461",
+    "booking_id": "BK-2024-044",
+    "issue_type": "COMPLAINT",
+    "priority": "MEDIUM",
+    "created_at": "2024-01-25T00:00:00Z",
+    "resolved_at": "2024-01-25T04:36:00Z",
+    "resolution_time_minutes": 276,
+    "assigned_agent": "agent_maria_g",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Documented complaint details thoroughly",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-25T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Escalated to Front Office manager",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-25T00:55:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Conducted service recovery discussion with guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-25T01:50:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Offered $100 compensation and room upgrade",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-25T02:45:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Followed up to ensure guest satisfaction",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-25T03:40:00Z"
+      }
+    ],
+    "tools_used": [
+      "update_pms",
+      "send_email",
+      "notify_team"
+    ],
+    "outcome": "Complaint resolved. Guest accepted $100 compensation plus room upgrade.",
+    "approval_required": true,
+    "guest_satisfaction": "VERY_SATISFIED",
+    "metadata": {
+      "room_number": "817",
+      "booking_id": "BK-2024-044",
+      "channel": "CHAT"
+    },
+    "approval_details": {
+      "requested_at": "2024-01-25T00:52:00Z",
+      "approved_by": "manager_susan_l",
+      "approved_at": "2024-01-25T00:57:00Z",
+      "approval_notes": "Approved within policy guidelines"
+    },
+    "follow_up": {
+      "conducted_at": "2024-01-26T04:36:00Z",
+      "method": "EMAIL",
+      "notes": "Guest confirmed satisfaction with resolution"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2027",
+    "issue_id": "ISS-2024-1225",
+    "booking_id": "BK-2024-036",
+    "issue_type": "LATE_CHECKOUT",
+    "priority": "LOW",
+    "created_at": "2024-02-23T00:00:00Z",
+    "resolved_at": "2024-02-23T03:18:00Z",
+    "resolution_time_minutes": 198,
+    "assigned_agent": "agent_maria_g",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Verified guest loyalty status and current occupancy",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Checked room availability for extended stay",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T00:39:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Approved late checkout until 2:00 PM",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T01:18:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Updated PMS with late checkout flag",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T01:57:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Sent confirmation email to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T02:36:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "update_pms",
+      "send_email"
+    ],
+    "outcome": "Late checkout approved until 2:00 PM. Guest notified via email.",
+    "approval_required": false,
+    "guest_satisfaction": "SATISFIED",
+    "metadata": {
+      "room_number": "311",
+      "booking_id": "BK-2024-036",
+      "channel": "PHONE"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2028",
+    "issue_id": "ISS-2024-1099",
+    "booking_id": "BK-2024-051",
+    "issue_type": "ROOM_UPGRADE",
+    "priority": "HIGH",
+    "created_at": "2024-02-21T00:00:00Z",
+    "resolved_at": "2024-02-21T00:30:00Z",
+    "resolution_time_minutes": 30,
+    "assigned_agent": "agent_maria_g",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Verified guest loyalty tier and benefits",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-21T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Checked availability of upgrade rooms",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-21T00:05:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Calculated upgrade cost differential",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-21T00:10:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Processed complimentary upgrade for GOLD member",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-21T00:15:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Updated room assignment in PMS",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-21T00:20:00Z"
+      },
+      {
+        "step_number": 6,
+        "description": "Sent upgrade confirmation to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-21T00:25:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "update_pms",
+      "send_email"
+    ],
+    "outcome": "Complimentary upgrade to Premium King approved. Guest moved to room 602.",
+    "approval_required": false,
+    "guest_satisfaction": "VERY_SATISFIED",
+    "metadata": {
+      "room_number": "314",
+      "booking_id": "BK-2024-051",
+      "channel": "SLACK"
+    },
+    "follow_up": {
+      "conducted_at": "2024-02-22T00:30:00Z",
+      "method": "EMAIL",
+      "notes": "Guest confirmed satisfaction with resolution"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2029",
+    "issue_id": "ISS-2024-1160",
+    "booking_id": "BK-2024-013",
+    "issue_type": "COMPLAINT",
+    "priority": "LOW",
+    "created_at": "2024-02-23T00:00:00Z",
+    "resolved_at": "2024-02-23T04:17:00Z",
+    "resolution_time_minutes": 257,
+    "assigned_agent": "agent_maria_g",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Documented complaint details thoroughly",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Escalated to Operations manager",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T00:51:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Conducted service recovery discussion with guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T01:42:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Offered $50 compensation and spa credit",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T02:33:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Followed up to ensure guest satisfaction",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-23T03:24:00Z"
+      }
+    ],
+    "tools_used": [
+      "update_pms",
+      "send_email",
+      "notify_team"
+    ],
+    "outcome": "Complaint resolved. Guest accepted $50 compensation plus spa credit.",
+    "approval_required": true,
+    "guest_satisfaction": "VERY_SATISFIED",
+    "metadata": {
+      "room_number": "605",
+      "booking_id": "BK-2024-013",
+      "channel": "CHAT"
+    },
+    "approval_details": {
+      "requested_at": "2024-02-23T00:20:00Z",
+      "approved_by": "manager_robert_k",
+      "approved_at": "2024-02-23T00:25:00Z",
+      "approval_notes": "Approved within policy guidelines"
+    },
+    "follow_up": {
+      "conducted_at": "2024-02-24T04:17:00Z",
+      "method": "EMAIL",
+      "notes": "Guest confirmed satisfaction with resolution"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2030",
+    "issue_id": "ISS-2024-1433",
+    "booking_id": "BK-2024-043",
+    "issue_type": "LOST_ITEM",
+    "priority": "LOW",
+    "created_at": "2024-01-23T00:00:00Z",
+    "resolved_at": "2024-01-23T04:44:00Z",
+    "resolution_time_minutes": 284,
+    "assigned_agent": "agent_maria_g",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Checked lost and found database",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-23T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Contacted housekeeping for room 404",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-23T00:56:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Located item: phone charger",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-23T01:52:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Arranged shipping to guest address",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-23T02:48:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Sent tracking information to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-23T03:44:00Z"
+      }
+    ],
+    "tools_used": [
+      "update_pms",
+      "send_email",
+      "notify_team"
+    ],
+    "outcome": "Item located and shipped to guest. Tracking: 1Z584315.",
+    "approval_required": false,
+    "guest_satisfaction": "VERY_SATISFIED",
+    "metadata": {
+      "room_number": "404",
+      "booking_id": "BK-2024-043",
+      "channel": "SLACK"
+    },
+    "follow_up": {
+      "conducted_at": "2024-01-24T04:44:00Z",
+      "method": "EMAIL",
+      "notes": "Guest confirmed satisfaction with resolution"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2031",
+    "issue_id": "ISS-2024-1102",
+    "booking_id": "BK-2024-011",
+    "issue_type": "CANCELLATION_REFUND",
+    "priority": "MEDIUM",
+    "created_at": "2024-02-09T00:00:00Z",
+    "resolved_at": "2024-02-09T02:20:00Z",
+    "resolution_time_minutes": 140,
+    "assigned_agent": "agent_sarah_m",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Retrieved booking details and cancellation policy",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-09T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Verified cancellation timeline against policy",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-09T00:23:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Calculated refund amount based on policy",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-09T00:46:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Requested approval for $500.0 refund",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-09T01:09:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Processed refund to original payment method",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-09T01:32:00Z"
+      },
+      {
+        "step_number": 6,
+        "description": "Sent cancellation confirmation email",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-09T01:55:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "process_refund",
+      "send_email"
+    ],
+    "outcome": "Booking cancelled. Full refund of $500.0 processed within policy guidelines.",
+    "approval_required": true,
+    "guest_satisfaction": "NEUTRAL",
+    "metadata": {
+      "room_number": "620",
+      "booking_id": "BK-2024-011",
+      "channel": "SLACK"
+    },
+    "approval_details": {
+      "requested_at": "2024-02-09T00:23:00Z",
+      "approved_by": "manager_alice_j",
+      "approved_at": "2024-02-09T00:28:00Z",
+      "approval_notes": "Approved within policy guidelines"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2032",
+    "issue_id": "ISS-2024-1103",
+    "booking_id": "BK-2024-012",
+    "issue_type": "BOOKING_MODIFICATION",
+    "priority": "MEDIUM",
+    "created_at": "2024-01-30T00:00:00Z",
+    "resolved_at": "2024-01-30T07:59:00Z",
+    "resolution_time_minutes": 479,
+    "assigned_agent": "agent_maria_g",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Retrieved current booking details",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-30T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Checked availability for requested dates",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-30T01:35:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Calculated any rate differences",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-30T03:10:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Updated booking dates in PMS",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-30T04:45:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Sent modified confirmation to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-01-30T06:20:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "update_pms",
+      "send_email"
+    ],
+    "outcome": "Booking modified successfully. New dates: 2024-02-09 to 2024-02-12.",
+    "approval_required": false,
+    "guest_satisfaction": "SATISFIED",
+    "metadata": {
+      "room_number": "606",
+      "booking_id": "BK-2024-012",
+      "channel": "SLACK"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2033",
+    "issue_id": "ISS-2024-1099",
+    "booking_id": "BK-2024-050",
+    "issue_type": "LATE_CHECKOUT",
+    "priority": "LOW",
+    "created_at": "2024-02-21T00:00:00Z",
+    "resolved_at": "2024-02-21T07:18:00Z",
+    "resolution_time_minutes": 438,
+    "assigned_agent": "agent_john_d",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Verified guest loyalty status and current occupancy",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-21T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Checked room availability for extended stay",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-21T01:27:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Approved late checkout until 2:00 PM",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-21T02:54:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Updated PMS with late checkout flag",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-21T04:21:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Sent confirmation email to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-02-21T05:48:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "update_pms",
+      "send_email"
+    ],
+    "outcome": "Late checkout approved until 2:00 PM. Guest notified via email.",
+    "approval_required": false,
+    "guest_satisfaction": "VERY_SATISFIED",
+    "metadata": {
+      "room_number": "619",
+      "booking_id": "BK-2024-050",
+      "channel": "PHONE"
+    },
+    "follow_up": {
+      "conducted_at": "2024-02-22T07:18:00Z",
+      "method": "EMAIL",
+      "notes": "Guest confirmed satisfaction with resolution"
+    }
+  },
+  {
+    "resolution_id": "RES-2024-2034",
+    "issue_id": "ISS-2024-1231",
+    "booking_id": "BK-2024-042",
+    "issue_type": "BILLING_DISPUTE",
+    "priority": "LOW",
+    "created_at": "2024-03-04T00:00:00Z",
+    "resolved_at": "2024-03-04T07:51:00Z",
+    "resolution_time_minutes": 471,
+    "assigned_agent": "agent_maria_g",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Retrieved detailed billing records",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-04T00:00:00Z"
+      },
+      {
+        "step_number": 2,
+        "description": "Compared charges against booking confirmation",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-04T01:18:00Z"
+      },
+      {
+        "step_number": 3,
+        "description": "Identified billing error: duplicate charge",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-04T02:36:00Z"
+      },
+      {
+        "step_number": 4,
+        "description": "Requested approval for $150.0 adjustment",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-04T03:54:00Z"
+      },
+      {
+        "step_number": 5,
+        "description": "Processed credit to guest account",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-04T05:12:00Z"
+      },
+      {
+        "step_number": 6,
+        "description": "Sent corrected invoice to guest",
+        "status": "COMPLETED",
+        "completed_at": "2024-03-04T06:30:00Z"
+      }
+    ],
+    "tools_used": [
+      "lookup_booking",
+      "check_policy",
+      "process_refund",
+      "send_email"
+    ],
+    "outcome": "Billing error corrected. $150.0 credited to guest account.",
+    "approval_required": true,
+    "guest_satisfaction": "SATISFIED",
+    "metadata": {
+      "room_number": "907",
+      "booking_id": "BK-2024-042",
+      "channel": "CHAT"
+    },
+    "approval_details": {
+      "requested_at": "2024-03-04T00:27:00Z",
+      "approved_by": "manager_alice_j",
+      "approved_at": "2024-03-04T00:32:00Z",
+      "approval_notes": "Approved within policy guidelines"
+    }
+  }
+]

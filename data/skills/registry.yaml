@@ -1,0 +1,90 @@
+last_updated: '2026-06-09T18:33:46.854449'
+skills:
+- active: true
+  category: checkout
+  created_at: '2024-01-15T10:30:00Z'
+  domain: booking
+  file_path: data/skills/late_checkout_request.yaml
+  name: Late Checkout Request Handler
+  skill_id: late_checkout_request
+  success_rate: 0.0
+  trigger_embedding_id: null
+  usage_count: 0
+  version: '1.0'
+- active: true
+  category: room_modification
+  created_at: '2024-01-15T10:35:00Z'
+  domain: booking
+  file_path: data/skills/room_upgrade_request.yaml
+  name: Room Upgrade Request Handler
+  skill_id: room_upgrade_request
+  success_rate: 0.0
+  trigger_embedding_id: null
+  usage_count: 0
+  version: '1.0'
+- active: true
+  category: cancellation
+  created_at: '2024-01-15T10:40:00Z'
+  domain: booking
+  file_path: data/skills/cancellation_refund.yaml
+  name: Cancellation and Refund Handler
+  skill_id: cancellation_refund
+  success_rate: 0.0
+  trigger_embedding_id: null
+  usage_count: 0
+  version: '1.0'
+- active: true
+  category: dispute
+  created_at: '2024-01-15T10:45:00Z'
+  domain: billing
+  file_path: data/skills/billing_dispute.yaml
+  name: Billing Dispute Resolution Handler
+  skill_id: billing_dispute
+  success_rate: 0.0
+  trigger_embedding_id: null
+  usage_count: 0
+  version: '1.0'
+- active: true
+  category: amenity
+  created_at: '2024-01-15T10:50:00Z'
+  domain: guest_services
+  file_path: data/skills/amenity_request.yaml
+  name: Amenity Request Handler
+  skill_id: amenity_request
+  success_rate: 0.0
+  trigger_embedding_id: null
+  usage_count: 0
+  version: '1.0'
+- active: true
+  category: general
+  created_at: '2026-06-09T17:42:36.543410'
+  domain: hotel_operations
+  file_path: data/skills/skill_736daa5b.yaml
+  name: I Need A Helicopter To Handler
+  skill_id: skill_736daa5b
+  success_rate: 0.0
+  trigger_embedding_id: null
+  usage_count: 0
+  version: '1.0'
+- active: true
+  category: general
+  created_at: '2026-06-09T17:45:06.898646'
+  domain: hotel_operations
+  file_path: data/skills/skill_fcf0ea7f.yaml
+  name: I Want To Check In Handler
+  skill_id: skill_fcf0ea7f
+  success_rate: 0.0
+  trigger_embedding_id: null
+  usage_count: 0
+  version: '1.0'
+- active: true
+  category: general
+  created_at: '2026-06-09T18:33:46.854297'
+  domain: hotel_operations
+  file_path: data/skills/skill_a7bcad64.yaml
+  name: I Want A Cradle For Handler
+  skill_id: skill_a7bcad64
+  success_rate: 0.0
+  trigger_embedding_id: null
+  usage_count: 0
+  version: '1.0'

@@ -1,0 +1,254 @@
+{
+  "test_cases": [
+    {
+      "test_id": "skill_match_001",
+      "test_type": "positive",
+      "category": "booking",
+      "issue_description": "Guest wants to check out at 2 PM instead of 11 AM tomorrow",
+      "expected_skill_id": "late_checkout_request",
+      "expected_confidence": "high",
+      "difficulty": "easy",
+      "notes": "Direct match to late checkout skill"
+    },
+    {
+      "test_id": "skill_match_002",
+      "test_type": "positive",
+      "category": "booking",
+      "issue_description": "Can I stay in my room until 3 PM? I have a late flight",
+      "expected_skill_id": "late_checkout_request",
+      "expected_confidence": "high",
+      "difficulty": "easy",
+      "notes": "Paraphrased late checkout request"
+    },
+    {
+      "test_id": "skill_match_003",
+      "test_type": "positive",
+      "category": "booking",
+      "issue_description": "I need to cancel my reservation for next week and get my money back",
+      "expected_skill_id": "cancellation_refund",
+      "expected_confidence": "high",
+      "difficulty": "easy",
+      "notes": "Clear cancellation with refund request"
+    },
+    {
+      "test_id": "skill_match_004",
+      "test_type": "positive",
+      "category": "booking",
+      "issue_description": "Something came up and I can't make it. Can I get a refund?",
+      "expected_skill_id": "cancellation_refund",
+      "expected_confidence": "medium",
+      "difficulty": "medium",
+      "notes": "Implicit cancellation request"
+    },
+    {
+      "test_id": "skill_match_005",
+      "test_type": "positive",
+      "category": "booking",
+      "issue_description": "Is it possible to upgrade to a suite? I'm celebrating my anniversary",
+      "expected_skill_id": "room_upgrade_request",
+      "expected_confidence": "high",
+      "difficulty": "easy",
+      "notes": "Direct upgrade request with context"
+    },
+    {
+      "test_id": "skill_match_006",
+      "test_type": "positive",
+      "category": "booking",
+      "issue_description": "I'd like a better room if available. What are my options?",
+      "expected_skill_id": "room_upgrade_request",
+      "expected_confidence": "medium",
+      "difficulty": "medium",
+      "notes": "Indirect upgrade inquiry"
+    },
+    {
+      "test_id": "skill_match_007",
+      "test_type": "positive",
+      "category": "billing",
+      "issue_description": "I was charged twice for my stay. Can you fix this?",
+      "expected_skill_id": "billing_dispute_resolution",
+      "expected_confidence": "high",
+      "difficulty": "easy",
+      "notes": "Clear billing error"
+    },
+    {
+      "test_id": "skill_match_008",
+      "test_type": "positive",
+      "category": "billing",
+      "issue_description": "My credit card statement shows a charge I don't recognize from your hotel",
+      "expected_skill_id": "billing_dispute_resolution",
+      "expected_confidence": "high",
+      "difficulty": "medium",
+      "notes": "Billing dispute with investigation needed"
+    },
+    {
+      "test_id": "skill_match_009",
+      "test_type": "positive",
+      "category": "amenity",
+      "issue_description": "Can I get extra towels and pillows sent to room 305?",
+      "expected_skill_id": "amenity_request",
+      "expected_confidence": "high",
+      "difficulty": "easy",
+      "notes": "Standard amenity request"
+    },
+    {
+      "test_id": "skill_match_010",
+      "test_type": "positive",
+      "category": "amenity",
+      "issue_description": "We need a crib for our baby. Do you have one available?",
+      "expected_skill_id": "amenity_request",
+      "expected_confidence": "high",
+      "difficulty": "easy",
+      "notes": "Special amenity request"
+    },
+    {
+      "test_id": "skill_match_011",
+      "test_type": "negative",
+      "category": "complaint",
+      "issue_description": "The room is too noisy. I can hear construction from 6 AM",
+      "expected_skill_id": null,
+      "expected_confidence": "low",
+      "difficulty": "medium",
+      "notes": "Noise complaint - no existing skill"
+    },
+    {
+      "test_id": "skill_match_012",
+      "test_type": "negative",
+      "category": "accessibility",
+      "issue_description": "I need a wheelchair accessible room on the ground floor",
+      "expected_skill_id": null,
+      "expected_confidence": "low",
+      "difficulty": "medium",
+      "notes": "Accessibility request - no existing skill"
+    },
+    {
+      "test_id": "skill_match_013",
+      "test_type": "negative",
+      "category": "maintenance",
+      "issue_description": "The air conditioning in my room is not working",
+      "expected_skill_id": null,
+      "expected_confidence": "low",
+      "difficulty": "easy",
+      "notes": "Maintenance issue - no existing skill"
+    },
+    {
+      "test_id": "skill_match_014",
+      "test_type": "negative",
+      "category": "security",
+      "issue_description": "I lost my room key. Can you make me a new one?",
+      "expected_skill_id": null,
+      "expected_confidence": "low",
+      "difficulty": "easy",
+      "notes": "Lost key - no existing skill"
+    },
+    {
+      "test_id": "skill_match_015",
+      "test_type": "negative",
+      "category": "pet",
+      "issue_description": "Can I bring my service dog? What's your pet policy?",
+      "expected_skill_id": null,
+      "expected_confidence": "low",
+      "difficulty": "medium",
+      "notes": "Pet policy inquiry - no existing skill"
+    },
+    {
+      "test_id": "skill_match_016",
+      "test_type": "positive",
+      "category": "booking",
+      "issue_description": "Need to extend checkout time by a few hours",
+      "expected_skill_id": "late_checkout_request",
+      "expected_confidence": "high",
+      "difficulty": "easy",
+      "notes": "Concise late checkout request"
+    },
+    {
+      "test_id": "skill_match_017",
+      "test_type": "positive",
+      "category": "billing",
+      "issue_description": "There's an incorrect charge on my bill for minibar items I didn't use",
+      "expected_skill_id": "billing_dispute_resolution",
+      "expected_confidence": "high",
+      "difficulty": "medium",
+      "notes": "Specific billing dispute"
+    },
+    {
+      "test_id": "skill_match_018",
+      "test_type": "negative",
+      "category": "loyalty",
+      "issue_description": "My loyalty points weren't credited for my last stay",
+      "expected_skill_id": null,
+      "expected_confidence": "low",
+      "difficulty": "medium",
+      "notes": "Loyalty program issue - no existing skill"
+    },
+    {
+      "test_id": "skill_match_019",
+      "test_type": "positive",
+      "category": "booking",
+      "issue_description": "I want to cancel booking #BK12345 and receive a full refund",
+      "expected_skill_id": "cancellation_refund",
+      "expected_confidence": "high",
+      "difficulty": "easy",
+      "notes": "Explicit cancellation with booking reference"
+    },
+    {
+      "test_id": "skill_match_020",
+      "test_type": "negative",
+      "category": "food",
+      "issue_description": "Can I order room service? What's on the menu?",
+      "expected_skill_id": null,
+      "expected_confidence": "low",
+      "difficulty": "easy",
+      "notes": "Room service inquiry - no existing skill"
+    },
+    {
+      "test_id": "skill_match_021",
+      "test_type": "positive",
+      "category": "amenity",
+      "issue_description": "Could you send up some extra blankets? It's cold in here",
+      "expected_skill_id": "amenity_request",
+      "expected_confidence": "high",
+      "difficulty": "easy",
+      "notes": "Amenity request with context"
+    },
+    {
+      "test_id": "skill_match_022",
+      "test_type": "negative",
+      "category": "parking",
+      "issue_description": "Is valet parking available? How much does it cost?",
+      "expected_skill_id": null,
+      "expected_confidence": "low",
+      "difficulty": "easy",
+      "notes": "Parking inquiry - no existing skill"
+    },
+    {
+      "test_id": "skill_match_023",
+      "test_type": "positive",
+      "category": "booking",
+      "issue_description": "I'm a gold member. Can I get a complimentary upgrade to a deluxe room?",
+      "expected_skill_id": "room_upgrade_request",
+      "expected_confidence": "high",
+      "difficulty": "medium",
+      "notes": "Upgrade request with loyalty context"
+    },
+    {
+      "test_id": "skill_match_024",
+      "test_type": "negative",
+      "category": "wifi",
+      "issue_description": "The WiFi password isn't working. Can you help?",
+      "expected_skill_id": null,
+      "expected_confidence": "low",
+      "difficulty": "easy",
+      "notes": "WiFi issue - no existing skill"
+    },
+    {
+      "test_id": "skill_match_025",
+      "test_type": "positive",
+      "category": "billing",
+      "issue_description": "I was charged for parking but I didn't use the parking garage",
+      "expected_skill_id": "billing_dispute_resolution",
+      "expected_confidence": "high",
+      "difficulty": "medium",
+      "notes": "Specific service charge dispute"
+    }
+  ]
+}

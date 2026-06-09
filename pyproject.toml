@@ -1,0 +1,102 @@
+[tool.poetry]
+name = "hotel-issue-resolution-copilot"
+version = "0.1.0"
+description = "A self-learning AI agent for hotel reservation issue resolution"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+# LLM and Embeddings
+openai = "^1.12.0"
+anthropic = "^0.18.0"
+sentence-transformers = "^2.3.1"
+
+# Vector Store
+chromadb = "^0.4.22"
+# pinecone-client = "^3.0.0"  # Optional
+
+# RAG and Reranking
+langchain = "^0.2.0"
+langchain-community = "^0.2.0"
+langchain-openai = "^0.1.0"
+langgraph = "^0.2.0"
+# cohere = "^4.47"  # Optional for reranking
+
+
+# Data Processing
+pydantic = "^2.5.3"
+pydantic-settings = "^2.1.0"
+pyyaml = "^6.0.1"
+python-dotenv = "^1.0.1"
+
+# API and CLI
+fastapi = "^0.109.0"
+uvicorn = "^0.27.0"
+click = "^8.1.7"
+httpx = "^0.26.0"
+
+# Utilities
+faker = "^25.2.0"
+python-dateutil = "^2.8.2"
+tiktoken = "^0.9"
+
+# Logging and Monitoring
+structlog = "^24.1.0"
+python-json-logger = "^2.0.7"
+
+# UI
+streamlit = "^1.31.0"
+email-validator = "^2.3.0"
+
+[tool.poetry.group.dev.dependencies]
+# Testing
+pytest = "^7.4.4"
+pytest-asyncio = "^0.23.3"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.12.0"
+
+# Evaluation
+ragas = "^0.1.1"
+
+# Code Quality
+black = "^24.1.1"
+isort = "^5.13.2"
+flake8 = "^7.0.0"
+mypy = "^1.8.0"
+pylint = "^3.0.3"
+
+# Jupyter (optional)
+jupyter = "^1.0.0"
+ipykernel = "^6.29.0"
+
+[tool.poetry.scripts]
+hotel-copilot = "src.presentation.cli.main:cli"
+
+[tool.black]
+line-length = 100
+target-version = ['py311']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --cov=src --cov-report=html --cov-report=term-missing"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

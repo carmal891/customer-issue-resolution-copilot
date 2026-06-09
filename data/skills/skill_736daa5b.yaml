@@ -1,0 +1,144 @@
+skill_id: skill_736daa5b
+name: I Need A Helicopter To Handler
+version: '1.0'
+description: 'Automatically generated skill for: I need a helicopter to travel around
+  the city'
+triggers:
+- I need a helicopter to travel around the city
+- I would like to arrange a helicopter for city travel
+- Need a helicopter ride to get around the city
+- Can you book a helicopter for me to tour the city?
+- "I\u2019m looking for helicopter transportation within the city"
+- Please help me secure a helicopter for urban travel
+- I need helicopter service to move around town
+- Requesting helicopter transfer for city sightseeing
+steps:
+- step_id: step_1
+  step_type: reasoning
+  description: LLM analyzed issue and retrieved 5 relevant context pieces from policy
+    knowledge base
+  tool_name: null
+  parameters:
+    query: "I need a helicopter to travel around the city The core request is for\
+      \ transportation assistance: the guest wants a helicopter to travel around the\
+      \ city, which is likely a concierge or special-arrangements request rather than\
+      \ a room issue. To resolve it, we would need the guest\u2019s booking details\
+      \ and contact information, along with the dates/times, destination, number of\
+      \ passengers, and whether they want a private charter or sightseeing tour. Relevant\
+      \ policies may include the hotel\u2019s concierge service scope, third-party\
+      \ transport/vendor booking rules, liability and safety requirements, payment/deposit\
+      \ terms, and any restrictions on arranging non-standard transportation."
+    analysis: "The core request is for transportation assistance: the guest wants\
+      \ a helicopter to travel around the city, which is likely a concierge or special-arrangements\
+      \ request rather than a room issue. To resolve it, we would need the guest\u2019\
+      s booking details and contact information, along with the dates/times, destination,\
+      \ number of passengers, and whether they want a private charter or sightseeing\
+      \ tour. Relevant policies may include the hotel\u2019s concierge service scope,\
+      \ third-party transport/vendor booking rules, liability and safety requirements,\
+      \ payment/deposit terms, and any restrictions on arranging non-standard transportation."
+    top_k: 5
+  requires_approval: false
+  approval_reason: null
+  expected_output: '{"num_results": 5, "avg_score": 0.9498882293701172, "llm_tokens":
+    253, "citations": [{"source_id": 1, "source_name": "Accessibility Policy", "doc_type":
+    "policy", "relevance_score": 1.0, "content_preview": "\nUpon arrival, guests with
+    accessible room reservations receive priority check-in assistance. Front desk
+    agents are trained to greet these guests warmly and efficiently, recognizing that
+    some guests m"}, {"source_id": 2, "source_name": "Complaint Handling Policy",
+    "doc_type": "policy", "relevance_score": 0.98, "content_preview": "Priority Two
+    complaints should be addressed within 2 hours of receipt and typically require
+    coordination between departments to resolve. Priority Three complaints involve
+    minor inconveniences or servi"}, {"source_id": 3, "source_name": "Complaint Handling
+    Policy", "doc_type": "policy", "relevance_score": 0.951, "content_preview": "\nCertain
+    types of complaints require specific handling approaches beyond the general procedures
+    outlined above. Complaints involving allegations of staff misconduct, including
+    rudeness, discrimination"}]}'
+- step_id: step_2
+  step_type: reasoning
+  description: LLM generated plan with 3 actions
+  tool_name: null
+  parameters:
+    context_length: 1376
+    available_tools: []
+  requires_approval: false
+  approval_reason: null
+  expected_output: '{"num_actions": 3, "actions": [{"step_id": "step_1", "description":
+    "Acknowledge the guest''s request and clarify that helicopter transportation is
+    not a standard hotel service. Ask whether they need help arranging city transportation
+    options such as a car service, taxi, or private tour instead.", "tool_name": null,
+    "parameters": {}, "requires_approval": false, "reasoning": "This is a guest service
+    clarification step and does not involve any booking, financial, or sensitive action."},
+    {"step_id": "step_2", "description": "Check whether the hotel has a concierge
+    or partner transportation service that can arrange premium city transport or sightseeing
+    options for the guest.", "tool_name": "check_concierge_services", "parameters":
+    {"service_type": "city_transportation", "request": "premium or private transport
+    alternatives"}, "requires_approval": false, "reasoning": "This helps identify
+    available alternatives without making any commitment or booking change."}, {"step_id":
+    "step_3", "description": "If the guest confirms interest in a helicopter charter
+    or other premium transport, escalate the request to a human concierge or manager
+    to assess feasibility, pricing, and safety requirements.", "tool_name": "escalate_to_human_agent",
+    "parameters": {"department": "concierge", "priority": "normal", "issue_type":
+    "special_transport_request"}, "requires_approval": true, "reasoning": "Arranging
+    helicopter transport is a sensitive, potentially high-cost travel service and
+    should be handled by a human agent."}]}'
+- step_id: step_3
+  step_type: reasoning
+  description: Acknowledge the guest's request and clarify that helicopter transportation
+    is not a standard hotel service. Ask whether they need help arranging city transportation
+    options such as a car service, taxi, or private tour instead.
+  tool_name: null
+  parameters:
+    parameters: {}
+    reasoning: This is a guest service clarification step and does not involve any
+      booking, financial, or sensitive action.
+  requires_approval: false
+  approval_reason: null
+  expected_output: '{"requires_approval": false}'
+- step_id: step_4
+  step_type: tool_call
+  description: Check whether the hotel has a concierge or partner transportation service
+    that can arrange premium city transport or sightseeing options for the guest.
+  tool_name: check_concierge_services
+  parameters:
+    parameters:
+      service_type: city_transportation
+      request: premium or private transport alternatives
+    reasoning: This helps identify available alternatives without making any commitment
+      or booking change.
+  requires_approval: false
+  approval_reason: null
+  expected_output: '{"requires_approval": false}'
+- step_id: step_5
+  step_type: tool_call
+  description: If the guest confirms interest in a helicopter charter or other premium
+    transport, escalate the request to a human concierge or manager to assess feasibility,
+    pricing, and safety requirements.
+  tool_name: escalate_to_human_agent
+  parameters:
+    parameters:
+      department: concierge
+      priority: normal
+      issue_type: special_transport_request
+    reasoning: Arranging helicopter transport is a sensitive, potentially high-cost
+      travel service and should be handled by a human agent.
+  requires_approval: false
+  approval_reason: null
+  expected_output: '{"requires_approval": true}'
+- step_id: step_6
+  step_type: reasoning
+  description: Prepared 3 actions for approval
+  tool_name: null
+  parameters:
+    num_actions: 3
+  requires_approval: false
+  approval_reason: null
+  expected_output: '{"requires_approval": true, "action_count": 3}'
+guardrails: {}
+metadata:
+  created_from: tpao_trace
+  source_issue_id: ISS-0002
+  source_resolution_id: RES-ISS-0002-ReAct
+  domain: hotel_operations
+  no_policy_match: false
+  using_general_knowledge: false
+  requires_policy_review: false

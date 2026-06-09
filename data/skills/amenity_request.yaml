@@ -1,0 +1,325 @@
+skill_id: "amenity_request"
+version: "1.0"
+name: "Amenity Request Handler"
+description: "Handles guest requests for additional amenities, services, or room items"
+
+metadata:
+  domain: "guest_services"
+  created_at: "2024-01-15T10:50:00Z"
+  created_by: "manual"
+  last_updated: "2024-01-15T10:50:00Z"
+  usage_count: 0
+  success_rate: 0.0
+  avg_resolution_time_minutes: 0.0
+
+triggers:
+  semantic_patterns:
+    - "need extra towels"
+    - "request additional pillows"
+    - "can I get room service"
+    - "need more toiletries"
+    - "request wake up call"
+    - "need iron and ironing board"
+    - "request mini fridge"
+  
+  issue_types:
+    - "amenity_request"
+    - "room_service_request"
+    - "housekeeping_request"
+  
+  required_context:
+    - "booking_id"
+    - "requested_item"
+  
+  optional_context:
+    - "quantity"
+    - "urgency"
+    - "room_number"
+
+steps:
+  - step_id: 1
+    name: "Retrieve booking and room details"
+    action_type: "tool_call"
+    tool: "lookup_booking"
+    inputs:
+      booking_id: "${context.booking_id}"
+    outputs:
+      - "booking_details"
+    required: true
+    
+  - step_id: 2
+    name: "Validate amenity request"
+    action_type: "decision"
+    logic: |
+      # Categorize the request
+      complimentary_items = [
+          "towels", "pillows", "blankets", "toiletries", "hangers",
+          "ice", "drinking glasses", "coffee", "tea"
+      ]
+      
+      chargeable_items = [
+          "mini_fridge", "microwave", "extra_bed", "crib",
+          "room_service", "laundry_service"
+      ]
+      
+      housekeeping_items = [
+          "cleaning", "fresh_linens", "trash_removal"
+      ]
+      
+      requested_item_lower = context.requested_item.lower()
+      
+      # Determine category and charge
+      if any(item in requested_item_lower for item in complimentary_items):
+          category = "complimentary"
+          charge = 0
+          requires_payment = False
+      elif any(item in requested_item_lower for item in chargeable_items):
+          category = "chargeable"
+          # Look up charge from rate card
+          charge = get_amenity_charge(context.requested_item)
+          requires_payment = True
+      elif any(item in requested_item_lower for item in housekeeping_items):
+          category = "housekeeping"
+          charge = 0
+          requires_payment = False
+      else:
+          category = "unknown"
+          charge = 0
+          requires_payment = False
+      
+      # Check availability
+      if category != "unknown":
+          available = True
+          estimated_delivery = "15-30 minutes"
+      else:
+          available = False
+          estimated_delivery = None
+      
+      # Determine urgency
+      if context.get("urgency") == "urgent":
+          priority = "high"
+          estimated_delivery = "10-15 minutes"
+      else:
+          priority = "normal"
+    outputs:
+      - "category"
+      - "charge"
+      - "requires_payment"
+      - "available"
+      - "estimated_delivery"
+      - "priority"
+    
+  - step_id: 3
+    name: "Check room service availability"
+    action_type: "tool_call"
+    tool: "check_room_availability"
+    inputs:
+      service_type: "${category}"
+      room_number: "${booking_details.room_number}"
+      requested_item: "${context.requested_item}"
+    outputs:
+      - "service_available"
+      - "delivery_time"
+    required: true
+    condition: "available == True"
+    
+  - step_id: 4
+    name: "Create service request ticket"
+    action_type: "tool_call"
+    tool: "update_pms"
+    inputs:
+      action: "create_service_request"
+      booking_id: "${context.booking_id}"
+      room_number: "${booking_details.room_number}"
+      request_type: "${category}"
+      requested_item: "${context.requested_item}"
+      quantity: "${context.quantity or 1}"
+      priority: "${priority}"
+      charge: "${charge}"
+    outputs:
+      - "ticket_id"
+      - "ticket_status"
+    required: true
+    condition: "service_available == True"
+    
+  - step_id: 5
+    name: "Process payment for chargeable items"
+    action_type: "tool_call"
+    tool: "update_booking"
+    inputs:
+      booking_id: "${context.booking_id}"
+      add_charge:
+        description: "${context.requested_item}"
+        amount: "${charge}"
+    outputs:
+      - "charge_added"
+    required: true
+    requires_approval: true
+    approval_reason: "Additional charge for amenity"
+    condition: "requires_payment == True AND charge > 0"
+    
+  - step_id: 6
+    name: "Notify housekeeping/room service"
+    action_type: "tool_call"
+    tool: "notify_team"
+    inputs:
+      team: "${category}"
+      notification_type: "service_request"
+      data:
+        ticket_id: "${ticket_id}"
+        room_number: "${booking_details.room_number}"
+        guest_name: "${booking_details.guest_name}"
+        requested_item: "${context.requested_item}"
+        quantity: "${context.quantity or 1}"
+        priority: "${priority}"
+        estimated_delivery: "${delivery_time}"
+    outputs:
+      - "team_notified"
+    required: true
+    condition: "ticket_status == 'created'"
+    
+  - step_id: 7
+    name: "Send confirmation to guest"
+    action_type: "tool_call"
+    tool: "send_email"
+    inputs:
+      to: "${booking_details.guest_email}"
+      template: "amenity_request_confirmation"
+      data:
+        guest_name: "${booking_details.guest_name}"
+        booking_id: "${context.booking_id}"
+        room_number: "${booking_details.room_number}"
+        requested_item: "${context.requested_item}"
+        quantity: "${context.quantity or 1}"
+        charge: "${charge}"
+        estimated_delivery: "${delivery_time}"
+        ticket_id: "${ticket_id}"
+    outputs:
+      - "confirmation_sent"
+    required: false
+    condition: "ticket_status == 'created'"
+    
+  - step_id: 8
+    name: "Send unavailability notification"
+    action_type: "tool_call"
+    tool: "send_email"
+    inputs:
+      to: "${booking_details.guest_email}"
+      template: "amenity_unavailable"
+      data:
+        guest_name: "${booking_details.guest_name}"
+        requested_item: "${context.requested_item}"
+        alternative_options: "${get_alternatives(context.requested_item)}"
+    outputs:
+      - "notification_sent"
+    required: false
+    condition: "service_available == False OR available == False"
+
+approval_gates:
+  - gate_id: "amenity_charge_approval"
+    required_for_steps: [5]
+    approval_type: "operational"
+    risk_level: "low"
+    auto_approve_conditions:
+      - "charge <= 25"
+      - "booking_details.loyalty_tier in ['platinum', 'diamond']"
+    human_review_required:
+      - "charge > 50"
+      - "booking_details.payment_status == 'pending'"
+    approval_context:
+      - "requested_item"
+      - "charge"
+      - "booking_details"
+
+guardrails:
+  - type: "input_validation"
+    rules:
+      - "booking_id must be valid"
+      - "booking must be active (checked in or confirmed)"
+      - "requested_item must not be empty"
+  
+  - type: "business_rules"
+    rules:
+      - "cannot fulfill requests for checked-out bookings"
+      - "chargeable items require payment authorization"
+      - "high-value items (>$100) require manager approval"
+      - "urgent requests must be fulfilled within 15 minutes"
+  
+  - type: "safety"
+    rules:
+      - "verify room number matches booking"
+      - "check for suspicious request patterns"
+      - "ensure guest is currently in residence"
+
+error_handling:
+  - error_type: "booking_not_found"
+    action: "escalate"
+    message: "Booking {booking_id} not found. Please verify booking reference."
+    user_facing: true
+  
+  - error_type: "booking_not_active"
+    action: "inform"
+    message: "Amenity requests can only be made for active bookings. Check-in date: {check_in_date}"
+    user_facing: true
+  
+  - error_type: "item_unavailable"
+    action: "inform"
+    message: "The requested item is currently unavailable. We've suggested alternatives."
+    user_facing: true
+  
+  - error_type: "service_team_unavailable"
+    action: "escalate"
+    message: "Unable to reach service team. Request will be processed manually."
+    user_facing: false
+  
+  - error_type: "payment_declined"
+    action: "inform"
+    message: "Unable to process charge. Please provide alternative payment method."
+    user_facing: true
+  
+  - error_type: "tool_failure"
+    action: "retry"
+    max_retries: 2
+    fallback: "escalate"
+  
+  - error_type: "approval_rejected"
+    action: "inform"
+    message: "Amenity request was not approved. Please contact front desk for assistance."
+    user_facing: true
+
+success_criteria:
+  - "ticket_status == 'created' OR service_available == False"
+  - "team_notified == true OR service_available == False"
+  - "confirmation_sent == true OR notification_sent == true"
+
+rollback_steps:
+  - step_id: 5
+    rollback_action: "remove_charge"
+    rollback_tool: "update_booking"
+    rollback_inputs:
+      booking_id: "${context.booking_id}"
+      remove_charge:
+        description: "${context.requested_item}"
+        amount: "${charge}"
+
+source_trace:
+  origin: "manual"
+  original_issue_id: null
+  react_trace_id: null
+  human_validated: true
+  validation_date: "2024-01-15T10:50:00Z"
+  validator: "ops_team"
+
+performance_metrics:
+  avg_execution_time_ms: 0
+  success_count: 0
+  failure_count: 0
+  approval_rejection_count: 0
+  last_used: null
+  avg_delivery_time_minutes: 0
+
+tags:
+  - "amenity"
+  - "room_service"
+  - "housekeeping"
+  - "guest_services"
