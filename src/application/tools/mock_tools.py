@@ -18,10 +18,10 @@ from src.application.tools.base import Tool, ToolResult, ToolStatus
 class LookupBookingTool(Tool):
     """
     Look up booking details by booking ID.
-    
+
     In production, this would query the PMS (Property Management System).
     """
-    
+
     def __init__(self):
         super().__init__(
             name="lookup_booking",
@@ -29,7 +29,7 @@ class LookupBookingTool(Tool):
         )
         # Load mock bookings data
         self._bookings = self._load_mock_bookings()
-    
+
     def _load_mock_bookings(self) -> Dict[str, Any]:
         """Load mock bookings from JSON file"""
         try:
@@ -43,7 +43,7 @@ class LookupBookingTool(Tool):
         except Exception as e:
             print(f"Warning: Could not load mock bookings: {e}")
             return {}
-    
+
     def get_input_schema(self) -> Dict[str, Any]:
         return {
             "type": "object",
@@ -65,22 +65,22 @@ class LookupBookingTool(Tool):
             },
             "required": ["booking_id"]
         }
-    
+
     def _execute(self, **kwargs) -> ToolResult:
         booking_id = kwargs["booking_id"]
         include_billing = kwargs.get("include_billing", False)
         get_original_quote = kwargs.get("get_original_quote", False)
-        
+
         # Look up booking
         booking = self._bookings.get(booking_id)
-        
+
         if not booking:
             return ToolResult(
                 status=ToolStatus.FAILURE,
                 data={},
                 error=f"Booking {booking_id} not found"
             )
-        
+
         # Build response
         result_data = {
             "booking_id": booking["booking_id"],
@@ -94,7 +94,7 @@ class LookupBookingTool(Tool):
             "loyalty_tier": booking.get("loyalty_tier", "none"),
             "total_amount": booking["total_amount"]
         }
-        
+
         if include_billing:
             result_data["billing_details"] = {
                 "room_charges": booking["total_amount"] * 0.85,
@@ -103,7 +103,7 @@ class LookupBookingTool(Tool):
                 "payment_method": "credit_card",
                 "payment_status": "paid"
             }
-        
+
         if get_original_quote:
             result_data["original_quote"] = {
                 "room_rate": booking["total_amount"] * 0.85,
@@ -111,7 +111,7 @@ class LookupBookingTool(Tool):
                 "subtotal": booking["total_amount"] * 0.85,
                 "included_items": ["room", "wifi", "breakfast"]
             }
-        
+
         return ToolResult(
             status=ToolStatus.SUCCESS,
             data=result_data
@@ -121,17 +121,17 @@ class LookupBookingTool(Tool):
 class CheckPolicyTool(Tool):
     """
     Check hotel policies by type or query.
-    
+
     In production, this would query a policy management system or use RAG.
     """
-    
+
     def __init__(self):
         super().__init__(
             name="check_policy",
             description="Retrieve hotel policies for cancellation, refunds, upgrades, etc."
         )
         self._policies = self._load_mock_policies()
-    
+
     def _load_mock_policies(self) -> Dict[str, str]:
         """Load mock policies from markdown files"""
         policies = {}
@@ -146,7 +146,7 @@ class CheckPolicyTool(Tool):
         except Exception as e:
             print(f"Warning: Could not load mock policies: {e}")
             return {}
-    
+
     def get_input_schema(self) -> Dict[str, Any]:
         return {
             "type": "object",
@@ -163,11 +163,11 @@ class CheckPolicyTool(Tool):
             },
             "required": ["policy_type"]
         }
-    
+
     def _execute(self, **kwargs) -> ToolResult:
         policy_type = kwargs["policy_type"]
         query = kwargs.get("query", "")
-        
+
         # Map policy types to file names
         policy_map = {
             "cancellation": "cancellation_refund_policy",
@@ -178,7 +178,7 @@ class CheckPolicyTool(Tool):
             "loyalty": "loyalty_program_policy",
             "complaint": "complaint_handling_policy"
         }
-        
+
         policy_file = policy_map.get(policy_type)
         if not policy_file or policy_file not in self._policies:
             return ToolResult(
@@ -186,9 +186,9 @@ class CheckPolicyTool(Tool):
                 data={},
                 error=f"Policy type '{policy_type}' not found"
             )
-        
+
         policy_content = self._policies[policy_file]
-        
+
         # Extract relevant section if query provided
         if query:
             # Simple keyword matching (in production, use RAG)
@@ -199,7 +199,7 @@ class CheckPolicyTool(Tool):
             ]
             if relevant_lines:
                 policy_content = '\n'.join(relevant_lines[:10])  # First 10 matches
-        
+
         return ToolResult(
             status=ToolStatus.SUCCESS,
             data={
@@ -213,16 +213,16 @@ class CheckPolicyTool(Tool):
 class ProcessRefundTool(Tool):
     """
     Process refund to guest's payment method.
-    
+
     In production, this would integrate with payment gateway.
     """
-    
+
     def __init__(self):
         super().__init__(
             name="process_refund",
             description="Process refund to guest's original payment method"
         )
-    
+
     def get_input_schema(self) -> Dict[str, Any]:
         return {
             "type": "object",
@@ -253,12 +253,12 @@ class ProcessRefundTool(Tool):
             },
             "required": ["booking_id", "amount", "reason"]
         }
-    
+
     def _execute(self, **kwargs) -> ToolResult:
         booking_id = kwargs["booking_id"]
         amount = kwargs["amount"]
         reason = kwargs["reason"]
-        
+
         # Validate amount
         if amount < 0:
             return ToolResult(
@@ -266,10 +266,10 @@ class ProcessRefundTool(Tool):
                 data={},
                 error="Refund amount must be positive"
             )
-        
+
         # Simulate refund processing
         transaction_id = f"REF-{booking_id}-{datetime.now().strftime('%Y%m%d%H%M%S')}"
-        
+
         # Simulate 95% success rate
         if random.random() < 0.95:
             return ToolResult(
@@ -296,16 +296,16 @@ class ProcessRefundTool(Tool):
 class SendEmailTool(Tool):
     """
     Send email to guest.
-    
+
     In production, this would integrate with email service (SendGrid, SES, etc.).
     """
-    
+
     def __init__(self):
         super().__init__(
             name="send_email",
             description="Send email notification to guest"
         )
-    
+
     def get_input_schema(self) -> Dict[str, Any]:
         return {
             "type": "object",
@@ -329,12 +329,12 @@ class SendEmailTool(Tool):
             },
             "required": ["to", "template", "data"]
         }
-    
+
     def _execute(self, **kwargs) -> ToolResult:
         to = kwargs["to"]
         template = kwargs["template"]
         data = kwargs["data"]
-        
+
         # Validate email
         if "@" not in to:
             return ToolResult(
@@ -342,10 +342,10 @@ class SendEmailTool(Tool):
                 data={},
                 error="Invalid email address"
             )
-        
+
         # Simulate email sending
         message_id = f"MSG-{datetime.now().strftime('%Y%m%d%H%M%S')}"
-        
+
         return ToolResult(
             status=ToolStatus.SUCCESS,
             data={
@@ -361,16 +361,16 @@ class SendEmailTool(Tool):
 class UpdatePMSTool(Tool):
     """
     Update Property Management System.
-    
+
     In production, this would integrate with PMS API (Opera, Mews, etc.).
     """
-    
+
     def __init__(self):
         super().__init__(
             name="update_pms",
             description="Update property management system with booking changes or service requests"
         )
-    
+
     def get_input_schema(self) -> Dict[str, Any]:
         return {
             "type": "object",
@@ -395,13 +395,13 @@ class UpdatePMSTool(Tool):
             },
             "required": ["action"]
         }
-    
+
     def _execute(self, **kwargs) -> ToolResult:
         action = kwargs["action"]
-        
+
         # Simulate PMS update
         ticket_id = f"PMS-{action.upper()}-{datetime.now().strftime('%Y%m%d%H%M%S')}"
-        
+
         return ToolResult(
             status=ToolStatus.SUCCESS,
             data={
@@ -416,16 +416,16 @@ class UpdatePMSTool(Tool):
 class NotifyTeamTool(Tool):
     """
     Notify internal team (housekeeping, maintenance, front desk, etc.).
-    
+
     In production, this would integrate with team communication system.
     """
-    
+
     def __init__(self):
         super().__init__(
             name="notify_team",
             description="Send notification to internal team"
         )
-    
+
     def get_input_schema(self) -> Dict[str, Any]:
         return {
             "type": "object",
@@ -447,15 +447,15 @@ class NotifyTeamTool(Tool):
             },
             "required": ["team", "notification_type", "data"]
         }
-    
+
     def _execute(self, **kwargs) -> ToolResult:
         team = kwargs["team"]
         notification_type = kwargs["notification_type"]
         data = kwargs["data"]
-        
+
         # Simulate team notification
         notification_id = f"NOTIF-{team.upper()}-{datetime.now().strftime('%Y%m%d%H%M%S')}"
-        
+
         return ToolResult(
             status=ToolStatus.SUCCESS,
             data={
@@ -471,16 +471,16 @@ class NotifyTeamTool(Tool):
 class CheckRoomAvailabilityTool(Tool):
     """
     Check room availability for specific dates or times.
-    
+
     In production, this would query PMS availability system.
     """
-    
+
     def __init__(self):
         super().__init__(
             name="check_room_availability",
             description="Check room availability for dates, times, or upgrades"
         )
-    
+
     def get_input_schema(self) -> Dict[str, Any]:
         return {
             "type": "object",
@@ -519,14 +519,14 @@ class CheckRoomAvailabilityTool(Tool):
                 }
             }
         }
-    
+
     def _execute(self, **kwargs) -> ToolResult:
         # Simulate availability check
         # In production, this would query real availability data
-        
+
         # Simulate 70% availability
         is_available = random.random() < 0.7
-        
+
         if is_available:
             # Generate mock available rooms/times
             if kwargs.get("room_category") == "upgrade":
@@ -575,16 +575,16 @@ class CheckRoomAvailabilityTool(Tool):
 class UpdateBookingTool(Tool):
     """
     Update booking details (room, dates, charges, status, etc.).
-    
+
     In production, this would update PMS booking records.
     """
-    
+
     def __init__(self):
         super().__init__(
             name="update_booking",
             description="Update booking details including room, dates, charges, and status"
         )
-    
+
     def get_input_schema(self) -> Dict[str, Any]:
         return {
             "type": "object",
@@ -649,19 +649,19 @@ class UpdateBookingTool(Tool):
             },
             "required": ["booking_id"]
         }
-    
+
     def _execute(self, **kwargs) -> ToolResult:
         booking_id = kwargs["booking_id"]
-        
+
         # Simulate booking update
         update_id = f"UPD-{booking_id}-{datetime.now().strftime('%Y%m%d%H%M%S')}"
-        
+
         # Build update summary
         updates = []
         for key, value in kwargs.items():
             if key != "booking_id" and value is not None:
                 updates.append(f"{key}: {value}")
-        
+
         return ToolResult(
             status=ToolStatus.SUCCESS,
             data={
@@ -680,7 +680,7 @@ class UpdateBookingTool(Tool):
 def create_default_tools() -> list[Tool]:
     """
     Create all default mock tools.
-    
+
     Returns:
         List of Tool instances
     """

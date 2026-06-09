@@ -1,4 +1,4 @@
-last_updated: '2026-06-09T18:33:46.854449'
+last_updated: '2026-06-10T01:41:27.780811'
 skills:
 - active: true
   category: checkout
@@ -84,6 +84,17 @@ skills:
   file_path: data/skills/skill_a7bcad64.yaml
   name: I Want A Cradle For Handler
   skill_id: skill_a7bcad64
+  success_rate: 0.0
+  trigger_embedding_id: null
+  usage_count: 0
+  version: '1.0'
+- active: true
+  category: general
+  created_at: '2026-06-10T01:41:27.780706'
+  domain: hotel_operations
+  file_path: data/skills/skill_00bb2dc9.yaml
+  name: I Want A Car To Handler
+  skill_id: skill_00bb2dc9
   success_rate: 0.0
   trigger_embedding_id: null
   usage_count: 0

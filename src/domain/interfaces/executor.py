@@ -11,13 +11,13 @@ if TYPE_CHECKING:
 class IExecutor(ABC):
     """
     Interface for executor agent.
-    
+
     Phase 1 (POC): Dummy implementation that delegates to Orchestrator.
     Human executes actions manually after approval.
-    
+
     Phase 2 (Future): Autonomous execution of approved low-risk actions
     with error recovery and rollback capabilities.
-    
+
     This interface is defined now to establish the contract and make
     Phase 2 migration straightforward.
     """
@@ -33,7 +33,7 @@ class IExecutor(ABC):
 
         Phase 1: Returns resolution with status updated to AWAITING_EXECUTION.
         Human performs actions manually and updates status.
-        
+
         Phase 2: Autonomously executes approved actions and returns
         completed resolution with execution results.
 
@@ -60,7 +60,7 @@ class IExecutor(ABC):
         Execute a single resolution step.
 
         Phase 1: Returns step with status updated to AWAITING_EXECUTION.
-        
+
         Phase 2: Executes the step and returns result.
 
         Args:
@@ -129,7 +129,7 @@ class IExecutor(ABC):
         Cancel an in-progress execution.
 
         Phase 1: Updates status to CANCELLED.
-        
+
         Phase 2: Attempts graceful cancellation and rollback.
 
         Args:

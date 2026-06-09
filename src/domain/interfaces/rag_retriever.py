@@ -8,7 +8,7 @@ from ..models.context import RetrievedContext, RAGContext
 class IRAGRetriever(ABC):
     """
     Interface for RAG (Retrieval-Augmented Generation) retrieval system.
-    
+
     This interface defines the contract for retrieving relevant context from
     the knowledge base to ground agent responses and decisions.
     """

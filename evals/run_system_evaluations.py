@@ -66,12 +66,12 @@ def load_test_cases(file_path: str) -> List[Dict[str, Any]]:
 def initialize_rag_pipeline() -> RAGPipeline:
     """
     Initialize RAG pipeline with indexed data.
-    
+
     Note: Uses production vector store. For isolated evaluation,
     run indexing scripts first with eval-specific collections.
     """
     logger.info("Initializing RAG pipeline for evaluation...")
-    
+
     config = RAGConfig(
         embedding_provider="openai",
         embedding_model="text-embedding-3-small",
@@ -81,30 +81,30 @@ def initialize_rag_pipeline() -> RAGPipeline:
         retrieval_top_k=10,
         rerank_top_k=5
     )
-    
+
     pipeline = RAGPipeline(config)
-    
+
     try:
         count = pipeline.vector_store.count()
-logger.info(f" RAG pipeline initialized ({count} indexed chunks)")
+        logger.info(f" RAG pipeline initialized ({count} indexed chunks)")
     except Exception as e:
         logger.warning(f"Could not get vector store count: {e}")
-logger.info(" RAG pipeline initialized (count unavailable)")
-    
+        logger.info(" RAG pipeline initialized (count unavailable)")
+
     return pipeline
 
 
 def initialize_skill_matcher() -> SkillMatcher:
     """
     Initialize skill matcher with indexed skills.
-    
+
     Note: Uses production vector store. For isolated evaluation,
     run indexing scripts first with eval-specific collections.
     """
     logger.info("Initializing skill matcher for evaluation...")
-    
+
     import os
-    
+
     # Create embedding service and vector store FIRST
     # IMPORTANT: Must use SentenceTransformer to match skills indexing (384 dimensions)
     embedding_service = EmbeddingServiceFactory.create(
@@ -118,7 +118,7 @@ def initialize_skill_matcher() -> SkillMatcher:
         collection_name="hotel_skills",
         distance_metric=DistanceMetric.COSINE
     )
-    
+
     # Pass embedding_service and vector_store to SkillRegistry
     skill_registry = SkillRegistry(
         skills_dir="./data/skills",
@@ -133,7 +133,7 @@ def initialize_skill_matcher() -> SkillMatcher:
         )
     )
     llm_service = LLMService(model="gpt-5.4-mini")
-    
+
     matcher = SkillMatcher(
         skill_registry=skill_registry,
         embedding_service=embedding_service,
@@ -143,29 +143,29 @@ def initialize_skill_matcher() -> SkillMatcher:
         high_confidence_threshold=0.60,
         medium_confidence_threshold=0.45
     )
-    
+
     skill_count = len(skill_registry.get_all_skills())
     logger.info(f"Skill matcher initialized ({skill_count} skills)")
-    
+
     return matcher
 
 
 class RAGPipelineAdapter:
     """
     Adapter: RAG Pipeline → Evaluator Interface
-    
+
     Converts query_with_reranking() output to retrieve_and_generate() format.
     Adds LLM-based answer generation on top of retrieval.
     """
-    
+
     def __init__(self, rag_pipeline: RAGPipeline, llm_service: LLMService):
         self.rag_pipeline = rag_pipeline
         self.llm_service = llm_service
-    
+
     def retrieve_and_generate(self, query: str, metadata_filters=None, top_k=None):
         """
         Retrieve + Generate answer.
-        
+
         Returns:
             {"answer": str, "contexts": List[dict]}
         """
@@ -175,9 +175,9 @@ class RAGPipelineAdapter:
             metadata_filters=metadata_filters,
             top_k=top_k or 5
         )
-        
+
         logger.debug(f"Query: '{query}' | Retrieved {len(reranked_results)} results")
-        
+
         # Step 2: Format contexts
         contexts = [
             {
@@ -188,27 +188,27 @@ class RAGPipelineAdapter:
             }
             for r in reranked_results
         ]
-        
+
         if contexts:
             logger.debug(f"First context source: {contexts[0]['metadata'].get('source', 'unknown')}")
         else:
             logger.warning(f"No contexts retrieved for query: '{query}'")
-        
+
         # Step 3: Generate answer using LLM
         context_text = "\n\n".join([
             f"[Source: {c['metadata'].get('source', 'unknown')}]\n{c['content']}"
             for c in contexts
         ])
-        
+
         system_prompt = "You are a hotel customer service assistant. Answer questions based ONLY on the provided context. Be concise and factual."
-        
+
         user_prompt = f"""Context:
 {context_text}
 
 Question: {query}
 
 Answer:"""
-        
+
         answer_response = self.llm_service.generate(
             system_prompt=system_prompt,
             user_prompt=user_prompt,
@@ -216,7 +216,7 @@ Answer:"""
             max_completion_tokens=300
         )
         answer = answer_response.content
-        
+
         return {"answer": answer, "contexts": contexts}
 
 
@@ -225,13 +225,13 @@ def run_kb_rag_evaluation(rag_adapter: RAGPipelineAdapter, num_cases: Optional[i
     logger.info("\n" + "="*80)
     logger.info("KB RAG EVALUATION (Real System)")
     logger.info("="*80)
-    
+
     judge = LLMJudge(model="gpt-5.4-mini")
     evaluator = KnowledgeBaseRAGEvaluator(llm_judge=judge)
-    
+
     test_cases_path = Path(__file__).parent / "test_data/kb_rag_test_cases.json"
     test_cases_json = load_test_cases(str(test_cases_path))
-    
+
     test_cases = [
         KBRAGTestCase(
             question=case['question'],
@@ -240,10 +240,10 @@ def run_kb_rag_evaluation(rag_adapter: RAGPipelineAdapter, num_cases: Optional[i
         )
         for case in (test_cases_json[:num_cases] if num_cases else test_cases_json)
     ]
-    
+
     logger.info(f"Running {len(test_cases)} test cases...")
     results = evaluator.evaluate_batch(test_cases, rag_adapter)
-    
+
     # Print summary
     logger.info("\n" + "="*80)
     logger.info("RESULTS")
@@ -253,12 +253,12 @@ def run_kb_rag_evaluation(rag_adapter: RAGPipelineAdapter, num_cases: Optional[i
     logger.info(f"Answer Relevancy: {results.avg_answer_relevancy:.3f} (target: ≥0.90)")
     logger.info(f"Context Precision: {results.avg_context_precision:.3f} (target: ≥0.80)")
     logger.info(f"Context Recall: {results.avg_context_recall:.3f} (target: ≥0.90)")
-    
+
     logger.info("\nBy Category:")
     for cat, cat_results in results.results_by_category.items():
         passed = sum(1 for r in cat_results if r.passed)
         logger.info(f"  {cat}: {passed}/{len(cat_results)}")
-    
+
     return results
 
 
@@ -267,12 +267,12 @@ def run_skill_matching_evaluation(skill_matcher: SkillMatcher, num_cases: Option
     logger.info("\n" + "="*80)
     logger.info("SKILL MATCHING EVALUATION (Real System)")
     logger.info("="*80)
-    
+
     evaluator = SkillMatchingEvaluator(confidence_threshold=0.45)
-    
+
     test_cases_path = Path(__file__).parent / "test_data/skill_matching_test_cases.json"
     test_cases_json = load_test_cases(str(test_cases_path))
-    
+
     test_cases = [
         SkillMatchTestCase(
             issue_description=case['issue_description'],
@@ -283,10 +283,10 @@ def run_skill_matching_evaluation(skill_matcher: SkillMatcher, num_cases: Option
         )
         for case in (test_cases_json[:num_cases] if num_cases else test_cases_json)
     ]
-    
+
     logger.info(f"Running {len(test_cases)} test cases...")
     results = evaluator.evaluate_batch(test_cases, skill_matcher)
-    
+
     # Print summary
     logger.info("\n" + "="*80)
     logger.info("RESULTS")
@@ -297,12 +297,12 @@ def run_skill_matching_evaluation(skill_matcher: SkillMatcher, num_cases: Option
     logger.info(f"MRR: {results.mean_reciprocal_rank:.3f}")
     logger.info(f"False Positive Rate: {results.false_positive_rate:.3f}")
     logger.info(f"False Negative Rate: {results.false_negative_rate:.3f}")
-    
+
     logger.info("\nBy Category:")
     for cat, cat_results in results.results_by_category.items():
         passed = sum(1 for r in cat_results if r.passed)
         logger.info(f"  {cat}: {passed}/{len(cat_results)}")
-    
+
     return results
 
 def generate_markdown_report(
@@ -313,35 +313,35 @@ def generate_markdown_report(
 ) -> str:
     """
     Generate a PM-friendly markdown report from evaluation results.
-    
+
     Args:
         kb_results: Knowledge base RAG evaluation results
         skill_results: Skill matching evaluation results
         timestamp: Timestamp string for the report
         output_dir: Directory to save the report
-        
+
     Returns:
         Path to the generated report file
     """
     from pathlib import Path
     from datetime import datetime
-    
+
     # Create reports directory if it doesn't exist
     Path(output_dir).mkdir(parents=True, exist_ok=True)
-    
+
     # Generate report filename
     report_file = f"{output_dir}/evaluation_report_{timestamp}.md"
-    
+
     # Extract key metrics
     kb_pass_rate = kb_results["summary"]["pass_rate"] * 100
     skill_pass_rate = skill_results["summary"]["pass_rate"] * 100
-    
+
     kb_total = kb_results["summary"]["total_cases"]
     kb_passed = kb_results["summary"]["passed_cases"]
-    
+
     skill_total = skill_results["summary"]["total_cases"]
     skill_passed = skill_results["summary"]["passed_cases"]
-    
+
     # Build report content
     report = f"""# Customer Issue Resolution Copilot - Evaluation Report
 
@@ -388,7 +388,7 @@ When a customer asks a question (e.g., "What's your cancellation policy?"), the 
 ### Results by Category
 
 """
-    
+
     # Add KB category breakdown
     for category, stats in kb_results["category_breakdown"].items():
         report += f"""
@@ -400,7 +400,7 @@ When a customer asks a question (e.g., "What's your cancellation policy?"), the 
 - **Avg Context Precision:** {stats['avg_context_precision']:.1%}
 - **Avg Context Recall:** {stats['avg_context_recall']:.1%}
 """
-    
+
     report += f"""
 ---
 
@@ -431,10 +431,10 @@ When a customer issue comes in (e.g., "I need to checkout late"), the system mus
 ### Results by Category
 
 """
-    
+
     # Add skill matching category breakdown
     for category, stats in skill_results["category_breakdown"].items():
-status_emoji = "" if stats['passed'] == stats['count'] else "️" if stats['passed'] > 0 else ""
+        status_emoji = "" if stats['passed'] == stats['count'] else "️" if stats['passed'] > 0 else ""
         report += f"""
 #### {category.title()} Issues ({stats['count']} tests) {status_emoji}
 
@@ -443,7 +443,7 @@ status_emoji = "" if stats['passed'] == stats['count'] else "️" if stats['pass
 - **Top-3 Accuracy:** {stats['top_3_accuracy']:.1%}
 - **Avg Confidence:** {stats['avg_confidence']:.2f}
 """
-    
+
     report += f"""
 ---
 
@@ -452,48 +452,48 @@ status_emoji = "" if stats['passed'] == stats['count'] else "️" if stats['pass
 ### What's Working Well
 
 """
-    
+
     # Identify what's working
     working_well = []
     for category, stats in skill_results["category_breakdown"].items():
         if stats['top_1_accuracy'] >= 0.9:
             working_well.append(f"- **{category.title()} Skill Matching:** {stats['top_1_accuracy']:.0%} accuracy ({stats['passed']}/{stats['count']} tests passed)")
-    
+
     if kb_results['average_scores']['faithfulness'] >= 0.85:
         working_well.append(f"- **RAG Faithfulness:** {kb_results['average_scores']['faithfulness']:.1%} (no hallucinations)")
-    
+
     if working_well:
         report += "\n".join(working_well) + "\n"
     else:
         report += "- No components currently meeting target thresholds\n"
-    
+
     report += """
 ### ️ What Needs Improvement
 
 """
-    
+
     # Identify what needs improvement
     needs_improvement = []
-    
+
     if kb_pass_rate < 85:
         needs_improvement.append(f"- **Knowledge Base RAG:** Only {kb_pass_rate:.0f}% pass rate (target: 85%+)")
         if kb_results['average_scores']['faithfulness'] < 0.85:
             needs_improvement.append(f"  - Faithfulness: {kb_results['average_scores']['faithfulness']:.1%} (hallucination risk)")
         if kb_results['average_scores']['answer_relevancy'] < 0.90:
             needs_improvement.append(f"  - Answer Relevancy: {kb_results['average_scores']['answer_relevancy']:.1%} (answers not addressing questions)")
-    
+
     for category, stats in skill_results["category_breakdown"].items():
         if stats['top_1_accuracy'] < 0.9:
             needs_improvement.append(f"- **{category.title()} Skill Matching:** Only {stats['top_1_accuracy']:.0%} accuracy (target: 90%+)")
-    
+
     if skill_results['error_analysis']['avg_confidence_when_correct'] < 0.5:
         needs_improvement.append(f"- **Confidence Calibration:** Low confidence ({skill_results['error_analysis']['avg_confidence_when_correct']:.2f}) even when correct")
-    
+
     if needs_improvement:
         report += "\n".join(needs_improvement) + "\n"
     else:
-report += "- All components meeting target thresholds \n"
-    
+        report += "- All components meeting target thresholds \n"
+
     report += f"""
 ---
 
@@ -502,10 +502,10 @@ report += "- All components meeting target thresholds \n"
 ### Priority Actions
 
 """
-    
+
     # Generate recommendations based on results
     recommendations = []
-    
+
     if kb_pass_rate < 50:
         recommendations.append("""
 ** CRITICAL: Fix Knowledge Base RAG**
@@ -526,7 +526,7 @@ report += "- All components meeting target thresholds \n"
   3. Improve prompt engineering
 - Timeline: 1-2 weeks
 """.format(kb_pass_rate))
-    
+
     for category, stats in skill_results["category_breakdown"].items():
         if stats['top_1_accuracy'] < 0.5:
             recommendations.append(f"""
@@ -538,7 +538,7 @@ report += "- All components meeting target thresholds \n"
   3. Re-index skills with new triggers
 - Timeline: 1-2 days
 """)
-    
+
     if skill_results['error_analysis']['avg_confidence_when_correct'] < 0.5:
         recommendations.append(f"""
 ** MEDIUM: Tune Confidence Scoring**
@@ -549,12 +549,12 @@ report += "- All components meeting target thresholds \n"
   3. Calibrate confidence scores to accuracy
 - Timeline: 2-3 days
 """)
-    
+
     if recommendations:
         report += "\n".join(recommendations)
     else:
-report += "- All components meeting targets - focus on maintaining quality \n"
-    
+        report += "- All components meeting targets - focus on maintaining quality \n"
+
     report += f"""
 ---
 
@@ -598,12 +598,12 @@ report += "- All components meeting targets - focus on maintaining quality \n"
 - `evals/results/kb_rag_{timestamp}.json`
 - `evals/results/skill_matching_{timestamp}.json`
 """
-    
+
     # Write report to file
     with open(report_file, 'w') as f:
         f.write(report)
-    
-logger.info(f" Generated evaluation report: {report_file}")
+
+        logger.info(f" Generated evaluation report: {report_file}")
     return report_file
 
 
@@ -611,73 +611,73 @@ logger.info(f" Generated evaluation report: {report_file}")
 def clear_and_reindex_vector_stores():
     """
     Clear evaluation vector stores and re-index from scratch.
-    
+
     This ensures each evaluation run starts with fresh, consistent data.
-    
+
     Vector Stores Used for Evaluation:
     ----------------------------------
     1. Knowledge Base: ChromaDB collection "hotel_knowledge"
        - Location: ./data/vector_store/
        - Contains: Policies, procedures, historical tickets
        - Indexed by: scripts/index_knowledge_base.py
-    
+
     2. Skills: ChromaDB collection "hotel_skills"
        - Location: ./data/vector_store/
        - Contains: Skill trigger embeddings for semantic matching
        - Indexed by: scripts/index_skills.py
-    
+
     Note: Both collections share the same persist_directory but are
     separate collections within ChromaDB. Clearing the directory
     removes both collections, ensuring a clean slate for evaluation.
     """
     import shutil
     import subprocess
-    
+
     logger.info("\n" + "="*80)
     logger.info("CLEARING AND RE-INDEXING VECTOR STORES")
     logger.info("="*80)
-    
+
     # Clear vector store directories
     vector_store_path = Path("./data/vector_store")
     if vector_store_path.exists():
-logger.info("️ Clearing existing vector store...")
+        logger.info("️ Clearing existing vector store...")
         shutil.rmtree(vector_store_path)
-logger.info(" Vector store cleared")
-    
+        logger.info(" Vector store cleared")
+
     # Re-index knowledge base with --test flag
-logger.info("\n Re-indexing knowledge base...")
+    logger.info("\n Re-indexing knowledge base...")
     kb_result = subprocess.run(
-        ["python", "reindex_hotel_knowledge.py", "--test"],
+        ["python", "scripts/reindex_hotel_knowledge.py", "--test"],
         capture_output=True,
         text=True
     )
-    
+
     if kb_result.returncode != 0:
-logger.error(f" Knowledge base indexing failed:")
+        logger.error(f" Knowledge base indexing failed:")
         logger.error(kb_result.stderr)
         raise RuntimeError("Knowledge base indexing failed")
-    
-logger.info(" Knowledge base indexed")
-    
+
+    logger.info(" Knowledge base indexed")
+
     # Re-index skills with --test flag
-logger.info("\n Re-indexing skills...")
+    logger.info("\n Re-indexing skills...")
     skills_result = subprocess.run(
-        ["python", "scripts/reindex_skills.py", "--test"],
+        ["python", "scripts/reindex_skills_simple.py"],
         capture_output=True,
         text=True
     )
-    
+
     if skills_result.returncode != 0:
-logger.error(f" Skills indexing failed:")
+        logger.error(f" Skills indexing failed:")
         logger.error(skills_result.stderr)
         raise RuntimeError("Skills indexing failed")
-    
-logger.info(" Skills indexed")
-    
+
+    logger.info(" Skills indexed")
+
     # Verify indexing worked
-logger.info("\n Verifying indexing...")
+    logger.info("\n Verifying indexing...")
     verify_indexing()
-    
+
     logger.info("\n" + "="*80)
     logger.info("RE-INDEXING COMPLETE")
     logger.info("="*80 + "\n")
@@ -686,7 +686,7 @@ logger.info("\n Verifying indexing...")
 def verify_indexing():
     """
     Verify that vector stores were properly indexed.
-    
+
     Checks:
     1. Knowledge base collection has documents
     2. Skills collection has documents
@@ -694,7 +694,7 @@ def verify_indexing():
     import os
     from src.infrastructure.embeddings.embedding_service import EmbeddingServiceFactory, EmbeddingProvider
     from src.infrastructure.vector_store.chromadb_adapter import ChromaDBAdapter, DistanceMetric
-    
+
     try:
         # Check knowledge base
         logger.info("  Checking knowledge base collection...")
@@ -705,11 +705,11 @@ def verify_indexing():
         )
         kb_count = kb_vector_store.count()
         if kb_count > 0:
-logger.info(f" Knowledge base: {kb_count} documents indexed")
+            logger.info(f" Knowledge base: {kb_count} documents indexed")
         else:
-logger.error(f" Knowledge base: 0 documents found!")
+            logger.error(f" Knowledge base: 0 documents found!")
             raise RuntimeError("Knowledge base indexing verification failed")
-        
+
         # Check skills
         logger.info("  Checking skills collection...")
         skills_vector_store = ChromaDBAdapter(
@@ -719,13 +719,13 @@ logger.error(f" Knowledge base: 0 documents found!")
         )
         skills_count = skills_vector_store.count()
         if skills_count > 0:
-logger.info(f" Skills: {skills_count} documents indexed")
+            logger.info(f" Skills: {skills_count} documents indexed")
         else:
-logger.error(f" Skills: 0 documents found!")
+            logger.error(f" Skills: 0 documents found!")
             raise RuntimeError("Skills indexing verification failed")
-            
+
     except Exception as e:
-logger.error(f" Verification failed: {e}")
+        logger.error(f" Verification failed: {e}")
         raise RuntimeError(f"Indexing verification failed: {e}")
 
 
@@ -734,53 +734,53 @@ def main():
     logger.info("="*80)
     logger.info("SYSTEM EVALUATION")
     logger.info("="*80)
-    
+
     try:
         # Step 1: Clear and re-index vector stores for fresh evaluation
         clear_and_reindex_vector_stores()
-        
+
         # Step 2: Initialize components
         logger.info("\nInitializing components...")
         rag_pipeline = initialize_rag_pipeline()
         skill_matcher = initialize_skill_matcher()
         llm_service = LLMService(model="gpt-5.4-mini")
         rag_adapter = RAGPipelineAdapter(rag_pipeline, llm_service)
-        
+
         # Run evaluations (start with subset for speed)
         kb_results = run_kb_rag_evaluation(rag_adapter, num_cases=5)
         skill_results = run_skill_matching_evaluation(skill_matcher, num_cases=10)
-        
+
         # Export results
         results_dir = Path("./evals/results")
         results_dir.mkdir(exist_ok=True)
-        
+
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         kb_file = results_dir / f"kb_rag_{timestamp}.json"
         skill_file = results_dir / f"skill_matching_{timestamp}.json"
-        
+
         with open(kb_file, 'w') as f:
             json.dump(kb_results.to_dict(), f, indent=2)
         with open(skill_file, 'w') as f:
             json.dump(skill_results.to_dict(), f, indent=2)
-        
+
         logger.info("\n" + "="*80)
         logger.info("COMPLETE")
         logger.info("="*80)
         logger.info(f"\nResults: {kb_file}")
         logger.info(f"         {skill_file}")
-        
+
         # Generate markdown report
-logger.info("\n Generating evaluation report...")
+        logger.info("\n Generating evaluation report...")
         report_path = generate_markdown_report(
             kb_results=kb_results.to_dict(),
             skill_results=skill_results.to_dict(),
             timestamp=timestamp
         )
-logger.info(f" Report saved to: {report_path}")
+        logger.info(f" Report saved to: {report_path}")
         logger.info("\nNext: Review failures, improve system, re-run with full suite")
-        
+
         return 0
-        
+
     except Exception as e:
         logger.error(f"\nFailed: {e}", exc_info=True)
         return 1

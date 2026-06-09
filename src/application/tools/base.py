@@ -27,7 +27,7 @@ class ToolStatus(str, Enum):
 class ToolResult:
     """
     Result of a tool execution.
-    
+
     Contains the output data, status, and any metadata about the execution.
     """
     status: ToolStatus
@@ -37,15 +37,15 @@ class ToolResult:
     requires_approval: bool = False
     approval_reason: Optional[str] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def is_success(self) -> bool:
         """Check if execution was successful"""
         return self.status == ToolStatus.SUCCESS
-    
+
     def is_failure(self) -> bool:
         """Check if execution failed"""
         return self.status == ToolStatus.FAILURE
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary"""
         return {
@@ -61,7 +61,7 @@ class ToolResult:
 
 class ToolExecutionError(Exception):
     """Raised when tool execution fails"""
-    
+
     def __init__(
         self,
         message: str,
@@ -78,7 +78,7 @@ class ToolExecutionError(Exception):
 class Tool(ABC):
     """
     Abstract base class for all tools.
-    
+
     Tools are the interface between the agent and external systems.
     Each tool should:
     - Have a clear, descriptive name
@@ -88,11 +88,11 @@ class Tool(ABC):
     - Return a structured result
     - Handle errors gracefully
     """
-    
+
     def __init__(self, name: str, description: str):
         """
         Initialize tool.
-        
+
         Args:
             name: Unique tool identifier
             description: Human-readable description of what the tool does
@@ -103,120 +103,120 @@ class Tool(ABC):
         self._success_count = 0
         self._failure_count = 0
         self._total_execution_time_ms = 0.0
-    
+
     @abstractmethod
     def get_input_schema(self) -> Dict[str, Any]:
         """
         Return JSON schema for tool inputs.
-        
+
         This is used for:
         - Input validation
         - LLM function calling
         - Documentation generation
-        
+
         Returns:
             JSON schema dict
         """
         pass
-    
+
     @abstractmethod
     def _execute(self, **kwargs) -> ToolResult:
         """
         Execute the tool's core logic.
-        
+
         This is the method subclasses should implement.
-        
+
         Args:
             **kwargs: Tool-specific inputs
-            
+
         Returns:
             ToolResult with execution outcome
-            
+
         Raises:
             ToolExecutionError: If execution fails
         """
         pass
-    
+
     def validate_inputs(self, inputs: Dict[str, Any]) -> None:
         """
         Validate inputs against schema.
-        
+
         Args:
             inputs: Input parameters
-            
+
         Raises:
             ValueError: If inputs are invalid
         """
         schema = self.get_input_schema()
         required = schema.get("required", [])
         properties = schema.get("properties", {})
-        
+
         # Check required fields
         for field in required:
             if field not in inputs:
                 raise ValueError(f"Missing required field: {field}")
-        
+
         # Check field types (basic validation)
         for field, value in inputs.items():
             if field not in properties:
                 logger.warning(f"Unknown field '{field}' for tool '{self.name}'")
-    
+
     def execute(self, **kwargs) -> ToolResult:
         """
         Execute the tool with input validation and error handling.
-        
+
         This is the public interface that should be called.
-        
+
         Args:
             **kwargs: Tool-specific inputs
-            
+
         Returns:
             ToolResult with execution outcome
         """
         start_time = datetime.now()
-        
+
         try:
             # Validate inputs
             self.validate_inputs(kwargs)
-            
+
             # Execute
             logger.info(f"Executing tool '{self.name}' with inputs: {kwargs}")
             result = self._execute(**kwargs)
-            
+
             # Update metrics
             self._execution_count += 1
             if result.is_success():
                 self._success_count += 1
             else:
                 self._failure_count += 1
-            
+
             # Calculate execution time
             end_time = datetime.now()
             execution_time_ms = (end_time - start_time).total_seconds() * 1000
             result.execution_time_ms = execution_time_ms
             self._total_execution_time_ms += execution_time_ms
-            
+
             logger.info(
                 f"Tool '{self.name}' completed with status {result.status} "
                 f"in {execution_time_ms:.2f}ms"
             )
-            
+
             return result
-            
+
         except Exception as e:
             # Handle execution errors
             self._execution_count += 1
             self._failure_count += 1
-            
+
             end_time = datetime.now()
             execution_time_ms = (end_time - start_time).total_seconds() * 1000
             self._total_execution_time_ms += execution_time_ms
-            
+
             logger.error(
                 f"Tool '{self.name}' failed: {str(e)}",
                 exc_info=True
             )
-            
+
             # Return failure result
             return ToolResult(
                 status=ToolStatus.FAILURE,
@@ -225,11 +225,11 @@ class Tool(ABC):
                 execution_time_ms=execution_time_ms,
                 metadata={"exception_type": type(e).__name__}
             )
-    
+
     def get_metrics(self) -> Dict[str, Any]:
         """
         Get tool execution metrics.
-        
+
         Returns:
             Dict with execution statistics
         """
@@ -250,11 +250,11 @@ class Tool(ABC):
             ),
             "total_execution_time_ms": self._total_execution_time_ms
         }
-    
+
     def to_function_schema(self) -> Dict[str, Any]:
         """
         Convert tool to OpenAI function calling schema.
-        
+
         Returns:
             Function schema dict
         """
@@ -268,77 +268,77 @@ class Tool(ABC):
 class ToolRegistry:
     """
     Registry for managing available tools.
-    
+
     Provides:
     - Tool registration
     - Tool lookup by name
     - Tool listing
     - Metrics aggregation
     """
-    
+
     def __init__(self):
         """Initialize empty registry"""
         self._tools: Dict[str, Tool] = {}
-    
+
     def register(self, tool: Tool) -> None:
         """
         Register a tool.
-        
+
         Args:
             tool: Tool instance to register
-            
+
         Raises:
             ValueError: If tool name already registered
         """
         if tool.name in self._tools:
             raise ValueError(f"Tool '{tool.name}' already registered")
-        
+
         self._tools[tool.name] = tool
         logger.info(f"Registered tool: {tool.name}")
-    
+
     def get(self, name: str) -> Optional[Tool]:
         """
         Get tool by name.
-        
+
         Args:
             name: Tool name
-            
+
         Returns:
             Tool instance or None if not found
         """
         return self._tools.get(name)
-    
+
     def list_tools(self) -> List[str]:
         """
         List all registered tool names.
-        
+
         Returns:
             List of tool names
         """
         return list(self._tools.keys())
-    
+
     def get_all_tools(self) -> List[Tool]:
         """
         Get all registered tools.
-        
+
         Returns:
             List of Tool instances
         """
         return list(self._tools.values())
-    
+
     def get_function_schemas(self) -> List[Dict[str, Any]]:
         """
         Get OpenAI function schemas for all tools.
-        
+
         Returns:
             List of function schema dicts
         """
         return [tool.to_function_schema() for tool in self._tools.values()]
-    
+
     def get_metrics(self) -> Dict[str, Any]:
         """
         Get aggregated metrics for all tools.
-        
+
         Returns:
             Dict with tool metrics
         """
@@ -349,7 +349,7 @@ class ToolRegistry:
                 for name, tool in self._tools.items()
             }
         }
-    
+
     def clear(self) -> None:
         """Clear all registered tools"""
         self._tools.clear()

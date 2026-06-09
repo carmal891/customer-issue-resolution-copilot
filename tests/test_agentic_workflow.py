@@ -53,7 +53,7 @@ def print_header(text: str):
 
 def print_success(text: str):
     """Print success message"""
-print(f"{TestColors.OKGREEN} {text}{TestColors.ENDC}")
+    print(f"{TestColors.OKGREEN}✓ {text}{TestColors.ENDC}")
 
 
 def print_info(text: str):
@@ -63,12 +63,12 @@ def print_info(text: str):
 
 def print_warning(text: str):
     """Print warning message"""
-print(f"{TestColors.WARNING} {text}{TestColors.ENDC}")
+    print(f"{TestColors.WARNING}⚠ {text}{TestColors.ENDC}")
 
 
 def print_error(text: str):
     """Print error message"""
-print(f"{TestColors.FAIL} {text}{TestColors.ENDC}")
+    print(f"{TestColors.FAIL}✗ {text}{TestColors.ENDC}")
 
 
 def print_section(text: str):
@@ -267,11 +267,11 @@ class AgenticWorkflowTester:
                 print_success(f"Executor correctly blocked unauthorized execution: {type(e).__name__}")
             
             print_section("Scenario 1 Results")
-print_success(" Skill matching works correctly")
-print_success(" Approval request created successfully")
-print_success(" Approval token generated and validated")
-print_success(" Executor enforces approval gates")
-print_success(" Execution completed successfully")
+            print_success("✓ Skill matching works correctly")
+            print_success("✓ Approval request created successfully")
+            print_success("✓ Approval token generated and validated")
+            print_success("✓ Executor enforces approval gates")
+            print_success("✓ Execution completed successfully")
             
             return True
             
@@ -420,12 +420,12 @@ print_success(" Execution completed successfully")
                 print_warning("Skill compilation returned None (may be expected for some resolutions)")
             
             print_section("Scenario 2 Results")
-print_success(" TPAO loop handled novel issue")
-print_success(" Think-Plan-Act-Observe cycle completed")
-print_success(" Resolution generated successfully")
-print_success(" Approval and execution worked")
+            print_success("✓ TPAO loop handled novel issue")
+            print_success("✓ Think-Plan-Act-Observe cycle completed")
+            print_success("✓ Resolution generated successfully")
+            print_success("✓ Approval and execution worked")
             if compiled_skill:
-print_success(" Skill compilation created reusable skill")
+                print_success("✓ Skill compilation created reusable skill")
             
             return True
             
@@ -485,8 +485,8 @@ print_success(" Skill compilation created reusable skill")
             
             # Check if this is the compiled skill from scenario 2
             if "accessible" in best_match.skill.name.lower() or "wheelchair" in best_match.skill.name.lower():
-print_success(" Matched the skill compiled from scenario 2!")
-print_success(" Self-learning loop verified!")
+                print_success("✓ Matched the skill compiled from scenario 2!")
+                print_success("✓ Self-learning loop verified!")
             else:
                 print_info(f"Matched different skill: {best_match.skill.name}")
             
@@ -498,10 +498,10 @@ print_success(" Self-learning loop verified!")
             print_success("Skill is executable")
             
             print_section("Scenario 3 Results")
-print_success(" Similar issue matched compiled skill")
-print_success(" Self-learning loop works end-to-end")
-print_success(" System improves over time")
-print_success(" Novel task → Skill compilation → Reuse VERIFIED!")
+            print_success("✓ Similar issue matched compiled skill")
+            print_success("✓ Self-learning loop works end-to-end")
+            print_success("✓ System improves over time")
+            print_success("✓ Novel task → Skill compilation → Reuse VERIFIED!")
             
             return True
             
@@ -535,16 +535,16 @@ print_success(" Novel task → Skill compilation → Reuse VERIFIED!")
         passed_tests = sum(1 for result in results.values() if result)
         
         for scenario, result in results.items():
-status = " PASSED" if result else " FAILED"
+            status = "✓ PASSED" if result else "✗ FAILED"
             color = TestColors.OKGREEN if result else TestColors.FAIL
             print(f"{color}{status}{TestColors.ENDC} - {scenario.replace('_', ' ').title()}")
         
         print(f"\n{TestColors.BOLD}Results: {passed_tests}/{total_tests} tests passed{TestColors.ENDC}")
         
         if passed_tests == total_tests:
-print(f"{TestColors.OKGREEN}{TestColors.BOLD} ALL TESTS PASSED! {TestColors.ENDC}")
+            print(f"{TestColors.OKGREEN}{TestColors.BOLD}✓ ALL TESTS PASSED!{TestColors.ENDC}")
         else:
-print(f"{TestColors.WARNING}{TestColors.BOLD} Some tests failed{TestColors.ENDC}")
+            print(f"{TestColors.WARNING}{TestColors.BOLD}⚠ Some tests failed{TestColors.ENDC}")
         
         print(f"\n{TestColors.OKCYAN}Test completed at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}{TestColors.ENDC}")
         

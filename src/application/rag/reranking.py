@@ -52,7 +52,7 @@ class RerankResult:
     original_score: float
     rank: int
     relevance_explanation: Optional[str] = None
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary"""
         return {
@@ -68,7 +68,7 @@ class RerankResult:
 
 class IReranker(ABC):
     """Abstract interface for reranking implementations"""
-    
+
     @abstractmethod
     def rerank(
         self,
@@ -78,12 +78,12 @@ class IReranker(ABC):
     ) -> List[RerankResult]:
         """
         Rerank retrieval results.
-        
+
         Args:
             query: Original query
             results: Initial retrieval results
             top_k: Number of top results to return
-        
+
         Returns:
             Reranked results
         """
@@ -93,25 +93,25 @@ class IReranker(ABC):
 class CrossEncoderReranker(IReranker):
     """
     Cross-encoder reranking using sentence-transformers.
-    
+
     Cross-encoders jointly encode query and document for better
     relevance scoring than bi-encoders used in retrieval.
     """
-    
+
     def __init__(self, config: RerankConfig):
         """
         Initialize cross-encoder reranker.
-        
+
         Args:
             config: Reranking configuration
         """
         self.config = config
         self.model = None
-        
+
         logger.info(
             f"Initialized CrossEncoderReranker with model={config.model_name}"
         )
-    
+
     def _load_model(self):
         """Lazy load the cross-encoder model"""
         if self.model is None:
@@ -125,7 +125,7 @@ class CrossEncoderReranker(IReranker):
                     "Install with: pip install sentence-transformers"
                 )
                 raise
-    
+
     def rerank(
         self,
         query: str,
@@ -134,34 +134,34 @@ class CrossEncoderReranker(IReranker):
     ) -> List[RerankResult]:
         """
         Rerank using cross-encoder.
-        
+
         Args:
             query: Original query
             results: Initial retrieval results
             top_k: Number of top results to return
-        
+
         Returns:
             Reranked results with cross-encoder scores
         """
         if not results:
             return []
-        
+
         self._load_model()
-        
+
         top_k = top_k or self.config.top_k
-        
+
         logger.info(f"Reranking {len(results)} results with cross-encoder")
-        
+
         # Prepare query-document pairs
         pairs = [(query, result.content) for result in results]
-        
+
         # Get cross-encoder scores
         scores = self.model.predict(pairs)
-        
+
         # Normalize scores if configured
         if self.config.normalize_scores:
             scores = self._normalize_scores(scores)
-        
+
         # Create rerank results
         rerank_results = []
         for i, (result, score) in enumerate(zip(results, scores)):
@@ -174,28 +174,28 @@ class CrossEncoderReranker(IReranker):
                         rank=0  # Will be set after sorting
                     )
                 )
-        
+
         # Sort by rerank score
         rerank_results.sort(key=lambda x: x.rerank_score, reverse=True)
-        
+
         # Assign ranks and limit to top_k
         for i, result in enumerate(rerank_results[:top_k]):
             result.rank = i + 1
-        
+
         logger.info(
             f"Reranked to {len(rerank_results[:top_k])} results, "
             f"top score={rerank_results[0].rerank_score:.3f}"
         )
-        
+
         return rerank_results[:top_k]
-    
+
     def _normalize_scores(self, scores: List[float]) -> List[float]:
         """
         Normalize scores to [0, 1] range using min-max normalization.
-        
+
         Args:
             scores: Raw scores
-        
+
         Returns:
             Normalized scores
         """
@@ -207,48 +207,48 @@ class CrossEncoderReranker(IReranker):
             # numpy array
             if scores.size == 0:
                 return []
-        
+
         min_score = min(scores)
         max_score = max(scores)
-        
+
         if max_score == min_score:
             # All scores are the same
             return [1.0] * len(scores)
-        
+
         normalized = [
             (score - min_score) / (max_score - min_score)
             for score in scores
         ]
-        
+
         return normalized
 
 
 class CohereReranker(IReranker):
     """
     Reranking using Cohere Rerank API.
-    
+
     Cohere's rerank models are specifically trained for relevance scoring
     and often outperform open-source alternatives.
     """
-    
+
     def __init__(self, config: RerankConfig):
         """
         Initialize Cohere reranker.
-        
+
         Args:
             config: Reranking configuration with API key
         """
         self.config = config
         self.client = None
-        
+
         if not config.cohere_api_key:
             logger.warning(
                 "Cohere API key not provided. "
                 "Set COHERE_API_KEY environment variable."
             )
-        
+
         logger.info(f"Initialized CohereReranker with model={config.cohere_model}")
-    
+
     def _get_client(self):
         """Lazy load Cohere client"""
         if self.client is None:
@@ -261,7 +261,7 @@ class CohereReranker(IReranker):
                     "cohere not installed. Install with: pip install cohere"
                 )
                 raise
-    
+
     def rerank(
         self,
         query: str,
@@ -270,27 +270,27 @@ class CohereReranker(IReranker):
     ) -> List[RerankResult]:
         """
         Rerank using Cohere Rerank API.
-        
+
         Args:
             query: Original query
             results: Initial retrieval results
             top_k: Number of top results to return
-        
+
         Returns:
             Reranked results with Cohere scores
         """
         if not results:
             return []
-        
+
         self._get_client()
-        
+
         top_k = top_k or self.config.top_k
-        
+
         logger.info(f"Reranking {len(results)} results with Cohere API")
-        
+
         # Prepare documents
         documents = [result.content for result in results]
-        
+
         # Call Cohere Rerank API
         try:
             response = self.client.rerank(
@@ -299,12 +299,12 @@ class CohereReranker(IReranker):
                 top_n=top_k,
                 model=self.config.cohere_model
             )
-            
+
             # Create rerank results
             rerank_results = []
             for i, rerank_item in enumerate(response.results):
                 original_result = results[rerank_item.index]
-                
+
                 rerank_results.append(
                     RerankResult(
                         retrieval_result=original_result,
@@ -314,19 +314,19 @@ class CohereReranker(IReranker):
                         relevance_explanation=None  # Cohere doesn't provide this
                     )
                 )
-            
+
             logger.info(
                 f"Reranked to {len(rerank_results)} results, "
                 f"top score={rerank_results[0].rerank_score:.3f}"
             )
-            
+
             return rerank_results
-        
+
         except Exception as e:
             logger.error(f"Cohere rerank failed: {e}")
             # Fall back to original ranking
             return self._fallback_ranking(results, top_k)
-    
+
     def _fallback_ranking(
         self,
         results: List[RetrievalResult],
@@ -334,7 +334,7 @@ class CohereReranker(IReranker):
     ) -> List[RerankResult]:
         """Fallback to original ranking if API fails"""
         logger.warning("Using fallback ranking (original scores)")
-        
+
         rerank_results = []
         for i, result in enumerate(results[:top_k]):
             rerank_results.append(
@@ -345,22 +345,22 @@ class CohereReranker(IReranker):
                     rank=i + 1
                 )
             )
-        
+
         return rerank_results
 
 
 class DiversityReranker(IReranker):
     """
     Diversity-aware reranking using Maximal Marginal Relevance (MMR).
-    
+
     Balances relevance with diversity to avoid redundant results.
     Useful when multiple chunks from the same document are retrieved.
     """
-    
+
     def __init__(self, config: RerankConfig):
         """
         Initialize diversity reranker.
-        
+
         Args:
             config: Reranking configuration
         """
@@ -368,7 +368,7 @@ class DiversityReranker(IReranker):
         logger.info(
             f"Initialized DiversityReranker with lambda={config.diversity_lambda}"
         )
-    
+
     def rerank(
         self,
         query: str,
@@ -377,31 +377,31 @@ class DiversityReranker(IReranker):
     ) -> List[RerankResult]:
         """
         Rerank using MMR for diversity.
-        
+
         MMR = λ * relevance - (1-λ) * max_similarity_to_selected
-        
+
         Args:
             query: Original query
             results: Initial retrieval results
             top_k: Number of top results to return
-        
+
         Returns:
             Diverse reranked results
         """
         if not results:
             return []
-        
+
         top_k = top_k or self.config.top_k
         lambda_param = self.config.diversity_lambda
-        
+
         logger.info(
             f"Reranking {len(results)} results with MMR (lambda={lambda_param})"
         )
-        
+
         # Start with empty selected set
         selected = []
         remaining = list(results)
-        
+
         # Iteratively select diverse results
         while len(selected) < top_k and remaining:
             if not selected:
@@ -412,28 +412,28 @@ class DiversityReranker(IReranker):
                 # Subsequent results: balance relevance and diversity
                 best_idx = -1
                 best_score = float('-inf')
-                
+
                 for i, candidate in enumerate(remaining):
                     # Relevance score
                     relevance = candidate.score
-                    
+
                     # Max similarity to already selected
                     max_sim = max(
                         self._content_similarity(candidate, selected_result)
                         for selected_result in selected
                     )
-                    
+
                     # MMR score
                     mmr_score = lambda_param * relevance - (1 - lambda_param) * max_sim
-                    
+
                     if mmr_score > best_score:
                         best_score = mmr_score
                         best_idx = i
                         best_result = candidate
-            
+
             # Move best result to selected
             selected.append(remaining.pop(best_idx))
-        
+
         # Create rerank results
         rerank_results = []
         for i, result in enumerate(selected):
@@ -445,11 +445,11 @@ class DiversityReranker(IReranker):
                     rank=i + 1
                 )
             )
-        
+
         logger.info(f"Selected {len(rerank_results)} diverse results")
-        
+
         return rerank_results
-    
+
     def _content_similarity(
         self,
         result1: RetrievalResult,
@@ -457,18 +457,18 @@ class DiversityReranker(IReranker):
     ) -> float:
         """
         Calculate content similarity between two results.
-        
+
         For POC, uses simple heuristics:
         - Same source: high similarity
         - Same section: medium similarity
         - Different: low similarity
-        
+
         In production, could use embedding similarity.
         """
         # Same chunk
         if result1.chunk_id == result2.chunk_id:
             return 1.0
-        
+
         # Same source document
         if result1.source == result2.source:
             # Same section within document
@@ -478,7 +478,7 @@ class DiversityReranker(IReranker):
                 else:
                     return 0.5
             return 0.6
-        
+
         # Different sources
         return 0.2
 
@@ -486,23 +486,23 @@ class DiversityReranker(IReranker):
 class HybridReranker(IReranker):
     """
     Hybrid reranking combining multiple strategies.
-    
+
     Uses cross-encoder for relevance and diversity for coverage.
     """
-    
+
     def __init__(self, config: RerankConfig):
         """
         Initialize hybrid reranker.
-        
+
         Args:
             config: Reranking configuration
         """
         self.config = config
         self.cross_encoder = CrossEncoderReranker(config)
         self.diversity = DiversityReranker(config)
-        
+
         logger.info("Initialized HybridReranker")
-    
+
     def rerank(
         self,
         query: str,
@@ -511,83 +511,83 @@ class HybridReranker(IReranker):
     ) -> List[RerankResult]:
         """
         Rerank using hybrid approach.
-        
+
         1. First pass: cross-encoder for relevance
         2. Second pass: diversity selection from top results
-        
+
         Args:
             query: Original query
             results: Initial retrieval results
             top_k: Number of top results to return
-        
+
         Returns:
             Hybrid reranked results
         """
         if not results:
             return []
-        
+
         top_k = top_k or self.config.top_k
-        
+
         logger.info(f"Hybrid reranking {len(results)} results")
-        
+
         # First pass: cross-encoder (get more than top_k)
         ce_results = self.cross_encoder.rerank(
             query=query,
             results=results,
             top_k=min(top_k * 2, len(results))
         )
-        
+
         # Convert back to RetrievalResult for diversity pass
         ce_retrieval_results = [r.retrieval_result for r in ce_results]
-        
+
         # Second pass: diversity selection
         final_results = self.diversity.rerank(
             query=query,
             results=ce_retrieval_results,
             top_k=top_k
         )
-        
+
         logger.info(f"Hybrid reranking complete: {len(final_results)} results")
-        
+
         return final_results
 
 
 class RerankingPipeline:
     """
     Main reranking pipeline with strategy selection.
-    
+
     Factory for creating and using different reranking strategies.
     """
-    
+
     def __init__(self, config: Optional[RerankConfig] = None):
         """
         Initialize reranking pipeline.
-        
+
         Args:
             config: Reranking configuration
         """
         self.config = config or RerankConfig()
         self.reranker = self._create_reranker()
-        
+
         logger.info(f"Initialized RerankingPipeline with strategy={self.config.strategy}")
-    
+
     def _create_reranker(self) -> IReranker:
         """Create reranker based on strategy"""
         if self.config.strategy == RerankStrategy.CROSS_ENCODER:
             return CrossEncoderReranker(self.config)
-        
+
         elif self.config.strategy == RerankStrategy.COHERE:
             return CohereReranker(self.config)
-        
+
         elif self.config.strategy == RerankStrategy.DIVERSITY:
             return DiversityReranker(self.config)
-        
+
         elif self.config.strategy == RerankStrategy.HYBRID:
             return HybridReranker(self.config)
-        
+
         else:
             raise ValueError(f"Unknown strategy: {self.config.strategy}")
-    
+
     def rerank(
         self,
         query: str,
@@ -596,17 +596,17 @@ class RerankingPipeline:
     ) -> List[RerankResult]:
         """
         Rerank retrieval results.
-        
+
         Args:
             query: Original query
             results: Initial retrieval results
             top_k: Number of top results to return
-        
+
         Returns:
             Reranked results
         """
         return self.reranker.rerank(query, results, top_k)
-    
+
     def rerank_with_metrics(
         self,
         query: str,
@@ -615,24 +615,24 @@ class RerankingPipeline:
     ) -> Tuple[List[RerankResult], Dict[str, Any]]:
         """
         Rerank with metrics tracking.
-        
+
         Args:
             query: Original query
             results: Initial retrieval results
             top_k: Number of top results to return
-        
+
         Returns:
             Tuple of (reranked results, metrics)
         """
         from datetime import datetime
-        
+
         start_time = datetime.now()
-        
+
         reranked = self.rerank(query, results, top_k)
-        
+
         end_time = datetime.now()
         rerank_time_ms = (end_time - start_time).total_seconds() * 1000
-        
+
         # Calculate metrics
         metrics = {
             "strategy": self.config.strategy.value,
@@ -643,11 +643,11 @@ class RerankingPipeline:
             "avg_original_score": sum(r.original_score for r in reranked) / len(reranked) if reranked else 0.0,
             "score_improvement": 0.0,
         }
-        
+
         # Calculate score improvement (top result)
         if reranked and results:
             original_top_score = results[0].score
             reranked_top_score = reranked[0].rerank_score
             metrics["score_improvement"] = reranked_top_score - original_top_score
-        
+
         return reranked, metrics

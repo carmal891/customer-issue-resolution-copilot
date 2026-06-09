@@ -54,7 +54,7 @@ class ToolExecutionResult:
 class IToolExecutor(ABC):
     """
     Interface for tool execution system.
-    
+
     This interface defines the contract for executing operational tools
     with approval gating and safety checks.
     """

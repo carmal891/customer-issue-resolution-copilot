@@ -25,39 +25,39 @@ print("-" * 80)
 
 try:
     from src.domain.models.issue import Issue, IssueType, IssueChannel, IssuePriority
-print(" Issue models imported")
+    print("✓ Issue models imported")
     
     from src.domain.models.resolution import Resolution, ResolutionStep, ResolutionStatus
-print(" Resolution models imported")
+    print("✓ Resolution models imported")
     
     from src.domain.models.approval import ApprovalRequest, ApprovalToken, RiskLevel
-print(" Approval models imported")
+    print("✓ Approval models imported")
     
     from src.domain.models.context import RAGContext, RetrievedContext
-print(" Context models imported")
+    print("✓ Context models imported")
     
     from src.application.rag.rag_pipeline import RAGPipeline
-print(" RAG Pipeline imported")
+    print("✓ RAG Pipeline imported")
     
     from src.application.skills.skill_registry import SkillRegistry
-print(" Skill Registry imported")
+    print("✓ Skill Registry imported")
     
     from src.application.tools.base import ToolRegistry
-print(" Tool Registry imported")
+    print("✓ Tool Registry imported")
     
     from src.application.react.tpao_loop import TPAOLoop
-print(" TPAO Loop imported")
+    print("✓ TPAO Loop imported")
     
     from src.application.approval.approval_service import ApprovalService
-print(" Approval Service imported")
+    print("✓ Approval Service imported")
     
     from src.application.executor.executor_agent import ExecutorAgent, ExecutionStatus
-print(" Executor Agent imported")
+    print("✓ Executor Agent imported")
     
-print("\n All imports successful!\n")
+    print("\n✓ All imports successful!\n")
     
 except Exception as e:
-print(f"\n Import failed: {e}\n")
+    print(f"\n✗ Import failed: {e}\n")
     import traceback
     traceback.print_exc()
     sys.exit(1)
@@ -69,38 +69,38 @@ print("-" * 80)
 try:
     # Initialize RAG pipeline
     rag_pipeline = RAGPipeline()
-print(" RAG Pipeline initialized")
+    print("✓ RAG Pipeline initialized")
     
     # Initialize skills registry
     skill_registry = SkillRegistry()
-print(" Skill Registry initialized")
+    print("✓ Skill Registry initialized")
     
     # Initialize tool registry
     tool_registry = ToolRegistry()
-print(" Tool Registry initialized")
+    print("✓ Tool Registry initialized")
     
     # Initialize TPAO loop
     tpao_loop = TPAOLoop(
         rag_pipeline=rag_pipeline,
         tool_registry=tool_registry
     )
-print(" TPAO Loop initialized")
+    print("✓ TPAO Loop initialized")
     
     # Initialize approval service
     approval_service = ApprovalService()
-print(" Approval Service initialized")
+    print("✓ Approval Service initialized")
     
     # Initialize executor agent
     executor_agent = ExecutorAgent(
         tool_registry=tool_registry,
         approval_service=approval_service
     )
-print(" Executor Agent initialized")
+    print("✓ Executor Agent initialized")
     
-print("\n All components initialized successfully!\n")
+    print("\n✓ All components initialized successfully!\n")
     
 except Exception as e:
-print(f"\n Initialization failed: {e}\n")
+    print(f"\n✗ Initialization failed: {e}\n")
     import traceback
     traceback.print_exc()
     sys.exit(1)
@@ -126,16 +126,16 @@ try:
         }
     )
     
-print(f" Issue created: {issue.issue_id}")
+    print(f"✓ Issue created: {issue.issue_id}")
     print(f"  Subject: {issue.subject}")
     print(f"  Type: {issue.issue_type.value if issue.issue_type else 'None'}")
     print(f"  Channel: {issue.channel.value}")
     print(f"  Priority: {issue.priority.value}")
     
-print("\n Test issue created successfully!\n")
+    print("\n✓ Test issue created successfully!\n")
     
 except Exception as e:
-print(f"\n Issue creation failed: {e}\n")
+    print(f"\n✗ Issue creation failed: {e}\n")
     import traceback
     traceback.print_exc()
     sys.exit(1)
@@ -175,7 +175,7 @@ try:
         ]
     )
     
-print(f" Mock resolution created: {resolution.resolution_id}")
+    print(f"✓ Mock resolution created: {resolution.resolution_id}")
     print(f"  Steps: {len(resolution.steps)}")
     
     # Create approval request
@@ -193,7 +193,7 @@ print(f" Mock resolution created: {resolution.resolution_id}")
         requester="test_agent"
     )
     
-print(f" Approval request created: {approval_request.request_id}")
+    print(f"✓ Approval request created: {approval_request.request_id}")
     print(f"  Risk level: {approval_request.risk_level.value}")
     print(f"  Action type: {approval_request.action_type}")
     print(f"  Actions: {len(proposed_actions)}")
@@ -205,18 +205,18 @@ print(f" Approval request created: {approval_request.request_id}")
         comments="Approved for testing"
     )
     
-print(f" Approval granted")
+    print(f"✓ Approval granted")
     print(f"  Token: {approval_token.token[:20]}...")
     print(f"  Expires: {approval_token.expires_at}")
     
     # Validate token
     is_valid = approval_service.validate_token(approval_token.token)
-print(f" Token validation: {'Valid' if is_valid else 'Invalid'}")
+    print(f"✓ Token validation: {'Valid' if is_valid else 'Invalid'}")
     
-print("\n Approval service working correctly!\n")
+    print("\n✓ Approval service working correctly!\n")
     
 except Exception as e:
-print(f"\n Approval service test failed: {e}\n")
+    print(f"\n✗ Approval service test failed: {e}\n")
     import traceback
     traceback.print_exc()
     sys.exit(1)
@@ -233,35 +233,35 @@ try:
         actions=proposed_actions
     )
     
-print(f" Execution completed")
+    print(f"✓ Execution completed")
     print(f"  Status: {execution_result.status.value}")
     print(f"  Executed actions: {len(execution_result.executed_actions)}")
     print(f"  Failed actions: {len(execution_result.failed_actions)}")
     print(f"  Execution time: {execution_result.execution_time_ms:.2f}ms")
     
     if execution_result.status == ExecutionStatus.COMPLETED:
-print(" Execution successful!")
+        print("✓ Execution successful!")
     else:
-print(f" Execution status: {execution_result.status.value}")
+        print(f"⚠ Execution status: {execution_result.status.value}")
         if execution_result.error:
             print(f"  Error: {execution_result.error}")
     
     # Test execution without approval (should fail)
-print("\n Testing unauthorized execution (should fail)...")
+    print("\n⚠ Testing unauthorized execution (should fail)...")
     try:
         executor_agent.execute_without_approval(
             resolution=resolution,
             actions=proposed_actions
         )
-print(" ERROR: Executor allowed execution without approval!")
+        print("✗ ERROR: Executor allowed execution without approval!")
         sys.exit(1)
     except Exception as e:
-print(f" Correctly blocked unauthorized execution: {type(e).__name__}")
+        print(f"✓ Correctly blocked unauthorized execution: {type(e).__name__}")
     
-print("\n Executor agent working correctly!\n")
+    print("\n✓ Executor agent working correctly!\n")
     
 except Exception as e:
-print(f"\n Executor agent test failed: {e}\n")
+    print(f"\n✗ Executor agent test failed: {e}\n")
     import traceback
     traceback.print_exc()
     sys.exit(1)
@@ -273,7 +273,7 @@ print("-" * 80)
 try:
     # List available tools
     tools = tool_registry.list_tools()
-print(f" Available tools: {len(tools)}")
+    print(f"✓ Available tools: {len(tools)}")
     for tool_name in tools[:5]:  # Show first 5
         print(f"  - {tool_name}")
     if len(tools) > 5:
@@ -283,15 +283,15 @@ print(f" Available tools: {len(tools)}")
     if tools:
         tool = tool_registry.get(tools[0])
         if tool:
-print(f" Retrieved tool: {tools[0]}")
+            print(f"✓ Retrieved tool: {tools[0]}")
             print(f"  Description: {tool.description[:60]}..." if len(tool.description) > 60 else f"  Description: {tool.description}")
         else:
-print(f" Tool {tools[0]} not found")
+            print(f"⚠ Tool {tools[0]} not found")
     
-print("\n Tool registry working correctly!\n")
+    print("\n✓ Tool registry working correctly!\n")
     
 except Exception as e:
-print(f"\n Tool registry test failed: {e}\n")
+    print(f"\n✗ Tool registry test failed: {e}\n")
     import traceback
     traceback.print_exc()
     sys.exit(1)
@@ -303,7 +303,7 @@ print("-" * 80)
 try:
     # List available skills
     skills = skill_registry.list_skills()
-print(f" Available skills: {len(skills)}")
+    print(f"✓ Available skills: {len(skills)}")
     for skill_meta in skills[:5]:  # Show first 5
         skill = skill_registry.get_skill(skill_meta.skill_id)
         if skill:
@@ -311,10 +311,10 @@ print(f" Available skills: {len(skills)}")
     if len(skills) > 5:
         print(f"  ... and {len(skills) - 5} more")
     
-print("\n Skill registry working correctly!\n")
+    print("\n✓ Skill registry working correctly!\n")
     
 except Exception as e:
-print(f"\n Skill registry test failed: {e}\n")
+    print(f"\n✗ Skill registry test failed: {e}\n")
     import traceback
     traceback.print_exc()
     sys.exit(1)

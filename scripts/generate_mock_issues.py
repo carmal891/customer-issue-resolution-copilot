@@ -143,18 +143,18 @@ def generate_issue(index: int) -> dict:
     issue_type = template_group["type"]
     channel = random.choice(template_group["channels"])
     template = random.choice(template_group["templates"])
-    
+
     # Select booking reference
     booking_ref = random.choice(SAMPLE_BOOKINGS)
-    
+
     # Generate dates
     hours_ago = random.randint(1, 72)
     created_at = BASE_DATE - timedelta(hours=hours_ago)
-    
+
     # Fill template with data
     check_in_date = (BASE_DATE + timedelta(days=random.randint(1, 7))).strftime("%Y-%m-%d")
     new_date = (BASE_DATE + timedelta(days=random.randint(8, 14))).strftime("%Y-%m-%d")
-    
+
     description = template.format(
         room=booking_ref["room"],
         booking=booking_ref["confirmation"],
@@ -165,7 +165,7 @@ def generate_issue(index: int) -> dict:
         correct_amount=random.choice([567.00, 1047.00, 298.00, 627.00]),
         name=booking_ref["guest_name"]
     )
-    
+
     # Build issue
     issue = {
         "issue_id": generate_issue_id(index),
@@ -187,7 +187,7 @@ def generate_issue(index: int) -> dict:
             "loyalty_tier": booking_ref["loyalty"]
         }
     }
-    
+
     # Add channel-specific metadata
     if channel == "EMAIL":
         issue["metadata"]["email_subject"] = f"Re: Booking {booking_ref['confirmation']} - {issue_type.replace('_', ' ').title()}"
@@ -200,14 +200,14 @@ def generate_issue(index: int) -> dict:
     elif channel == "SLACK":
         issue["metadata"]["slack_channel"] = "#guest-services"
         issue["metadata"]["slack_thread_ts"] = f"1710{random.randint(100000, 999999)}.{random.randint(100000, 999999)}"
-    
+
     # Add resolution info if resolved
     if issue["status"] == "RESOLVED":
         resolved_hours = random.randint(1, hours_ago - 1)
         resolved_at = created_at + timedelta(hours=resolved_hours)
         issue["resolved_at"] = resolved_at.strftime("%Y-%m-%dT%H:%M:%SZ")
         issue["resolution_summary"] = f"Issue resolved via {channel.lower()}. Guest satisfied with outcome."
-    
+
     # Add assignment if in progress or resolved
     if issue["status"] in ["IN_PROGRESS", "RESOLVED"]:
         issue["assigned_to"] = random.choice([
@@ -216,44 +216,44 @@ def generate_issue(index: int) -> dict:
             "agent_maria_g",
             "agent_david_l"
         ])
-    
+
     return issue
 
 
 def main():
     """Generate all issues and save to JSON file."""
     print(f"Generating {NUM_ISSUES} mock customer issues...")
-    
+
     issues = []
     for i in range(NUM_ISSUES):
         issue = generate_issue(i)
         issues.append(issue)
-    
+
     # Save to file
     output_path = "data/mock/issues/customer_issues.json"
     with open(output_path, "w") as f:
         json.dump(issues, f, indent=2)
-    
-print(f" Generated {len(issues)} issues")
-print(f" Saved to {output_path}")
-    
+
+    print(f"✓ Generated {len(issues)} issues")
+    print(f"✓ Saved to {output_path}")
+
     # Print statistics
     type_counts = {}
     channel_counts = {}
     status_counts = {}
     priority_counts = {}
-    
+
     for issue in issues:
         issue_type = issue["issue_type"]
         channel = issue["channel"]
         status = issue["status"]
         priority = issue["priority"]
-        
+
         type_counts[issue_type] = type_counts.get(issue_type, 0) + 1
         channel_counts[channel] = channel_counts.get(channel, 0) + 1
         status_counts[status] = status_counts.get(status, 0) + 1
         priority_counts[priority] = priority_counts.get(priority, 0) + 1
-    
+
     print("\nStatistics:")
     print(f"  Type distribution: {type_counts}")
     print(f"  Channel distribution: {channel_counts}")

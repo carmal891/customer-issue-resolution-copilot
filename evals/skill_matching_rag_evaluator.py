@@ -45,28 +45,28 @@ class SkillMatchEvalResult:
     issue_description: str
     expected_skill_id: Optional[str]
     expected_skill_name: Optional[str]
-    
+
     # Matching results
     matched_skill_id: Optional[str]
     matched_skill_name: Optional[str]
     match_confidence: float
     match_score: float
-    
+
     # Top-K results
     top_k_skill_ids: List[str]
     top_k_scores: List[float]
-    
+
     # Evaluation metrics
     correct_match: bool  # Top-1 is correct
     correct_in_top_3: bool
     correct_in_top_5: bool
     rank_of_correct: Optional[int]  # None if not found
-    
+
     # For negative cases (should not match)
     should_match: bool
     false_positive: bool  # Matched when shouldn't
     false_negative: bool  # Didn't match when should
-    
+
     category: str
     passed: bool
     metadata: Dict[str, Any] = field(default_factory=dict)
@@ -78,28 +78,28 @@ class SkillMatchEvalSummary:
     total_cases: int
     passed_cases: int
     failed_cases: int
-    
+
     # Accuracy metrics
     top_1_accuracy: float  # Target: ≥0.90
     top_3_accuracy: float  # Target: ≥0.95
     top_5_accuracy: float
     mean_reciprocal_rank: float  # MRR
-    
+
     # Error analysis
     false_positive_rate: float
     false_negative_rate: float
     avg_confidence_when_correct: float
     avg_confidence_when_incorrect: float
-    
+
     # Confidence calibration
     confidence_bins: Dict[str, Dict[str, float]]  # Binned confidence vs accuracy
-    
+
     # Category breakdown
     results_by_category: Dict[str, List[SkillMatchEvalResult]]
-    
+
     # Detailed results
     results: List[SkillMatchEvalResult]
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization"""
         category_stats = {}
@@ -112,7 +112,7 @@ class SkillMatchEvalSummary:
                     "top_3_accuracy": sum(1 for r in cat_results if r.correct_in_top_3) / len(cat_results),
                     "avg_confidence": sum(r.match_confidence for r in cat_results) / len(cat_results)
                 }
-        
+
         return {
             "summary": {
                 "total_cases": self.total_cases,
@@ -148,14 +148,14 @@ class SkillMatchEvalSummary:
 class SkillMatchingEvaluator:
     """
     Evaluates Skill Matching system performance.
-    
+
     Tests:
     - Correct skill identification for known patterns
     - Handling of paraphrased requests
     - Rejection of out-of-scope requests
     - Confidence calibration
     """
-    
+
     def __init__(
         self,
         top_1_accuracy_threshold: float = 0.90,
@@ -164,7 +164,7 @@ class SkillMatchingEvaluator:
     ):
         """
         Initialize skill matching evaluator.
-        
+
         Args:
             top_1_accuracy_threshold: Minimum top-1 accuracy (default: 0.90)
             top_3_accuracy_threshold: Minimum top-3 accuracy (default: 0.95)
@@ -173,7 +173,7 @@ class SkillMatchingEvaluator:
         self.top_1_accuracy_threshold = top_1_accuracy_threshold
         self.top_3_accuracy_threshold = top_3_accuracy_threshold
         self.confidence_threshold = confidence_threshold
-    
+
     def evaluate_single(
         self,
         test_case: SkillMatchTestCase,
@@ -181,12 +181,12 @@ class SkillMatchingEvaluator:
     ) -> SkillMatchEvalResult:
         """
         Evaluate a single skill matching test case.
-        
+
         Args:
             test_case: The test case with issue and expected skill
             match_results: List of skill matches from SkillMatcher
                           Each should have: {skill_id, skill_name, confidence, score}
-        
+
         Returns:
             SkillMatchEvalResult with all metrics
         """
@@ -200,16 +200,16 @@ class SkillMatchingEvaluator:
             confidence_map = {"high": 0.9, "medium": 0.6, "low": 0.3}
             match_confidence = confidence_map.get(str(match_confidence).lower(), 0.5)
         match_score = top_match.get("score", 0.0) if top_match else 0.0
-        
+
         # Extract top-K (filter out None values)
         top_k_skill_ids = [m.get("skill_id") for m in match_results[:5] if m.get("skill_id")]
         top_k_scores = [m.get("score", 0.0) for m in match_results[:5]]
-        
+
         # Evaluate correctness
         correct_match = (matched_skill_id == test_case.expected_skill_id)
         correct_in_top_3 = test_case.expected_skill_id in top_k_skill_ids[:3]
         correct_in_top_5 = test_case.expected_skill_id in top_k_skill_ids[:5]
-        
+
         # Find rank of correct skill
         rank_of_correct = None
         if test_case.expected_skill_id:
@@ -217,11 +217,11 @@ class SkillMatchingEvaluator:
                 rank_of_correct = top_k_skill_ids.index(test_case.expected_skill_id) + 1
             except ValueError:
                 rank_of_correct = None  # Not in top-5
-        
+
         # Evaluate false positives/negatives
         false_positive = False
         false_negative = False
-        
+
         if not test_case.should_match:
             # Negative case: should NOT match any skill
             # Check if confidence is high (string) or score is above threshold (float)
@@ -235,7 +235,7 @@ class SkillMatchingEvaluator:
             # Positive case: should match expected skill
             if not correct_match:
                 false_negative = True
-        
+
         # Determine if test passed
         if test_case.should_match:
             # Positive case: must match correctly
@@ -243,7 +243,7 @@ class SkillMatchingEvaluator:
         else:
             # Negative case: must not match with high confidence
             passed = not false_positive
-        
+
         return SkillMatchEvalResult(
             issue_description=test_case.issue_description,
             expected_skill_id=test_case.expected_skill_id,
@@ -265,7 +265,7 @@ class SkillMatchingEvaluator:
             passed=passed,
             metadata=test_case.metadata
         )
-    
+
     def evaluate_batch(
         self,
         test_cases: List[SkillMatchTestCase],
@@ -273,16 +273,16 @@ class SkillMatchingEvaluator:
     ) -> SkillMatchEvalSummary:
         """
         Evaluate multiple skill matching test cases.
-        
+
         Args:
             test_cases: List of test cases
             skill_matcher: SkillMatcher instance to test
-        
+
         Returns:
             SkillMatchEvalSummary with aggregate metrics
         """
         results = []
-        
+
         for test_case in test_cases:
             try:
                 # Create mock issue for matching
@@ -299,13 +299,13 @@ class SkillMatchingEvaluator:
                     expected_skill=test_case.expected_skill_id,
                     expected_resolution=None
                 )
-                
+
                 # Run skill matcher
                 matches = skill_matcher.match_skill(
                     issue=mock_issue,
                     top_k=5
                 )
-                
+
                 # Convert SkillMatch objects to dicts
                 # Handle both string confidence ("high"/"medium"/"low") and numeric
                 confidence_map = {"high": 0.9, "medium": 0.6, "low": 0.3}
@@ -323,14 +323,14 @@ class SkillMatchingEvaluator:
                     }
                     for m in matches
                 ]
-                
+
                 # Evaluate result
                 eval_result = self.evaluate_single(
                     test_case=test_case,
                     match_results=match_dicts
                 )
                 results.append(eval_result)
-                
+
             except Exception as e:
                 logger.error(f"Error evaluating test case: {e}")
                 # Create failed result
@@ -355,10 +355,10 @@ class SkillMatchingEvaluator:
                     passed=False,
                     metadata={"error": str(e)}
                 ))
-        
+
         # Calculate summary statistics
         return self._create_summary(results)
-    
+
     def _create_summary(self, results: List[SkillMatchEvalResult]) -> SkillMatchEvalSummary:
         """Create summary statistics from evaluation results"""
         if not results:
@@ -378,17 +378,17 @@ class SkillMatchingEvaluator:
                 results_by_category={},
                 results=[]
             )
-        
+
         total = len(results)
         passed = sum(1 for r in results if r.passed)
-        
+
         # Accuracy metrics
         positive_cases = [r for r in results if r.should_match]
         if positive_cases:
             top_1_accuracy = sum(1 for r in positive_cases if r.correct_match) / len(positive_cases)
             top_3_accuracy = sum(1 for r in positive_cases if r.correct_in_top_3) / len(positive_cases)
             top_5_accuracy = sum(1 for r in positive_cases if r.correct_in_top_5) / len(positive_cases)
-            
+
             # Mean Reciprocal Rank
             reciprocal_ranks = [
                 1.0 / r.rank_of_correct if r.rank_of_correct else 0.0
@@ -400,16 +400,16 @@ class SkillMatchingEvaluator:
             top_3_accuracy = 0.0
             top_5_accuracy = 0.0
             mean_reciprocal_rank = 0.0
-        
+
         # Error rates
         negative_cases = [r for r in results if not r.should_match]
         false_positive_rate = sum(1 for r in negative_cases if r.false_positive) / len(negative_cases) if negative_cases else 0.0
         false_negative_rate = sum(1 for r in positive_cases if r.false_negative) / len(positive_cases) if positive_cases else 0.0
-        
+
         # Confidence analysis
         correct_results = [r for r in positive_cases if r.correct_match]
         incorrect_results = [r for r in positive_cases if not r.correct_match]
-        
+
         avg_confidence_when_correct = (
             sum(r.match_confidence for r in correct_results) / len(correct_results)
             if correct_results else 0.0
@@ -418,17 +418,17 @@ class SkillMatchingEvaluator:
             sum(r.match_confidence for r in incorrect_results) / len(incorrect_results)
             if incorrect_results else 0.0
         )
-        
+
         # Confidence calibration bins
         confidence_bins = self._calculate_confidence_bins(positive_cases)
-        
+
         # Group by category
         results_by_category: Dict[str, List[SkillMatchEvalResult]] = {}
         for result in results:
             if result.category not in results_by_category:
                 results_by_category[result.category] = []
             results_by_category[result.category].append(result)
-        
+
         return SkillMatchEvalSummary(
             total_cases=total,
             passed_cases=passed,
@@ -445,14 +445,14 @@ class SkillMatchingEvaluator:
             results_by_category=results_by_category,
             results=results
         )
-    
+
     def _calculate_confidence_bins(
         self,
         results: List[SkillMatchEvalResult]
     ) -> Dict[str, Dict[str, float]]:
         """
         Calculate confidence calibration bins.
-        
+
         Groups results by confidence ranges and calculates accuracy within each bin.
         Well-calibrated system: 80% confidence → 80% accuracy
         """
@@ -463,7 +463,7 @@ class SkillMatchingEvaluator:
             "0.6-0.8": [],
             "0.8-1.0": []
         }
-        
+
         for result in results:
             conf = result.match_confidence
             if conf < 0.2:
@@ -476,7 +476,7 @@ class SkillMatchingEvaluator:
                 bins["0.6-0.8"].append(result)
             else:
                 bins["0.8-1.0"].append(result)
-        
+
         calibration = {}
         for bin_name, bin_results in bins.items():
             if bin_results:
@@ -488,24 +488,24 @@ class SkillMatchingEvaluator:
                     "avg_confidence": avg_confidence,
                     "calibration_error": abs(accuracy - avg_confidence)
                 }
-        
+
         return calibration
-    
+
     def save_results(self, summary: SkillMatchEvalSummary, output_path: str) -> None:
         """Save evaluation results to JSON file"""
         output_file = Path(output_path)
         output_file.parent.mkdir(parents=True, exist_ok=True)
-        
+
         with open(output_file, 'w') as f:
             json.dump(summary.to_dict(), f, indent=2)
-        
+
         logger.info(f"Saved skill matching evaluation results to {output_path}")
-    
+
     @staticmethod
     def load_test_cases_from_file(file_path: str) -> List[SkillMatchTestCase]:
         """
         Load test cases from JSON file.
-        
+
         Expected format:
         [
             {
@@ -521,7 +521,7 @@ class SkillMatchingEvaluator:
         """
         with open(file_path, 'r') as f:
             data = json.load(f)
-        
+
         return [
             SkillMatchTestCase(
                 issue_description=item["issue_description"],

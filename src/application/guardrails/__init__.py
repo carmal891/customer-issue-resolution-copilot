@@ -40,7 +40,7 @@ def get_pii_detector() -> PIIDetector:
     """
     global _pii_detector
     if _pii_detector is None:
-logger.info(" Initializing regex-based PII detector (hospitality-specific)")
+        logger.info(" Initializing regex-based PII detector (hospitality-specific)")
         _pii_detector = PIIDetector()
     return _pii_detector
 
@@ -54,7 +54,7 @@ def get_injection_detector() -> GuardrailsAIInjectionDetector:
     """
     global _injection_detector
     if _injection_detector is None:
-logger.info("️ Initializing injection detector (Guardrails AI)")
+        logger.info("️ Initializing injection detector (Guardrails AI)")
         _injection_detector = GuardrailsAIInjectionDetector()
     return _injection_detector
 
@@ -68,7 +68,7 @@ def get_approval_enforcer() -> ApprovalEnforcer:
     """
     global _approval_enforcer
     if _approval_enforcer is None:
-logger.info(" Initializing approval enforcer")
+        logger.info(" Initializing approval enforcer")
         _approval_enforcer = ApprovalEnforcer()
     return _approval_enforcer
 
@@ -82,7 +82,7 @@ def get_confidence_checker() -> ConfidenceChecker:
     """
     global _confidence_checker
     if _confidence_checker is None:
-logger.info(" Initializing confidence checker")
+        logger.info(" Initializing confidence checker")
         _confidence_checker = ConfidenceChecker()
     return _confidence_checker
 
@@ -96,7 +96,7 @@ def get_tool_validator() -> ToolValidator:
     """
     global _tool_validator
     if _tool_validator is None:
-logger.info(" Initializing tool validator")
+        logger.info(" Initializing tool validator")
         _tool_validator = ToolValidator()
     return _tool_validator
 

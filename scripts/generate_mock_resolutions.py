@@ -156,17 +156,17 @@ def generate_resolution(index: int) -> dict:
     # Select issue type
     issue_type = random.choice(list(RESOLUTION_TEMPLATES.keys()))
     template = RESOLUTION_TEMPLATES[issue_type]
-    
+
     # Generate timestamps
     days_ago = random.randint(5, 60)
     created_at = BASE_DATE - timedelta(days=days_ago)
     resolution_time = random.randint(30, 480)  # 30 min to 8 hours
     resolved_at = created_at + timedelta(minutes=resolution_time)
-    
+
     # Generate booking reference
     booking_id = f"BK-2024-{random.randint(1, 55):03d}"
     room_number = f"{random.randint(2, 9)}{random.randint(1, 25):02d}"
-    
+
     # Fill template variables
     variables = {
         "time": random.choice(["2:00 PM", "3:00 PM", "1:00 PM"]),
@@ -184,7 +184,7 @@ def generate_resolution(index: int) -> dict:
         "item": random.choice(ITEMS),
         "tracking": f"1Z{random.randint(100000, 999999)}"
     }
-    
+
     # Build resolution steps
     steps = []
     for i, step_template in enumerate(template["steps"]):
@@ -195,7 +195,7 @@ def generate_resolution(index: int) -> dict:
             "completed_at": (created_at + timedelta(minutes=i * (resolution_time // len(template["steps"])))).strftime("%Y-%m-%dT%H:%M:%SZ")
         }
         steps.append(step)
-    
+
     # Build resolution
     resolution = {
         "resolution_id": generate_resolution_id(index),
@@ -223,7 +223,7 @@ def generate_resolution(index: int) -> dict:
             "channel": random.choice(["EMAIL", "CHAT", "PHONE", "SLACK"])
         }
     }
-    
+
     # Add approval info if required
     if template["approval_required"]:
         approval_time = random.randint(10, 60)
@@ -233,7 +233,7 @@ def generate_resolution(index: int) -> dict:
             "approved_at": (created_at + timedelta(minutes=approval_time + 5)).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "approval_notes": "Approved within policy guidelines"
         }
-    
+
     # Add follow-up if guest was very satisfied
     if resolution["guest_satisfaction"] == "VERY_SATISFIED":
         resolution["follow_up"] = {
@@ -241,47 +241,47 @@ def generate_resolution(index: int) -> dict:
             "method": "EMAIL",
             "notes": "Guest confirmed satisfaction with resolution"
         }
-    
+
     return resolution
 
 
 def main():
     """Generate all resolutions and save to JSON file."""
     print(f"Generating {NUM_RESOLUTIONS} mock historical resolutions...")
-    
+
     resolutions = []
     for i in range(NUM_RESOLUTIONS):
         resolution = generate_resolution(i)
         resolutions.append(resolution)
-    
+
     # Save to file
     output_path = "data/mock/resolutions/historical_resolutions.json"
     with open(output_path, "w") as f:
         json.dump(resolutions, f, indent=2)
-    
-print(f" Generated {len(resolutions)} resolutions")
-print(f" Saved to {output_path}")
-    
+
+    print(f" Generated {len(resolutions)} resolutions")
+    print(f" Saved to {output_path}")
+
     # Print statistics
     type_counts = {}
     satisfaction_counts = {}
     approval_count = 0
-    
+
     total_time = 0
     for resolution in resolutions:
         issue_type = resolution["issue_type"]
         satisfaction = resolution["guest_satisfaction"]
-        
+
         type_counts[issue_type] = type_counts.get(issue_type, 0) + 1
         satisfaction_counts[satisfaction] = satisfaction_counts.get(satisfaction, 0) + 1
-        
+
         if resolution["approval_required"]:
             approval_count += 1
-        
+
         total_time += resolution["resolution_time_minutes"]
-    
+
     avg_time = total_time / len(resolutions)
-    
+
     print("\nStatistics:")
     print(f"  Type distribution: {type_counts}")
     print(f"  Satisfaction distribution: {satisfaction_counts}")

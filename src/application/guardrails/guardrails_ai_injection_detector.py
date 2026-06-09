@@ -47,11 +47,11 @@ class InjectionCheckResult:
 class GuardrailsAIInjectionDetector:
     """
     Self-contained prompt injection detector.
-    
+
     Uses comprehensive regex patterns to detect various injection attempts.
     Zero external dependencies.
     """
-    
+
     # Comprehensive injection patterns by threat type
     PATTERNS = {
         ThreatType.INSTRUCTION_OVERRIDE: [
@@ -101,16 +101,16 @@ class GuardrailsAIInjectionDetector:
             r"eval\(",
         ],
     }
-    
+
     def __init__(self, threshold: float = 0.5):
         """
         Initialize injection detector.
-        
+
         Args:
             threshold: Detection sensitivity (0.0-1.0). Lower = more sensitive
         """
         self.threshold = threshold
-        
+
         # Compile all patterns for efficiency
         self.compiled_patterns: Dict[ThreatType, List[re.Pattern]] = {}
         for threat_type, patterns in self.PATTERNS.items():
@@ -118,15 +118,15 @@ class GuardrailsAIInjectionDetector:
                 re.compile(pattern, re.IGNORECASE) for pattern in patterns
             ]
         
-logger.info(f"️ Initialized injection detector with {sum(len(p) for p in self.PATTERNS.values())} patterns")
-    
+        logger.info(f"Initialized injection detector with {sum(len(p) for p in self.PATTERNS.values())} patterns")
+
     def detect_injection(self, text: str) -> Dict[str, Any]:
         """
         Detect prompt injection attempts in text.
-        
+
         Args:
             text: Text to analyze
-            
+
         Returns:
             Dictionary with detection results
         """
@@ -139,11 +139,11 @@ logger.info(f"️ Initialized injection detector with {sum(len(p) for p in self.
                 'details': 'Empty input',
                 'sanitized_text': text
             }
-        
+
         max_score = 0.0
         detected_threat = ThreatType.UNKNOWN
         all_matched_patterns = []
-        
+
         # Check against all pattern categories
         for threat_type, patterns in self.compiled_patterns.items():
             for pattern in patterns:
@@ -154,16 +154,16 @@ logger.info(f"️ Initialized injection detector with {sum(len(p) for p in self.
                     if threat_score > max_score:
                         max_score = threat_score
                         detected_threat = threat_type
-        
+
         is_injection = max_score >= self.threshold
-        
+
         details = (
             f"Detected {len(all_matched_patterns)} suspicious patterns. "
             f"Threat type: {detected_threat.value}"
             if is_injection
             else "No injection detected"
         )
-        
+
         return {
             'is_injection': is_injection,
             'risk_score': max_score,
@@ -172,7 +172,7 @@ logger.info(f"️ Initialized injection detector with {sum(len(p) for p in self.
             'details': details,
             'sanitized_text': text if not is_injection else "[BLOCKED: Potential injection attempt]"
         }
-    
+
     def _get_threat_score(self, threat_type: ThreatType) -> float:
         """Get severity score for threat type."""
         severity_scores = {
@@ -185,32 +185,32 @@ logger.info(f"️ Initialized injection detector with {sum(len(p) for p in self.
             ThreatType.UNKNOWN: 0.5,
         }
         return severity_scores.get(threat_type, 0.5)
-    
+
     def check_content(self, text: str) -> InjectionCheckResult:
         """
         Check content for injection attempts (app.py interface).
-        
+
         Args:
             text: Text to check
-            
+
         Returns:
             InjectionCheckResult with detection details
         """
         result = self.detect_injection(text)
-        
+
         # Build threats_detected list for app.py compatibility
         threats_detected = []
         if result['is_injection']:
             threat_type = ThreatType(result['threat_type']) if result.get('threat_type') else ThreatType.UNKNOWN
             severity = result['risk_score']
-            
+
             for pattern in result.get('matched_patterns', []):
                 threats_detected.append(DetectedThreat(
                     threat_type=threat_type,
                     matched_pattern=pattern,
                     severity=severity
                 ))
-        
+
         return InjectionCheckResult(
             is_injection=result['is_injection'],
             risk_score=result['risk_score'],
@@ -220,23 +220,23 @@ logger.info(f"️ Initialized injection detector with {sum(len(p) for p in self.
             details=result['details'],
             sanitized_text=result['sanitized_text']
         )
-    
+
     def should_block_content(self, check_result: InjectionCheckResult) -> Tuple[bool, str]:
         """
         Determine if content should be blocked (app.py interface).
-        
+
         Args:
             check_result: Result from check_content
-            
+
         Returns:
             Tuple of (should_block, reason)
         """
         if check_result.is_injection:
             reason = (
-f" Potential {check_result.threat_type.value} detected "
+                f" Potential {check_result.threat_type.value} detected "
                 f"(risk score: {check_result.risk_score:.2f}). "
                 f"Matched {len(check_result.matched_patterns)} suspicious patterns."
             )
             return True, reason
-        
+
         return False, ""

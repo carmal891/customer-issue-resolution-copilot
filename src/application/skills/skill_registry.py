@@ -43,11 +43,11 @@ class SkillMetadata:
 class SkillRegistry:
     """
     Registry for managing skills with dual storage.
-    
+
     Storage:
     - File system: YAML files (source of truth)
     - Vector DB: Embedded triggers for fast semantic matching
-    
+
     Responsibilities:
     - Load skills from YAML files
     - Index skill triggers in vector store
@@ -56,7 +56,7 @@ class SkillRegistry:
     - Track skill usage and performance
     - Manage skill lifecycle (activate/deactivate)
     """
-    
+
     def __init__(
         self,
         skills_dir: str = "data/skills",
@@ -66,7 +66,7 @@ class SkillRegistry:
     ):
         """
         Initialize skill registry.
-        
+
         Args:
             skills_dir: Directory containing skill YAML files
             registry_file: Path to registry index file
@@ -77,26 +77,26 @@ class SkillRegistry:
         self.registry_file = Path(registry_file)
         self.embedding_service = embedding_service
         self.vector_store = vector_store
-        
+
         # In-memory caches
         self._skills: Dict[str, Skill] = {}
         self._metadata: Dict[str, SkillMetadata] = {}
         self._registry_data: Optional[Dict[str, Any]] = None
-        
+
         # Load registry
         self._load_registry()
-    
+
     def _load_registry(self) -> None:
         """Load registry index file"""
         try:
             if self.registry_file.exists():
                 with open(self.registry_file, 'r') as f:
                     self._registry_data = yaml.safe_load(f)
-                
+
                 # Ensure registry_data is a dict
                 if not isinstance(self._registry_data, dict):
                     self._registry_data = {'skills': [], 'last_updated': datetime.now().isoformat()}
-                    
+
                 # Load metadata for all skills
                 for skill_info in self._registry_data.get('skills', []):
                     metadata = SkillMetadata(
@@ -113,28 +113,28 @@ class SkillRegistry:
                         trigger_embedding_id=skill_info.get('trigger_embedding_id')
                     )
                     self._metadata[metadata.skill_id] = metadata
-                
+
                 logger.info(
                     f"Loaded registry with {len(self._metadata)} skills from {self.registry_file}"
                 )
             else:
                 logger.warning(f"Registry file not found: {self.registry_file}")
                 self._registry_data = {'skills': [], 'last_updated': datetime.now().isoformat()}
-                
+
         except Exception as e:
             logger.error(f"Failed to load registry: {e}")
             raise SkillLoadError(f"Failed to load registry: {e}")
-    
+
     def _load_skill_from_file(self, file_path: str) -> Skill:
         """
         Load skill from YAML file.
-        
+
         Args:
             file_path: Path to skill YAML file
-            
+
         Returns:
             Skill instance
-            
+
         Raises:
             SkillLoadError: If loading fails
         """
@@ -142,10 +142,10 @@ class SkillRegistry:
             path = Path(file_path)
             if not path.exists():
                 raise SkillLoadError(f"Skill file not found: {file_path}")
-            
+
             with open(path, 'r') as f:
                 skill_data = yaml.safe_load(f)
-            
+
             # Convert YAML to Skill domain model
             # Note: YAML has different structure than domain model
             # YAML has triggers.semantic_patterns, domain model has triggers as List[str]
@@ -155,7 +155,7 @@ class SkillRegistry:
                 triggers = triggers_data.get('semantic_patterns', [])
             else:
                 triggers = triggers_data if isinstance(triggers_data, list) else []
-            
+
             # Convert guardrails from list to dict format
             # YAML has guardrails as list, domain model expects dict
             guardrails_data = skill_data.get('guardrails', [])
@@ -170,7 +170,7 @@ class SkillRegistry:
                         guardrails[f'guardrail_{i}'] = guardrail
             else:
                 guardrails = guardrails_data if isinstance(guardrails_data, dict) else {}
-            
+
             # Parse steps from YAML
             # YAML has action_type and tool, domain model expects step_type and tool_name
             from src.domain.models.skill import SkillStep, SkillStepType
@@ -184,7 +184,7 @@ class SkillRegistry:
                     step_type = SkillStepType.REASONING
                 else:
                     step_type = SkillStepType.TOOL_CALL  # Default
-                
+
                 step = SkillStep(
                     step_id=str(step_data.get('step_id', len(steps) + 1)),
                     step_type=step_type,
@@ -196,7 +196,7 @@ class SkillRegistry:
                     expected_output=', '.join(step_data.get('outputs', []))
                 )
                 steps.append(step)
-            
+
             skill = Skill(
                 skill_id=skill_data['skill_id'],
                 version=skill_data['version'],
@@ -207,34 +207,34 @@ class SkillRegistry:
                 metadata=skill_data.get('metadata', {}),
                 guardrails=guardrails
             )
-            
+
             logger.debug(f"Loaded skill: {skill.skill_id} from {file_path}")
             return skill
-            
+
         except Exception as e:
             logger.error(f"Failed to load skill from {file_path}: {e}")
             raise SkillLoadError(f"Failed to load skill from {file_path}: {e}")
-    
+
     def get_skill(self, skill_id: str, force_reload: bool = False) -> Optional[Skill]:
         """
         Get skill by ID from vector DB (no file I/O at runtime).
-        
+
         Args:
             skill_id: Skill identifier
             force_reload: Force reload from vector DB
-            
+
         Returns:
             Skill instance or None if not found
         """
         # Check cache first
         if not force_reload and skill_id in self._skills:
             return self._skills[skill_id]
-        
+
         # Load from vector DB
         if not self.vector_store:
             logger.error("Vector store not configured")
             return None
-        
+
         try:
             # Search for skill by ID in metadata using ChromaDB operator syntax
             results = self.vector_store.search_by_metadata(
@@ -246,15 +246,15 @@ class SkillRegistry:
                 },
                 n_results=1
             )
-            
+
             if not results or "skill_data_json" not in results[0].metadata:
                 logger.warning(f"Skill {skill_id} not found in vector DB")
                 return None
-            
+
             # Reconstruct Skill from JSON metadata
             import json
             skill_data = json.loads(results[0].metadata["skill_data_json"])
-            
+
             from src.domain.models.skill import SkillStep, SkillStepType
             steps = []
             for step_data in skill_data.get("steps", []):
@@ -269,7 +269,7 @@ class SkillRegistry:
                     expected_output=step_data.get("expected_output")
                 )
                 steps.append(step)
-            
+
             skill = Skill(
                 skill_id=skill_data["skill_id"],
                 version=skill_data["version"],
@@ -280,16 +280,16 @@ class SkillRegistry:
                 metadata=skill_data.get("metadata", {}),
                 guardrails=skill_data.get("guardrails", {})
             )
-            
+
             # Cache it
             self._skills[skill_id] = skill
             logger.debug(f"Loaded skill {skill_id} from vector DB with {len(steps)} steps")
             return skill
-            
+
         except Exception as e:
             logger.error(f"Failed to load skill {skill_id} from vector DB: {e}")
             return None
-    
+
     def list_skills(
         self,
         domain: Optional[str] = None,
@@ -298,17 +298,17 @@ class SkillRegistry:
     ) -> List[SkillMetadata]:
         """
         List skills with optional filtering.
-        
+
         Args:
             domain: Filter by domain
             category: Filter by category
             active_only: Only return active skills
-            
+
         Returns:
             List of skill metadata
         """
         results = []
-        
+
         for metadata in self._metadata.values():
             # Apply filters
             if active_only and not metadata.active:
@@ -317,55 +317,55 @@ class SkillRegistry:
                 continue
             if category and metadata.category != category:
                 continue
-            
+
             results.append(metadata)
-        
+
         return results
-    
+
     def get_all_skills(self, active_only: bool = True) -> List[Skill]:
         """
         Load all skills.
-        
+
         Args:
             active_only: Only return active skills
-            
+
         Returns:
             List of Skill instances
         """
         skills = []
-        
+
         for metadata in self.list_skills(active_only=active_only):
             skill = self.get_skill(metadata.skill_id)
             if skill:
                 skills.append(skill)
-        
+
         return skills
-    
+
     def index_skill_triggers(self, skill_id: str) -> bool:
         """
         Index skill triggers in vector store with complete skill data.
-        
+
         Args:
             skill_id: Skill to index
-            
+
         Returns:
             True if successful
         """
         if not self.embedding_service or not self.vector_store:
             logger.warning("Embedding service or vector store not configured")
             return False
-        
+
         # Load skill from file first (during indexing only)
         metadata = self._metadata.get(skill_id)
         if not metadata:
             return False
-        
+
         try:
             skill = self._load_skill_from_file(metadata.file_path)
             if not skill or not skill.triggers:
                 logger.warning(f"No triggers for skill {skill_id}")
                 return False
-            
+
             # Enrich trigger text with skill name and description for better semantic matching
             # Format: "Skill: [name]. Description: [description]. Triggers: [patterns]"
             enriched_trigger_text = (
@@ -373,13 +373,13 @@ class SkillRegistry:
                 f"Description: {skill.description}. "
                 f"Triggers: {' '.join(skill.triggers)}"
             )
-            
+
             logger.debug(f"Enriched trigger text for {skill_id}: {enriched_trigger_text[:200]}...")
-            
+
             # Generate embedding for enriched text
             embedding_result = self.embedding_service.embed_texts([enriched_trigger_text])
             embedding = embedding_result.embeddings[0]
-            
+
             # Serialize skill steps for storage
             from src.domain.models.skill import SkillStep
             steps_data = []
@@ -394,7 +394,7 @@ class SkillRegistry:
                     "approval_reason": step.approval_reason,
                     "expected_output": step.expected_output
                 })
-            
+
             # Serialize skill data to JSON string (ChromaDB doesn't support nested dicts)
             import json
             skill_data_json = json.dumps({
@@ -407,7 +407,7 @@ class SkillRegistry:
                 "metadata": skill.metadata,
                 "guardrails": skill.guardrails
             })
-            
+
             # Store complete skill data in metadata as JSON string
             # ChromaDB only accepts str, int, float, bool in metadata - no lists or nested dicts
             doc_id = f"skill_{skill_id}"
@@ -425,30 +425,30 @@ class SkillRegistry:
                     "skill_data_json": skill_data_json  # Store complete skill as JSON string
                 }]
             )
-            
+
             logger.info(f"Indexed skill {skill_id} with {len(steps_data)} steps in vector DB")
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to index skill {skill_id}: {e}")
             return False
-    
+
     def index_all_skills(self) -> int:
         """
         Index all active skills in vector store.
-        
+
         Returns:
             Number of skills indexed
         """
         count = 0
-        
+
         for metadata in self.list_skills(active_only=True):
             if self.index_skill_triggers(metadata.skill_id):
                 count += 1
-        
+
         logger.info(f"Indexed {count} skills")
         return count
-    
+
     def update_skill_metrics(
         self,
         skill_id: str,
@@ -457,19 +457,19 @@ class SkillRegistry:
     ) -> bool:
         """
         Update skill performance metrics.
-        
+
         Args:
             skill_id: Skill to update
             execution_time_ms: Execution time
             success: Whether execution was successful
-            
+
         Returns:
             True if successful
         """
         metadata = self._metadata.get(skill_id)
         if not metadata:
             return False
-        
+
         try:
             # Update in-memory metadata
             if success is not None:
@@ -481,22 +481,22 @@ class SkillRegistry:
                 else:
                     total_successes = metadata.success_rate * (metadata.usage_count - 1)
                     metadata.success_rate = total_successes / metadata.usage_count
-            
+
             # Update registry file
             self._save_registry()
-            
+
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to update metrics for {skill_id}: {e}")
             return False
-    
+
     def _save_registry(self) -> None:
         """Save registry to file"""
         try:
             if not self._registry_data:
                 return
-            
+
             # Update skills list with current metadata
             skills_list = []
             for metadata in self._metadata.values():
@@ -513,66 +513,66 @@ class SkillRegistry:
                     'usage_count': metadata.usage_count,
                     'success_rate': metadata.success_rate
                 })
-            
+
             self._registry_data['skills'] = skills_list
             self._registry_data['last_updated'] = datetime.now().isoformat()
-            
+
             # Write to file
             with open(self.registry_file, 'w') as f:
                 yaml.dump(self._registry_data, f, default_flow_style=False)
-            
+
             logger.debug(f"Saved registry to {self.registry_file}")
-            
+
         except Exception as e:
             logger.error(f"Failed to save registry: {e}")
-    
+
     def activate_skill(self, skill_id: str) -> bool:
         """
         Activate a skill.
-        
+
         Args:
             skill_id: Skill to activate
-            
+
         Returns:
             True if successful
         """
         metadata = self._metadata.get(skill_id)
         if not metadata:
             return False
-        
+
         metadata.active = True
         self._save_registry()
         logger.info(f"Activated skill: {skill_id}")
         return True
-    
+
     def deactivate_skill(self, skill_id: str) -> bool:
         """
         Deactivate a skill.
-        
+
         Args:
             skill_id: Skill to deactivate
-            
+
         Returns:
             True if successful
         """
         metadata = self._metadata.get(skill_id)
         if not metadata:
             return False
-        
+
         metadata.active = False
         self._save_registry()
         logger.info(f"Deactivated skill: {skill_id}")
         return True
-    
+
     def get_statistics(self) -> Dict[str, Any]:
         """
         Get registry statistics.
-        
+
         Returns:
             Dict with statistics
         """
         active_skills = [m for m in self._metadata.values() if m.active]
-        
+
         return {
             'total_skills': len(self._metadata),
             'active_skills': len(active_skills),

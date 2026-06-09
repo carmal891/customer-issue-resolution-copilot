@@ -102,13 +102,13 @@ def generate_loyalty_info(tier: str, index: int) -> Dict[str, Any]:
     """Generate loyalty program information."""
     if tier == "NONE":
         return {"loyalty_tier": "NONE", "loyalty_number": None}
-    
+
     tier_prefix = {
         "SILVER": "SILV",
         "GOLD": "GOLD",
         "PLATINUM": "PLAT"
     }
-    
+
     return {
         "loyalty_tier": tier,
         "loyalty_number": f"GP-{tier_prefix[tier]}-{1000 + index * 123 % 9999}"
@@ -126,17 +126,17 @@ def generate_booking(index: int) -> Dict[str, Any]:
         weights=[30, 25, 25, 20],  # More non-loyalty, fewer platinum
         k=1
     )[0]
-    
+
     # Date generation
     days_from_start = random.randint(0, 30)
     check_in = START_DATE + timedelta(days=days_from_start)
     nights = random.randint(2, 5)
     check_out = check_in + timedelta(days=nights)
-    
+
     # Booking created 1-20 days before check-in
     created_days_before = random.randint(1, 20)
     created_at = check_in - timedelta(days=created_days_before)
-    
+
     # Status determination based on dates
     today = datetime(2024, 3, 22)  # Fixed "today" for consistency
     if check_out < today:
@@ -156,7 +156,7 @@ def generate_booking(index: int) -> Dict[str, Any]:
             weights=[90, 10],
             k=1
         )[0]
-    
+
     # Guest information
     first_name = random.choice(FIRST_NAMES)
     last_name = random.choice(LAST_NAMES)
@@ -164,11 +164,11 @@ def generate_booking(index: int) -> Dict[str, Any]:
                      "consulting.com", "startup.io", "lawfirm.com", "finance.com",
                      "healthcare.org", "marketing.com", "university.edu"]
     email = f"{first_name.lower()}.{last_name.lower()}@{random.choice(email_domains)}"
-    
+
     # Room assignment
     floor = random.randint(2, 9)
     room_number = f"{floor}{random.randint(1, 25):02d}"
-    
+
     # Build booking
     booking = {
         "booking_id": f"BK-2024-{index + 1:03d}",
@@ -197,7 +197,7 @@ def generate_booking(index: int) -> Dict[str, Any]:
         "special_requests": random.choice(SPECIAL_REQUESTS),
         "created_at": created_at.strftime("%Y-%m-%dT%H:%M:%SZ")
     }
-    
+
     # Add status-specific fields
     if status == "CHECKED_IN":
         check_in_time = check_in.replace(
@@ -237,7 +237,7 @@ def generate_booking(index: int) -> Dict[str, Any]:
     else:  # CONFIRMED
         booking["checked_in_at"] = None
         booking["checked_out_at"] = None
-    
+
     # Add special notes for loyalty members
     if loyalty_tier in ["GOLD", "PLATINUM"] and status in ["CHECKED_OUT", "CHECKED_IN"]:
         if random.random() < 0.3:  # 30% chance
@@ -248,41 +248,41 @@ def generate_booking(index: int) -> Dict[str, Any]:
                 perks.append("Late checkout granted" if status == "CHECKED_OUT" else "Late checkout approved")
             if perks:
                 booking["special_requests"] = ", ".join(perks)
-    
+
     return booking
 
 
 def main():
     """Generate all bookings and save to JSON file."""
     print(f"Generating {NUM_BOOKINGS} mock bookings...")
-    
+
     bookings = []
     for i in range(NUM_BOOKINGS):
         booking = generate_booking(i)
         bookings.append(booking)
-    
+
     # Save to file
     output_path = "data/mock/bookings/bookings.json"
     with open(output_path, "w") as f:
         json.dump(bookings, f, indent=2)
-    
-print(f" Generated {len(bookings)} bookings")
-print(f" Saved to {output_path}")
-    
+
+    print(f"Generated {len(bookings)} bookings")
+    print(f"Saved to {output_path}")
+
     # Print statistics
     status_counts = {}
     channel_counts = {}
     loyalty_counts = {}
-    
+
     for booking in bookings:
         status = booking["status"]
         channel = booking["booking_channel"]
         loyalty = booking["guest"]["loyalty_tier"]
-        
+
         status_counts[status] = status_counts.get(status, 0) + 1
         channel_counts[channel] = channel_counts.get(channel, 0) + 1
         loyalty_counts[loyalty] = loyalty_counts.get(loyalty, 0) + 1
-    
+
     print("\nStatistics:")
     print(f"  Status distribution: {status_counts}")
     print(f"  Channel distribution: {channel_counts}")

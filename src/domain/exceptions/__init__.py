@@ -302,18 +302,18 @@ __all__ = [
     # Base
     "DomainException",
     "ValidationError",
-    
+
     # Booking
     "BookingError",
     "BookingNotFoundError",
     "InvalidBookingStateError",
     "BookingConflictError",
-    
+
     # Issue
     "IssueError",
     "IssueNotFoundError",
     "InvalidIssueStateError",
-    
+
     # Skill
     "SkillError",
     "SkillNotFoundError",
@@ -325,7 +325,7 @@ __all__ = [
     "SkillIndexError",
     "SkillCompilationError",
     "SkillExecutionError",
-    
+
     # RAG
     "RAGError",
     "RetrievalError",
@@ -333,7 +333,7 @@ __all__ = [
     "EmbeddingError",
     "RerankingError",
     "ChunkingError",
-    
+
     # Tool
     "ToolError",
     "ToolNotFoundError",
@@ -341,7 +341,7 @@ __all__ = [
     "ToolValidationError",
     "ToolRetrievalError",
     "UnauthorizedExecutionError",
-    
+
     # Approval
     "ApprovalError",
     "ApprovalNotFoundError",
@@ -352,32 +352,32 @@ __all__ = [
     "TokenRevocationError",
     "TokenExpiredError",
     "TokenInvalidError",
-    
+
     # Resolution
     "ResolutionError",
     "ResolutionNotFoundError",
     "InvalidResolutionStateError",
     "StepNotFoundError",
-    
+
     # Execution
     "ExecutionError",
     "CancellationError",
-    
+
     # Orchestration
     "OrchestrationError",
     "ClassificationError",
     "ReasoningError",
-    
+
     # Guardrails
     "GuardrailError",
     "PIIDetectedError",
     "PromptInjectionError",
     "LowConfidenceError",
     "RateLimitError",
-    
+
     # Notification
     "NotificationError",
-    
+
     # Metrics
     "MetricsError",
     "MetricsRetrievalError",

@@ -124,11 +124,11 @@ if 'initialized' not in st.session_state:
 def initialize_system_components():
     """Initialize all system components (cached for performance)."""
     logger.info("Starting system initialization...")
-    
+
     # Initialize RAG Pipeline
     logger.info("Initializing RAG Pipeline...")
     rag_pipeline = RAGPipeline()
-    
+
     # Index policy documents from data/mock directory
     logger.info("Indexing policy documents...")
     data_dir = Path("data/mock")
@@ -140,29 +140,29 @@ def initialize_system_components():
         logger.info(f"Indexed {index_stats.get('num_documents', 0)} documents, {index_stats.get('num_chunks', 0)} chunks")
     else:
         logger.warning("Policy documents directory not found")
-    
+
     # Initialize Skill Registry
     logger.info("Loading Skill Registry...")
     skill_registry = SkillRegistry(
         embedding_service=rag_pipeline.embedding_service,
         vector_store=rag_pipeline.vector_store
     )
-    
+
     # Load and index skills from YAML files
     logger.info("Loading and indexing skills from YAML files...")
     skill_ids = list(skill_registry._metadata.keys())
     logger.info(f"Found {len(skill_ids)} skills in registry to load and index")
-    
+
     indexed_count = 0
     for skill_id in skill_ids:
         try:
             # Load skill from YAML file
             skill_file = f"data/skills/{skill_id}.yaml"
             skill = skill_registry._load_skill_from_file(skill_file)
-            
+
             if skill:
                 logger.info(f"Loaded: {skill.skill_id} ({skill.name}) with {len(skill.steps)} steps")
-                
+
                 # Index the skill triggers
                 result = skill_registry.index_skill_triggers(skill.skill_id)
                 if result:
@@ -172,20 +172,20 @@ def initialize_system_components():
                     logger.warning(f"Failed to index {skill.skill_id}")
             else:
                 logger.error(f"Failed to load {skill_id}")
-                
+
         except Exception as e:
             logger.warning(f"Failed to load/index skill {skill_id}: {e}")
-    
+
     logger.info(f"Indexed {indexed_count}/{len(skill_ids)} skill triggers")
-    
+
     # Initialize Tool Registry
     logger.info("Setting up Tool Registry...")
     tool_registry = ToolRegistry()
-    
+
     # Initialize LLM Service
     logger.info("Initializing LLM Service...")
     llm_service = LLMService()
-    
+
     # Initialize Skill Matcher
     logger.info("Setting up Skill Matcher...")
     skill_matcher = SkillMatcher(
@@ -195,7 +195,7 @@ def initialize_system_components():
         llm_service=llm_service,
         enable_query_reformulation=True
     )
-    
+
     # Initialize ReAct Loop
     logger.info("Initializing ReAct Loop...")
     tpao_loop = TPAOLoop(
@@ -204,20 +204,20 @@ def initialize_system_components():
         llm_service=llm_service,
         max_iterations=5
     )
-    
+
     # Initialize Approval Service
     logger.info("Setting up Approval Service...")
     approval_service = ApprovalService()
-    
+
     # Initialize Executor Agent
     logger.info("Initializing Executor Agent...")
     executor_agent = ExecutorAgent(
         tool_registry=tool_registry,
         approval_service=approval_service
     )
-    
+
     logger.info("System initialization complete!")
-    
+
     return {
         'rag_pipeline': rag_pipeline,
         'skill_registry': skill_registry,
@@ -237,7 +237,7 @@ def ensure_system_initialized():
         try:
             with st.spinner("🚀 Initializing system components..."):
                 components = initialize_system_components()
-                
+
                 # Store in session state
                 st.session_state.rag_pipeline = components['rag_pipeline']
                 st.session_state.skill_registry = components['skill_registry']
@@ -248,10 +248,10 @@ def ensure_system_initialized():
                 st.session_state.approval_service = components['approval_service']
                 st.session_state.executor_agent = components['executor_agent']
                 st.session_state.initialized = True
-                
+
                 st.success(f"✅ System initialized! Loaded {components['indexed_skills']}/{components['total_skills']} skills")
                 logger.info("System components stored in session state")
-                
+
         except Exception as e:
             st.error(f"❌ Initialization failed: {str(e)}")
             logger.exception("System initialization failed")
@@ -266,14 +266,14 @@ def render_sidebar():
     """Render the sidebar with system status and navigation."""
     with st.sidebar:
         st.image("https://via.placeholder.com/300x100/1f77b4/ffffff?text=Hotel+Copilot", use_container_width=True)
-        
+
         st.markdown("---")
-        
+
         # System Status
         st.subheader("🔧 System Status")
         if st.session_state.initialized:
             st.success("✅ All systems operational")
-            
+
             # Component status
             with st.expander("📊 Component Details"):
                 st.write("✅ RAG Pipeline: Active")
@@ -284,9 +284,9 @@ def render_sidebar():
                 st.write("✅ Executor Agent: Ready")
         else:
             st.warning("⚠️ System initializing...")
-        
+
         st.markdown("---")
-        
+
         # Navigation
         st.subheader("📍 Navigation")
         page = st.radio(
@@ -294,9 +294,9 @@ def render_sidebar():
             ["🏠 Dashboard", "📝 Submit Issue", "✅ Approvals", "📚 Skills", "📖 Knowledge Base", "🛠️ Tools"],
             label_visibility="collapsed"
         )
-        
+
         st.markdown("---")
-        
+
         # Quick Stats
         st.subheader("📈 Quick Stats")
         col1, col2 = st.columns(2)
@@ -304,40 +304,40 @@ def render_sidebar():
             st.metric("Issues", len(st.session_state.issues))
         with col2:
             st.metric("Resolved", len([r for r in st.session_state.resolutions if r.status == ResolutionStatus.COMPLETED]))
-        
+
         return page
 
 def render_dashboard():
     """Render the main dashboard."""
     st.header("🏠 Dashboard")
-    
+
     # Metrics row
     col1, col2, col3, col4 = st.columns(4)
-    
+
     with col1:
         st.metric(
             "Total Issues",
             len(st.session_state.issues),
             delta="+2 today" if len(st.session_state.issues) > 0 else None
         )
-    
+
     with col2:
         resolved = len([r for r in st.session_state.resolutions if r.status == ResolutionStatus.COMPLETED])
         st.metric("Resolved", resolved)
-    
+
     with col3:
         pending_approvals = len([a for a in st.session_state.approvals if a.status == ApprovalStatus.PENDING])
         st.metric("Pending Approvals", pending_approvals, delta="Needs attention" if pending_approvals > 0 else None)
-    
+
     with col4:
         skills_count = len(st.session_state.skill_registry.list_skills()) if st.session_state.skill_registry else 0
         st.metric("Available Skills", skills_count)
-    
+
     st.markdown("---")
-    
+
     # Recent Activity
     col1, col2 = st.columns(2)
-    
+
     with col1:
         st.subheader("📋 Recent Issues")
         if st.session_state.issues:
@@ -350,7 +350,7 @@ def render_dashboard():
                         st.write(f"**Booking:** {issue.booking_id}")
         else:
             st.info("No issues submitted yet. Use 'Submit Issue' to create one.")
-    
+
     with col2:
         st.subheader("✅ Recent Resolutions")
         if st.session_state.resolutions:
@@ -361,7 +361,7 @@ def render_dashboard():
                     st.write(f"**Steps:** {len(resolution.steps)}")
                     if resolution.completed_at:
                         st.write(f"**Completed:** {resolution.completed_at.strftime('%Y-%m-%d %H:%M')}")
-                    
+
                     # Display citations if available (from ReAct Think phase)
                     for step in resolution.steps:
                         if step.step_type == "think" and step.output_data and "citations" in step.output_data:
@@ -373,10 +373,10 @@ def render_dashboard():
                                     doc_type = citation.get("doc_type", "document")
                                     score = citation.get("relevance_score", 0)
                                     preview = citation.get("content_preview", "")[:150]
-                                    
+
                                     # Color code by relevance
                                     score_emoji = "🟢" if score > 0.8 else "🟡" if score > 0.5 else "🔴"
-                                    
+
                                     st.markdown(f"{score_emoji} **{source_name}** ({doc_type}) - Relevance: {score:.2f}")
                                     st.caption(f"_{preview}..._")
         else:
@@ -385,24 +385,24 @@ def render_dashboard():
 def render_submit_issue():
     """Render the issue submission form."""
     st.header("📝 Submit Customer Issue")
-    
+
     with st.form("issue_form"):
         subject = st.text_input("Subject *", placeholder="Brief description of the issue")
-        
+
         col1, col2 = st.columns(2)
         with col1:
             guest_id = st.text_input("Guest ID", placeholder="Optional: G12345")
         with col2:
             booking_id = st.text_input("Booking ID", placeholder="Optional: BK67890")
-        
+
         description = st.text_area(
             "Description *",
             placeholder="Detailed description of the customer issue...",
             height=150
         )
-        
+
         submitted = st.form_submit_button("🚀 Submit Issue", use_container_width=True)
-        
+
         if submitted:
             if not subject or not description:
                 st.error("❌ Please fill in all required fields (marked with *)")
@@ -412,69 +412,69 @@ def render_submit_issue():
                     # GUARDRAIL LAYER 1: PII DETECTION AND MASKING
                     # ============================================================
                     pii_detector = get_pii_detector()
-                    
+
                     # Check subject for PII
                     masked_subject, subject_pii = pii_detector.detect_and_mask(subject)
-                    
+
                     # Check description for PII
                     masked_description, desc_pii = pii_detector.detect_and_mask(description)
-                    
+
                     # Combine all PII findings
                     all_pii = subject_pii + desc_pii
-                    
+
                     # Check if request should be blocked due to excessive PII
                     should_block_pii, pii_reason = pii_detector.should_block_request(description)
-                    
+
                     if should_block_pii:
                         st.error(f"🚫 **Security Alert: Request Blocked**")
                         st.error(f"**Reason:** {pii_reason}")
                         st.warning("⚠️ Your request contains excessive sensitive information. Please remove sensitive data and try again.")
                         return
-                    
+
                     # Show PII masking info if any PII was detected
                     if all_pii:
                         st.warning(f"🔒 **PII Detected and Masked:** {len(all_pii)} sensitive item(s) found")
                         with st.expander("View Masked PII Details"):
                             for pii_match in all_pii:
                                 st.write(f"- **{pii_match.pii_type.value}**: {pii_match.masked_value} (confidence: {pii_match.confidence:.2f})")
-                    
+
                     # ============================================================
                     # GUARDRAIL LAYER 2: PROMPT INJECTION DETECTION
                     # ============================================================
                     injection_detector = get_injection_detector()
-                    
+
                     # Check subject for injection attempts
                     subject_injection = injection_detector.check_content(masked_subject)
-                    
+
                     # Check description for injection attempts
                     desc_injection = injection_detector.check_content(masked_description)
-                    
+
                     # Check if content should be blocked
                     should_block_subject, subject_reason = injection_detector.should_block_content(subject_injection)
                     should_block_desc, desc_reason = injection_detector.should_block_content(desc_injection)
-                    
+
                     if should_block_subject or should_block_desc:
                         st.error(f"🚫 **Security Alert: Malicious Content Detected**")
-                        
+
                         if should_block_subject:
                             st.error(f"**Subject:** {subject_reason}")
                             for threat in subject_injection.threats_detected:
                                 st.write(f"  - {threat.threat_type.value}: Pattern '{threat.matched_pattern}' (severity: {threat.severity})")
-                        
+
                         if should_block_desc:
                             st.error(f"**Description:** {desc_reason}")
                             for threat in desc_injection.threats_detected:
                                 st.write(f"  - {threat.threat_type.value}: Pattern '{threat.matched_pattern}' (severity: {threat.severity})")
-                        
+
                         st.warning("⚠️ Your request appears to contain malicious patterns. Please rephrase and try again.")
                         logger.warning(f"Blocked injection attempt - Subject threats: {len(subject_injection.threats_detected)}, Desc threats: {len(desc_injection.threats_detected)}")
                         return
-                    
+
                     # Log any low-severity threats that were detected but not blocked
                     if subject_injection.threats_detected or desc_injection.threats_detected:
                         total_threats = len(subject_injection.threats_detected) + len(desc_injection.threats_detected)
                         logger.info(f"Low-severity threats detected but allowed: {total_threats}")
-                    
+
                     # ============================================================
                     # CREATE ISSUE WITH MASKED CONTENT
                     # ============================================================
@@ -494,35 +494,35 @@ def render_submit_issue():
                             "injection_threats_detected": len(subject_injection.threats_detected) + len(desc_injection.threats_detected)
                         }
                     )
-                    
+
                     st.session_state.issues.append(issue)
-                    
+
                     st.success(f"✅ Issue {issue.issue_id} created successfully!")
-                    
+
                     # Show next steps
                     st.info("🔄 The system will now:\n"
-                           "1. Check for matching skills\n"
-                           "2. Retrieve relevant knowledge\n"
-                           "3. Generate resolution plan\n"
-                           "4. Request approval if needed")
-                    
+                            "1. Check for matching skills\n"
+                            "2. Retrieve relevant knowledge\n"
+                            "3. Generate resolution plan\n"
+                            "4. Request approval if needed")
+
                     # Auto-process using actual skill matching
                     with st.spinner("🧠 Processing issue..."):
                         # Step 1: Try to match existing skill using the initialized skill matcher
                         matches = st.session_state.skill_matcher.match_skill(issue, top_k=3)
-                        
+
                         # Display all matches for transparency
                         if matches:
                             st.write("**Skill Matching Results:**")
                             for i, match in enumerate(matches, 1):
                                 confidence_emoji = "🟢" if match.confidence == "high" else "🟡" if match.confidence == "medium" else "🔴"
                                 st.write(f"{i}. {match.skill.name}: {confidence_emoji} {match.confidence} (score: {match.score:.3f})")
-                            
+
                             # NEW APPROACH: Always use top matched skill (regardless of confidence)
                             # Human will approve/reject in the Approvals page
                             matched_skill = matches[0].skill
                             st.success(f"✅ Matched skill: **{matched_skill.name}** (will be sent for approval)")
-                            
+
                             # Create resolution from skill steps
                             resolution_steps = []
                             for i, skill_step in enumerate(matched_skill.steps, 1):
@@ -538,7 +538,7 @@ def render_submit_issue():
                                         duration_ms=0.0  # Will be updated during execution
                                     )
                                 )
-                            
+
                             resolution = Resolution(
                                 resolution_id=f"RES-{issue.issue_id}",
                                 issue_id=issue.issue_id,
@@ -560,16 +560,16 @@ def render_submit_issue():
                             st.write("**Skill Matching Results:**")
                             st.write("No skills matched the query.")
                             st.warning("⚠️ No matching skill found. Using ReAct loop for novel task handling...")
-                            
+
                             # Use ReAct loop to generate plan - it returns a Resolution object
                             resolution = st.session_state.tpao_loop.execute(issue)
-                            
+
                             # Update resolution ID and status for consistency
                             resolution.resolution_id = f"RES-{issue.issue_id}"
                             resolution.status = ResolutionStatus.PENDING_APPROVAL
-                        
+
                         st.session_state.resolutions.append(resolution)
-                        
+
                         # Create approval request for actions requiring approval
                         # Build actions list with more detail
                         actions_list = []
@@ -581,7 +581,7 @@ def render_submit_issue():
                                 "tool": step.tool_used if step.tool_used else "N/A"
                             }
                             actions_list.append(action_detail)
-                        
+
                         approval = ApprovalRequest(
                             issue_id=issue.issue_id,
                             action_type="skill_execution" if resolution.skill_used else "novel_task_resolution",
@@ -596,41 +596,41 @@ def render_submit_issue():
                                 "match_confidence": matches[0].confidence if matches else None
                             }
                         )
-                        
+
                         # Update resolution with approval request ID
                         resolution.approval_request_id = approval.request_id
-                        
+
                         # Add to session state for UI display
                         st.session_state.approvals.append(approval)
-                        
+
                         # Register with ApprovalService so it can be approved/rejected
                         st.session_state.approval_service.approval_history.append(approval)
-                    
+
                     st.success(f"✅ Resolution plan created: {resolution.resolution_id}")
                     st.info(f"⏳ Approval request created: {approval.request_id}")
-                    
+
                 except Exception as e:
                     st.error(f"❌ Error creating issue: {str(e)}")
 
 def render_approvals():
     """Render the approvals page."""
     st.header("✅ Approval Requests")
-    
+
     # Filter
     status_filter = st.selectbox(
         "Filter by Status",
         options=["All", "Pending", "Approved", "Rejected"]
     )
-    
+
     # Get filtered approvals
     approvals = st.session_state.approvals
     if status_filter != "All":
         approvals = [a for a in approvals if a.status.value == status_filter.lower()]
-    
+
     if not approvals:
         st.info("No approval requests found.")
         return
-    
+
     # Display approvals
     for approval in reversed(approvals):
         risk_color = {
@@ -639,23 +639,23 @@ def render_approvals():
             RiskLevel.HIGH: "🔴",
             RiskLevel.CRITICAL: "🔴"
         }.get(approval.risk_level, "⚪")
-        
+
         status_emoji = {
             ApprovalStatus.PENDING: "⏳",
             ApprovalStatus.APPROVED: "✅",
             ApprovalStatus.REJECTED: "❌"
         }.get(approval.status, "⚪")
-        
+
         with st.expander(f"{status_emoji} {approval.request_id} - {risk_color} {approval.risk_level.value.upper()}"):
             col1, col2 = st.columns([2, 1])
-            
+
             with col1:
                 st.write(f"**Issue ID:** {approval.issue_id}")
                 st.write(f"**Action:** {approval.action_description}")
                 st.write(f"**Risk Level:** {approval.risk_level.value.upper()}")
                 st.write(f"**Status:** {approval.status.value.upper()}")
                 st.write(f"**Created:** {approval.created_at.strftime('%Y-%m-%d %H:%M')}")
-                
+
                 # Display policy citations if this is a ReAct resolution
                 if approval.action_type in ["tpao_novel_task_resolution", "novel_task_resolution"]:
                     # Find the resolution for this approval
@@ -664,7 +664,7 @@ def render_approvals():
                         if res.issue_id == approval.issue_id and res.novel_task:
                             resolution = res
                             break
-                    
+
                     if resolution:
                         # Extract citations from Think step
                         for step in resolution.steps:
@@ -678,7 +678,7 @@ def render_approvals():
                                         doc_type = citation.get("doc_type", "document")
                                         score = citation.get("relevance_score", 0)
                                         preview = citation.get("content_preview", "")[:200]
-                                        
+
                                         # Color code by relevance
                                         if score > 0.8:
                                             score_emoji = "🟢"
@@ -689,22 +689,22 @@ def render_approvals():
                                         else:
                                             score_emoji = "🔴"
                                             score_label = "Low"
-                                        
+
                                         st.markdown(f"{score_emoji} **{source_name}** ({doc_type})")
                                         st.caption(f"Relevance: {score_label} ({score:.3f})")
                                         with st.expander("📄 View Policy Excerpt"):
                                             st.text(preview + "...")
                                     break
-                
+
                 if approval.proposed_changes:
                     st.write("---")
                     st.write("**Proposed Changes:**")
                     st.json(approval.proposed_changes)
-            
+
             with col2:
                 if approval.status == ApprovalStatus.PENDING:
                     st.write("**Actions:**")
-                    
+
                     if st.button("✅ Approve", key=f"approve_{approval.request_id}", use_container_width=True):
                         try:
                             token = st.session_state.approval_service.approve_request(
@@ -713,24 +713,24 @@ def render_approvals():
                                 comments="Approved via UI"
                             )
                             approval.status = ApprovalStatus.APPROVED
-                            
+
                             # Check if this is a ReAct-generated resolution that needs to be compiled into a skill
                             st.write(f"DEBUG: Checking action_type: {approval.action_type}")
                             if approval.action_type in ["tpao_novel_task_resolution", "novel_task_resolution"]:
                                 st.info("🔨 Compiling ReAct resolution into reusable skill...")
-                                
+
                                 # Find the resolution for this approval using issue_id and novel_task flag
                                 resolution = None
                                 st.write(f"DEBUG: Looking for resolution with issue_id: {approval.issue_id}")
                                 st.write(f"DEBUG: Total resolutions in state: {len(st.session_state.resolutions)}")
-                                
+
                                 for res in st.session_state.resolutions:
                                     st.write(f"DEBUG: Checking resolution {res.resolution_id}, issue_id={res.issue_id}, novel_task={res.novel_task}")
                                     if res.issue_id == approval.issue_id and res.novel_task:
                                         resolution = res
                                         st.write(f"DEBUG: Found matching ReAct resolution!")
                                         break
-                                
+
                                 if resolution:
                                     st.write(f"DEBUG: Resolution found with {len(resolution.steps)} steps")
                                     # Find the original issue
@@ -741,7 +741,7 @@ def render_approvals():
                                             issue = iss
                                             st.write(f"DEBUG: Found matching issue!")
                                             break
-                                    
+
                                     if issue:
                                         st.write("DEBUG: Starting skill compilation...")
                                         try:
@@ -750,25 +750,25 @@ def render_approvals():
                                             import secrets
                                             import yaml
                                             from pathlib import Path
-                                            
+
                                             # Generate skill ID and name
                                             skill_id = f"skill_{secrets.token_hex(4)}"
-                                            
+
                                             # Create descriptive skill name from issue subject
                                             # Clean up the subject and make it a proper skill name
                                             subject_words = issue.subject.strip().split()[:5]  # Max 5 words
                                             skill_name = ' '.join(subject_words).title()
-                                            
+
                                             # Add "Handler" suffix if not present
                                             if not skill_name.lower().endswith('handler'):
                                                 skill_name = f"{skill_name} Handler"
-                                            
+
                                             # Fallback to issue type if subject is too short
                                             if len(skill_name) < 10:
                                                 skill_name = f"{issue.issue_type.value.replace('_', ' ').title()} Handler"
-                                            
+
                                             st.write(f"✨ Skill name: **{skill_name}**")
-                                            
+
                                             # Generate semantic trigger variations using LLM
                                             st.write("🔄 Generating semantic trigger variations...")
                                             trigger_variations = []
@@ -791,9 +791,9 @@ Examples:
 Original: "i need to checkin early"
 Variations: ["early check-in request", "early access to room", "check in before standard time", "arrive early at hotel", "can I check in early", "early arrival request", "need room access before 3pm"]
 """
-                                                
+
                                                 llm_response = st.session_state.llm_service.generate_json_simple(trigger_prompt)
-                                                
+
                                                 if isinstance(llm_response, list) and len(llm_response) > 0:
                                                     trigger_variations = llm_response[:7]  # Max 7 variations
                                                     st.write(f"✅ Generated {len(trigger_variations)} trigger variations")
@@ -808,12 +808,12 @@ Variations: ["early check-in request", "early access to room", "check in before 
                                             except Exception as e:
                                                 st.warning(f"⚠️ Trigger generation failed: {e}, using fallback")
                                                 trigger_variations = []
-                                            
+
                                             # Combine original + variations, remove duplicates
                                             all_triggers = [issue.subject or issue.body[:100]]
                                             if trigger_variations:
                                                 all_triggers.extend(trigger_variations)
-                                            
+
                                             # Remove duplicates while preserving order
                                             seen = set()
                                             unique_triggers = []
@@ -822,16 +822,16 @@ Variations: ["early check-in request", "early access to room", "check in before 
                                                 if trigger_lower and trigger_lower not in seen:
                                                     seen.add(trigger_lower)
                                                     unique_triggers.append(trigger)
-                                            
+
                                             # Limit to 8 triggers max
                                             final_triggers = unique_triggers[:8]
                                             st.write(f"📝 Using {len(final_triggers)} triggers for skill matching")
-                                            
+
                                             # Convert resolution steps to skill steps
                                             skill_steps = []
                                             for idx, res_step in enumerate(resolution.steps):
                                                 step_type = SkillStepType.TOOL_CALL if res_step.tool_used else SkillStepType.REASONING
-                                                
+
                                                 # Convert output_data to string if it's a dict
                                                 expected_output_str = None
                                                 if res_step.output_data:
@@ -840,7 +840,7 @@ Variations: ["early check-in request", "early access to room", "check in before 
                                                         expected_output_str = json.dumps(res_step.output_data)
                                                     else:
                                                         expected_output_str = str(res_step.output_data)
-                                                
+
                                                 skill_step = SkillStep(
                                                     step_id=f"step_{idx + 1}",
                                                     step_type=step_type,
@@ -852,16 +852,16 @@ Variations: ["early check-in request", "early access to room", "check in before 
                                                     approval_reason="Action requires verification" if not res_step.success else None
                                                 )
                                                 skill_steps.append(skill_step)
-                                            
+
                                             # Check if resolution was created without policy grounding
                                             no_policy_match = resolution.metadata.get("no_policy_match", False)
                                             using_general_knowledge = resolution.metadata.get("using_general_knowledge", False)
-                                            
+
                                             # Add warning to description if no policies were found
                                             skill_description = f"Automatically generated skill for: {issue.subject or issue.body[:50]}"
                                             if no_policy_match:
                                                 skill_description = f"⚠️ WARNING: Created without company policy grounding. {skill_description}"
-                                            
+
                                             # Create the skill with generated trigger variations
                                             new_skill = Skill(
                                                 skill_id=skill_id,
@@ -882,12 +882,12 @@ Variations: ["early check-in request", "early access to room", "check in before 
                                                 },
                                                 created_by="tpao_compiler"
                                             )
-                                            
+
                                             # Save skill to YAML file
                                             skills_dir = Path("data/skills")
                                             skills_dir.mkdir(parents=True, exist_ok=True)
                                             skill_file = skills_dir / f"{skill_id}.yaml"
-                                            
+
                                             # Convert skill to YAML format
                                             skill_dict = {
                                                 "skill_id": new_skill.skill_id,
@@ -911,21 +911,21 @@ Variations: ["early check-in request", "early access to room", "check in before 
                                                 "guardrails": new_skill.guardrails,
                                                 "metadata": new_skill.metadata
                                             }
-                                            
+
                                             with open(skill_file, 'w') as f:
                                                 yaml.dump(skill_dict, f, default_flow_style=False, sort_keys=False)
-                                            
+
                                             # Show success message with warning if applicable
                                             if no_policy_match:
                                                 st.warning(f"⚠️ Skill created but requires policy review - no company policies were found during resolution")
                                                 st.info(f"📝 Skill saved to: {skill_file}")
                                             else:
                                                 st.success(f"✅ Skill YAML saved to: {skill_file}")
-                                            
+
                                             # Add to registry metadata and index in vector DB
                                             from src.application.skills.skill_registry import SkillMetadata
                                             from datetime import datetime
-                                            
+
                                             # Create metadata entry
                                             metadata = SkillMetadata(
                                                 skill_id=skill_id,
@@ -939,14 +939,14 @@ Variations: ["early check-in request", "early access to room", "check in before 
                                                 usage_count=0,
                                                 success_rate=0.0
                                             )
-                                            
+
                                             # Add to registry's internal metadata
                                             st.session_state.skill_registry._metadata[skill_id] = metadata
                                             st.session_state.skill_registry._skills[skill_id] = new_skill
-                                            
+
                                             # Save registry file
                                             st.session_state.skill_registry._save_registry()
-                                            
+
                                             # Index the skill triggers in vector DB for matching
                                             st.write("DEBUG: Indexing skill triggers...")
                                             try:
@@ -956,10 +956,10 @@ Variations: ["early check-in request", "early access to room", "check in before 
                                                     f"Description: {new_skill.description}. "
                                                     f"Triggers: {' '.join(new_skill.triggers)}"
                                                 )
-                                                
+
                                                 embedding_result = st.session_state.skill_registry.embedding_service.embed_texts([enriched_trigger_text])
                                                 embedding = embedding_result.embeddings[0]
-                                                
+
                                                 # Serialize skill data to JSON
                                                 import json
                                                 skill_data_json = json.dumps({
@@ -984,7 +984,7 @@ Variations: ["early check-in request", "early access to room", "check in before 
                                                     "metadata": new_skill.metadata or {},
                                                     "guardrails": new_skill.guardrails or {}
                                                 })
-                                                
+
                                                 # Add to vector DB
                                                 doc_id = f"skill_{skill_id}"
                                                 st.session_state.skill_registry.vector_store.add_documents(
@@ -999,12 +999,12 @@ Variations: ["early check-in request", "early access to room", "check in before 
                                                         "skill_data_json": skill_data_json
                                                     }]
                                                 )
-                                                
+
                                                 st.success(f"✅ **New Skill Learned:** {new_skill.name}")
                                                 st.info(f"📄 File: {skill_file}")
                                                 st.info(f"🔢 Skill ID: {skill_id}")
                                                 st.info("♻️ Similar issues will now match this skill automatically")
-                                                
+
                                                 # Force UI refresh to show updated skill count in sidebar
                                                 import time
                                                 time.sleep(1)
@@ -1013,7 +1013,7 @@ Variations: ["early check-in request", "early access to room", "check in before 
                                                 st.warning(f"⚠️ Skill created but indexing failed: {str(index_error)}")
                                                 import traceback
                                                 st.code(traceback.format_exc())
-                                                
+
                                         except Exception as compile_error:
                                             st.error(f"❌ Skill compilation failed: {str(compile_error)}")
                                             import traceback
@@ -1031,7 +1031,7 @@ Variations: ["early check-in request", "early access to room", "check in before 
                             st.error(f"❌ Error: {str(e)}")
                             import traceback
                             st.error(traceback.format_exc())
-                    
+
                     if st.button("❌ Reject & Use ReAct", key=f"reject_{approval.request_id}", use_container_width=True):
                         try:
                             # Reject the approval
@@ -1041,30 +1041,30 @@ Variations: ["early check-in request", "early access to room", "check in before 
                                 reason="Skill rejected - Using ReAct for novel task handling"
                             )
                             approval.status = ApprovalStatus.REJECTED
-                            
+
                             # Find the original issue for this approval
                             issue = None
                             for iss in st.session_state.issues:
                                 if iss.issue_id == approval.issue_id:
                                     issue = iss
                                     break
-                            
+
                             if issue:
                                 st.info("🔄 Skill rejected. Triggering ReAct loop for novel task handling...")
-                                
+
                                 # Use ReAct loop to generate new plan
                                 with st.spinner("🧠 ReAct loop generating new resolution plan..."):
                                     tpao_resolution = st.session_state.tpao_loop.execute(issue)
-                                    
+
                                     # Update resolution ID and mark as novel task
                                     tpao_resolution.resolution_id = f"RES-{issue.issue_id}-ReAct"
                                     tpao_resolution.status = ResolutionStatus.PENDING_APPROVAL
                                     tpao_resolution.novel_task = True
                                     tpao_resolution.skill_matched = False
-                                    
+
                                     # Add to resolutions
                                     st.session_state.resolutions.append(tpao_resolution)
-                                    
+
                                     # Create new approval request for ReAct resolution
                                     actions_list = []
                                     for step in tpao_resolution.steps:
@@ -1075,7 +1075,7 @@ Variations: ["early check-in request", "early access to room", "check in before 
                                             "tool": step.tool_used if step.tool_used else "N/A"
                                         }
                                         actions_list.append(action_detail)
-                                    
+
                                     tpao_approval = ApprovalRequest(
                                         issue_id=issue.issue_id,
                                         action_type="tpao_novel_task_resolution",
@@ -1089,19 +1089,19 @@ Variations: ["early check-in request", "early access to room", "check in before 
                                             "triggered_by": "skill_rejection"
                                         }
                                     )
-                                    
+
                                     # Update resolution with approval request ID
                                     tpao_resolution.approval_request_id = tpao_approval.request_id
-                                    
+
                                     # Add to session state
                                     st.session_state.approvals.append(tpao_approval)
                                     st.session_state.approval_service.approval_history.append(tpao_approval)
-                                    
+
                                     st.success(f"✅ ReAct resolution created: {tpao_resolution.resolution_id}")
                                     st.info(f"⏳ New approval request created: {tpao_approval.request_id}")
                             else:
                                 st.warning("⚠️ Could not find original issue to trigger ReAct")
-                            
+
                             st.rerun()
                         except Exception as e:
                             st.error(f"❌ Error: {str(e)}")
@@ -1116,20 +1116,20 @@ Variations: ["early check-in request", "early access to room", "check in before 
 def render_skills():
     """Render the skills page."""
     st.header("📚 Available Skills")
-    
+
     if not st.session_state.skill_registry:
         st.warning("Skill registry not initialized")
         return
-    
+
     # Use get_all_skills() to get full Skill objects, not just metadata
     skills = st.session_state.skill_registry.get_all_skills(active_only=False)
-    
+
     if not skills:
         st.info("No skills loaded yet.")
         return
-    
+
     st.write(f"**Total Skills:** {len(skills)}")
-    
+
     for skill in skills:
         with st.expander(f"🎯 {skill.name}"):
             st.write(f"**ID:** {skill.skill_id}")
@@ -1138,12 +1138,12 @@ def render_skills():
             st.write(f"**Description:** {skill.description}")
             st.write(f"**Usage Count:** {skill.usage_count}")
             st.write(f"**Success Rate:** {skill.success_rate:.1%}")
-            
+
             if skill.triggers:
                 st.write("**Triggers:**")
                 for trigger in skill.triggers:
                     st.write(f"- {trigger}")
-            
+
             if skill.steps:
                 st.write(f"**Steps:** {len(skill.steps)}")
                 for i, step in enumerate(skill.steps, 1):
@@ -1152,80 +1152,80 @@ def render_skills():
 def render_knowledge_base():
     """Render the knowledge base page showing loaded policies."""
     st.header("📖 Knowledge Base")
-    
+
     if not st.session_state.rag_pipeline:
         st.warning("RAG pipeline not initialized")
         return
-    
+
     st.write("This page shows all policy documents loaded into the knowledge base.")
-    
+
     # Get policy files from data/mock/policies directory
     policies_dir = Path("data/mock/policies")
-    
+
     if not policies_dir.exists():
         st.error("Policies directory not found")
         return
-    
+
     policy_files = list(policies_dir.glob("*.md"))
-    
+
     if not policy_files:
         st.info("No policy documents found.")
         return
-    
+
     st.write(f"**Total Policies Loaded:** {len(policy_files)}")
     st.markdown("---")
-    
+
     # Display each policy in an expander
     for policy_file in sorted(policy_files):
         policy_name = policy_file.stem.replace('_', ' ').title()
-        
+
         with st.expander(f"📄 {policy_name}"):
             try:
                 with open(policy_file, 'r', encoding='utf-8') as f:
                     content = f.read()
-                
+
                 # Show file metadata
                 st.write(f"**File:** `{policy_file.name}`")
                 st.write(f"**Size:** {len(content)} characters")
-                
+
                 # Show content preview
                 st.markdown("**Content:**")
                 st.markdown(content)
-                
+
             except Exception as e:
                 st.error(f"Error reading policy: {e}")
-    
+
     # Show vector store statistics
     st.markdown("---")
     st.subheader("📊 Vector Store Statistics")
-    
+
     try:
         # Get collection info from vector store
         collection = st.session_state.rag_pipeline.vector_store.collection
         count = collection.count()
-        
+
         st.metric("Total Chunks Indexed", count)
         st.info("💡 These policies are used by the RAG system to ground agent responses and provide accurate information.")
-        
+
     except Exception as e:
         st.warning(f"Could not retrieve vector store statistics: {e}")
 
 def render_tools():
     """Render the tools page."""
     st.header("🛠️ Available Tools")
-    
+
     if not st.session_state.tool_registry:
         st.warning("Tool registry not initialized")
         return
-    
+
     tools = st.session_state.tool_registry.list_tools()
-    
+
     if not tools:
         st.info("No tools registered yet.")
         return
-    
+
     st.write(f"**Total Tools:** {len(tools)}")
-    
+
     for tool_name in tools:
         tool = st.session_state.tool_registry.get_tool(tool_name)
         if tool:
@@ -1238,17 +1238,17 @@ def main():
     """Main application entry point."""
     # Auto-initialize system on app startup
     ensure_system_initialized()
-    
+
     render_header()
-    
+
     # Render sidebar and get selected page
     page = render_sidebar()
-    
+
     # Render selected page (all pages now accessible after auto-init)
     if not st.session_state.initialized:
         st.warning("⚠️ System is initializing, please wait...")
         return
-    
+
     if page == "🏠 Dashboard":
         render_dashboard()
     elif page == "📝 Submit Issue":

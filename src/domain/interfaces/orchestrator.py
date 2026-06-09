@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 class IOrchestrator(ABC):
     """
     Interface for orchestrator agent.
-    
+
     The orchestrator is the main coordination agent that:
     - Receives customer issues
     - Retrieves relevant context via RAG

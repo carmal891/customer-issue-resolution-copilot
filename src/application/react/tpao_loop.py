@@ -237,7 +237,7 @@ Provide your analysis in 2-3 sentences."""
                 self.logger.warning(f"[Think] No relevant policies found for issue {state.issue.issue_id} - using LLM general knowledge")
                 
                 # Use LLM's general knowledge but add strong warning
-fallback_prompt = f"""️ WARNING: No company policies found in knowledge base for this issue.
+                fallback_prompt = f"""️ WARNING: No company policies found in knowledge base for this issue.
 Providing response based on general knowledge only. This response MUST be reviewed by a human before taking action.
 
 Issue: {state.issue.subject}
@@ -251,7 +251,7 @@ Based on general hospitality industry best practices (NOT company-specific polic
 Remember: This is NOT based on company policy and requires human review."""
 
                 fallback_response = self.llm_service.generate_simple(fallback_prompt)
-fallback_context = f"️ NO POLICY MATCH - GENERAL KNOWLEDGE ONLY:\n\n{fallback_response.content}"
+                fallback_context = f"️ NO POLICY MATCH - GENERAL KNOWLEDGE ONLY:\n\n{fallback_response.content}"
                 
                 # Store as context with warning
                 state.context_history.append(fallback_context)
@@ -260,7 +260,7 @@ fallback_context = f"️ NO POLICY MATCH - GENERAL KNOWLEDGE ONLY:\n\n{fallback_
                 step = ResolutionStep(
                     step_number=len(state.resolution.steps) + 1,
                     step_type="think",
-description="️ No relevant policies found - using LLM general knowledge (REQUIRES HUMAN REVIEW)",
+                    description="️ No relevant policies found - using LLM general knowledge (REQUIRES HUMAN REVIEW)",
                     success=True,  # Continue but with warning
                     input_data={"query": query, "analysis": analysis, "top_k": 5},
                     output_data={
@@ -269,11 +269,11 @@ description="️ No relevant policies found - using LLM general knowledge (REQUI
                         "fallback_used": True,
                         "llm_tokens": llm_response.tokens_used + fallback_response.tokens_used,
                         "citations": [{
-                            "source_id": 0,
-                            "source_name": "LLM General Knowledge (NOT company policy)",
-                            "doc_type": "fallback",
-                            "relevance_score": 0.0,
-                            "content_preview": fallback_response.content[:200]
+                              "source_id": 0,
+                              "source_name": "LLM General Knowledge (NOT company policy)",
+                              "doc_type": "fallback",
+                              "relevance_score": 0.0,
+                              "content_preview": fallback_response.content[:200]
                         }]
                     },
                     duration_ms=(datetime.now() - step_start).total_seconds() * 1000

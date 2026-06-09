@@ -25,12 +25,12 @@ __all__ = [
     # Registry
     "SkillRegistry",
     "SkillLoadError",
-    
+
     # Matcher
     "SkillMatcher",
     "SkillMatch",
     "MatchConfidence",
-    
+
     # Compiler
     "SkillCompiler",
     "ReActTrace",

@@ -38,11 +38,11 @@ class JudgmentResult:
 class LLMJudge:
     """
     LLM-as-a-Judge for evaluating system outputs.
-    
+
     Uses structured prompts with temperature=0 for reproducibility.
     Supports multiple judgment types with specific evaluation criteria.
     """
-    
+
     # Prompt templates for different judgment types
     FAITHFULNESS_PROMPT = """You are an expert evaluator assessing whether an AI assistant's answer is faithful to the provided context.
 
@@ -171,7 +171,7 @@ Provide your evaluation:"""
     ):
         """
         Initialize LLM Judge.
-        
+
         Args:
             model: OpenAI model to use
                    Recommended options:
@@ -184,7 +184,7 @@ Provide your evaluation:"""
         self.model = model
         self.temperature = temperature
         self.client = OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
-        
+
     def judge_faithfulness(
         self,
         question: str,
@@ -193,12 +193,12 @@ Provide your evaluation:"""
     ) -> JudgmentResult:
         """
         Judge if answer is faithful to context (no hallucinations).
-        
+
         Args:
             question: The question asked
             answer: The answer provided
             context: The context used to generate the answer
-            
+
         Returns:
             JudgmentResult with faithfulness score (0.0-1.0)
         """
@@ -207,12 +207,12 @@ Provide your evaluation:"""
             answer=answer,
             context=context
         )
-        
+
         return self._call_judge(
             prompt=prompt,
             judgment_type=JudgmentType.FAITHFULNESS
         )
-    
+
     def judge_answer_relevancy(
         self,
         question: str,
@@ -220,11 +220,11 @@ Provide your evaluation:"""
     ) -> JudgmentResult:
         """
         Judge if answer is relevant to the question.
-        
+
         Args:
             question: The question asked
             answer: The answer provided
-            
+
         Returns:
             JudgmentResult with relevancy score (0.0-1.0)
         """
@@ -232,12 +232,12 @@ Provide your evaluation:"""
             question=question,
             answer=answer
         )
-        
+
         return self._call_judge(
             prompt=prompt,
             judgment_type=JudgmentType.ANSWER_RELEVANCY
         )
-    
+
     def judge_plan_quality(
         self,
         issue: str,
@@ -246,12 +246,12 @@ Provide your evaluation:"""
     ) -> JudgmentResult:
         """
         Judge the quality of a resolution plan (1-5 scale).
-        
+
         Args:
             issue: The customer issue
             plan: The proposed resolution plan
             context: Retrieved policies/procedures used
-            
+
         Returns:
             JudgmentResult with plan quality score (1.0-5.0)
         """
@@ -260,12 +260,12 @@ Provide your evaluation:"""
             plan=plan,
             context=context
         )
-        
+
         return self._call_judge(
             prompt=prompt,
             judgment_type=JudgmentType.PLAN_QUALITY
         )
-    
+
     def judge_tool_correctness(
         self,
         task: str,
@@ -275,13 +275,13 @@ Provide your evaluation:"""
     ) -> JudgmentResult:
         """
         Judge if correct tools were selected and used.
-        
+
         Args:
             task: The task description
             available_tools: List of available tools with descriptions
             selected_tools: List of tools that were selected
             tool_results: Results from tool execution (optional)
-            
+
         Returns:
             JudgmentResult with tool correctness score (0.0-1.0)
         """
@@ -291,12 +291,12 @@ Provide your evaluation:"""
             selected_tools=json.dumps(selected_tools, indent=2),
             tool_results=json.dumps(tool_results or {}, indent=2)
         )
-        
+
         return self._call_judge(
             prompt=prompt,
             judgment_type=JudgmentType.TOOL_CORRECTNESS
         )
-    
+
     def _call_judge(
         self,
         prompt: str,
@@ -304,11 +304,11 @@ Provide your evaluation:"""
     ) -> JudgmentResult:
         """
         Call LLM to make a judgment.
-        
+
         Args:
             prompt: The evaluation prompt
             judgment_type: Type of judgment being made
-            
+
         Returns:
             JudgmentResult with score and reasoning
         """
@@ -328,19 +328,19 @@ Provide your evaluation:"""
                 temperature=self.temperature,
                 response_format={"type": "json_object"}
             )
-            
+
             # Parse JSON response
             result_text = response.choices[0].message.content
             if not result_text:
                 raise ValueError("Empty response from LLM")
             result_data = json.loads(result_text)
-            
+
             # Extract score (normalize to 0.0-1.0 if needed)
             score = result_data.get("score", 0.0)
             if judgment_type == JudgmentType.PLAN_QUALITY:
                 # Plan quality is 1-5, normalize to 0-1
                 score = (score - 1.0) / 4.0
-            
+
             return JudgmentResult(
                 judgment_type=judgment_type.value,
                 score=float(score),
@@ -348,7 +348,7 @@ Provide your evaluation:"""
                 verdict=result_data.get("verdict", "unknown"),
                 metadata=result_data
             )
-            
+
         except Exception as e:
             logger.error(f"LLM judge call failed: {e}")
             return JudgmentResult(

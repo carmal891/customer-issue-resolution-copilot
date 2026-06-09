@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 class IApprovalGateway(ABC):
     """
     Interface for approval gateway system.
-    
+
     This interface defines the contract for managing human approval
     workflow for risky or consequential actions.
     """

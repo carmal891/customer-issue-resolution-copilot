@@ -42,14 +42,14 @@ class PIIMatch:
 class PIIDetector:
     """
     Regex-based PII detector for hospitality operations.
-    
+
     Features:
     - No external dependencies
     - Fast pattern matching
     - Hotel-specific patterns (room numbers, booking refs)
     - Configurable masking strategies
     """
-    
+
     # Regex patterns for different PII types
     PATTERNS = {
         PIIType.CREDIT_CARD: [
@@ -100,14 +100,14 @@ class PIIDetector:
             (r'\b(?:BK|CONF|RES|BOOKING)[-\s]?[0-9]{4,10}\b', 0.95),
         ],
     }
-    
+
     # Sensitive PII types that should trigger blocking
     SENSITIVE_TYPES = {
         PIIType.CREDIT_CARD,
         PIIType.SSN,
         PIIType.PASSPORT,
     }
-    
+
     # Masking strategies per PII type
     MASKING_STRATEGIES = {
         PIIType.CREDIT_CARD: lambda v: f"****-****-****-{v[-4:]}" if len(v) >= 4 else "****",
@@ -121,7 +121,7 @@ class PIIDetector:
         PIIType.ROOM_NUMBER: lambda v: "Room ***",
         PIIType.BOOKING_REFERENCE: lambda v: f"{v.split('-')[0] if '-' in v else v[:2]}-****",
     }
-    
+
     def __init__(self):
         """Initialize regex PII detector."""
         # Compile all patterns for performance
@@ -132,24 +132,24 @@ class PIIDetector:
                 for pattern, confidence in patterns
             ]
         logger.info("Regex PII Detector initialized with hospitality-specific patterns")
-    
+
     def detect_and_mask(self, text: str) -> Tuple[str, List[PIIMatch]]:
         """
         Detect and mask PII in text.
-        
+
         Args:
             text: Input text to analyze
-        
+
         Returns:
             Tuple of (masked_text, list of PIIMatch objects)
         """
         if not text:
             return text, []
-        
+
         matches: List[PIIMatch] = []
         masked_text = text
         offset = 0  # Track position changes due to masking
-        
+
         # Detect all PII types
         for pii_type, patterns in self.compiled_patterns.items():
             for pattern, confidence in patterns:
@@ -157,14 +157,14 @@ class PIIDetector:
                     original_value = match.group(0)
                     start_pos = match.start()
                     end_pos = match.end()
-                    
+
                     # Apply masking strategy
                     masking_func = self.MASKING_STRATEGIES.get(
                         pii_type,
                         lambda v: "*" * len(v)
                     )
                     masked_value = masking_func(original_value)
-                    
+
                     # Create PIIMatch
                     pii_match = PIIMatch(
                         pii_type=pii_type,
@@ -175,7 +175,7 @@ class PIIDetector:
                         confidence=confidence
                     )
                     matches.append(pii_match)
-                    
+
                     # Replace in masked text (accounting for offset)
                     adjusted_start = start_pos + offset
                     adjusted_end = end_pos + offset
@@ -185,57 +185,57 @@ class PIIDetector:
                         masked_text[adjusted_end:]
                     )
                     offset += len(masked_value) - len(original_value)
-        
+
         # Sort matches by position and remove duplicates
         matches = self._deduplicate_matches(matches)
-        
+
         logger.info(f"Detected {len(matches)} PII entities in text")
         return masked_text, matches
-    
+
     def _deduplicate_matches(self, matches: List[PIIMatch]) -> List[PIIMatch]:
         """Remove overlapping matches, keeping highest confidence."""
         if not matches:
             return matches
-        
+
         # Sort by start position, then by confidence (descending)
         sorted_matches = sorted(
             matches,
             key=lambda m: (m.start_pos, -m.confidence)
         )
-        
+
         deduplicated = []
         last_end = -1
-        
+
         for match in sorted_matches:
             # Skip if overlaps with previous match
             if match.start_pos < last_end:
                 continue
             deduplicated.append(match)
             last_end = match.end_pos
-        
+
         return deduplicated
-    
+
     def should_block_request(self, text: str) -> Tuple[bool, str]:
         """
         Determine if request should be blocked due to excessive PII.
-        
+
         Args:
             text: Input text to check
-        
+
         Returns:
             Tuple of (should_block: bool, reason: str)
         """
         _, pii_matches = self.detect_and_mask(text)
-        
+
         if not pii_matches:
             return False, ""
-        
+
         # Count sensitive PII types
         sensitive_matches = [
             match for match in pii_matches
             if match.pii_type in self.SENSITIVE_TYPES
         ]
-        
+
         # Block if multiple sensitive PII items found
         if len(sensitive_matches) >= 2:
             return True, (
@@ -243,7 +243,7 @@ class PIIDetector:
                 f"({', '.join(m.pii_type.value for m in sensitive_matches)}). "
                 "Please remove sensitive information and try again."
             )
-        
+
         # Block if credit card detected (high risk)
         credit_card_matches = [
             match for match in pii_matches
@@ -255,29 +255,29 @@ class PIIDetector:
                 "Please do not share credit card details in messages. "
                 "Use secure payment channels instead."
             )
-        
+
         return False, ""
-    
+
     def validate_credit_card(self, card_number: str) -> bool:
         """
         Validate credit card using Luhn algorithm.
-        
+
         Args:
             card_number: Credit card number (digits only)
-        
+
         Returns:
             True if valid, False otherwise
         """
         # Remove spaces and dashes
         digits = re.sub(r'[\s\-]', '', card_number)
-        
+
         if not digits.isdigit() or len(digits) < 13 or len(digits) > 19:
             return False
-        
+
         # Luhn algorithm
         total = 0
         reverse_digits = digits[::-1]
-        
+
         for i, digit in enumerate(reverse_digits):
             n = int(digit)
             if i % 2 == 1:
@@ -285,7 +285,7 @@ class PIIDetector:
                 if n > 9:
                     n -= 9
             total += n
-        
+
         return total % 10 == 0
 
 

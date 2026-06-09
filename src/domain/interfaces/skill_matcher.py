@@ -32,7 +32,7 @@ class SkillMatchResult:
 class ISkillMatcher(ABC):
     """
     Interface for skill matching system.
-    
+
     This interface defines the contract for matching customer issues to
     existing skills using semantic search and pattern matching.
     """

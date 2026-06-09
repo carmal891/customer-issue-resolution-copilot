@@ -29,7 +29,7 @@ __all__ = [
     "ToolResult",
     "ToolExecutionError",
     "ToolRegistry",
-    
+
     # Mock tools
     "LookupBookingTool",
     "CheckPolicyTool",

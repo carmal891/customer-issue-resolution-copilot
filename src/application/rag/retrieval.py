@@ -43,7 +43,7 @@ class RetrievalConfig:
     max_expanded_queries: int = 3
     hybrid_alpha: float = 0.7  # Weight for vector vs metadata
     metadata_boost: Dict[str, float] = field(default_factory=dict)
-    
+
     def __post_init__(self):
         """Set default metadata boost weights"""
         if not self.metadata_boost:
@@ -67,7 +67,7 @@ class RetrievalResult:
     section: Optional[str] = None
     timestamp: Optional[datetime] = None
     rank: int = 0
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization"""
         return {
@@ -101,7 +101,7 @@ class RetrievalMetrics:
 class DenseRetriever:
     """
     Dense retrieval implementation using embeddings and vector search.
-    
+
     Supports:
     - Pure vector similarity search
     - Hybrid search with metadata filtering
@@ -109,7 +109,7 @@ class DenseRetriever:
     - Metadata boosting for precision
     - Result deduplication and ranking
     """
-    
+
     def __init__(
         self,
         embedding_service: IEmbeddingService,
@@ -118,7 +118,7 @@ class DenseRetriever:
     ):
         """
         Initialize dense retriever.
-        
+
         Args:
             embedding_service: Service for generating query embeddings
             vector_store: Vector database for similarity search
@@ -127,12 +127,12 @@ class DenseRetriever:
         self.embedding_service = embedding_service
         self.vector_store = vector_store
         self.config = config or RetrievalConfig()
-        
+
         logger.info(
             f"Initialized DenseRetriever with strategy={self.config.strategy}, "
             f"top_k={self.config.top_k}"
         )
-    
+
     def retrieve(
         self,
         query: str,
@@ -142,56 +142,56 @@ class DenseRetriever:
     ) -> Tuple[List[RetrievalResult], RetrievalMetrics]:
         """
         Retrieve relevant chunks for a query.
-        
+
         Args:
             query: User query or issue description
             metadata_filters: Optional metadata filters (doc_type, domain, etc.)
             top_k: Number of results to return (overrides config)
             min_score: Minimum similarity score (overrides config)
-        
+
         Returns:
             Tuple of (results, metrics)
         """
         start_time = datetime.now()
-        
+
         top_k = top_k or self.config.top_k
         min_score = min_score or self.config.min_score
-        
+
         logger.info(f"Retrieving for query: '{query[:100]}...'")
-        
+
         # Select retrieval strategy
         if self.config.strategy == RetrievalStrategy.DENSE:
             results = self._dense_retrieve(query, top_k, min_score)
             expanded_queries = []
-        
+
         elif self.config.strategy == RetrievalStrategy.HYBRID:
             results = self._hybrid_retrieve(
                 query, metadata_filters, top_k, min_score
             )
             expanded_queries = []
-        
+
         elif self.config.strategy == RetrievalStrategy.METADATA_FIRST:
             results = self._metadata_first_retrieve(
                 query, metadata_filters, top_k, min_score
             )
             expanded_queries = []
-        
+
         elif self.config.strategy == RetrievalStrategy.MULTI_QUERY:
             results, expanded_queries = self._multi_query_retrieve(
                 query, metadata_filters, top_k, min_score
             )
-        
+
         else:
             raise ValueError(f"Unknown strategy: {self.config.strategy}")
-        
+
         # Deduplicate and rank
         results = self._deduplicate_results(results)
         results = self._rank_results(results, query, metadata_filters)
-        
+
         # Calculate metrics
         end_time = datetime.now()
         retrieval_time_ms = (end_time - start_time).total_seconds() * 1000
-        
+
         metrics = RetrievalMetrics(
             query=query,
             num_results=len(results),
@@ -203,14 +203,14 @@ class DenseRetriever:
             metadata_filters=metadata_filters or {},
             expanded_queries=expanded_queries
         )
-        
+
         logger.info(
             f"Retrieved {len(results)} results in {retrieval_time_ms:.2f}ms, "
             f"avg_score={metrics.avg_score:.3f}"
         )
-        
+
         return results, metrics
-    
+
     def _dense_retrieve(
         self,
         query: str,
@@ -221,7 +221,7 @@ class DenseRetriever:
         # Generate query embedding
         embedding_result = self.embedding_service.embed_texts([query])
         query_embedding = embedding_result.embeddings[0]
-        
+
         # Search vector store
         search_results = self.vector_store.search(
             query_embedding=query_embedding,
@@ -229,15 +229,15 @@ class DenseRetriever:
             where=None,
             distance_metric=self.config.distance_metric
         )
-        
+
         # Convert to RetrievalResult
         results = []
         for sr in search_results:
             if sr.score >= min_score:
                 results.append(self._convert_search_result(sr))
-        
+
         return results
-    
+
     def _hybrid_retrieve(
         self,
         query: str,
@@ -249,7 +249,7 @@ class DenseRetriever:
         # Generate query embedding
         embedding_result = self.embedding_service.embed_texts([query])
         query_embedding = embedding_result.embeddings[0]
-        
+
         # Perform hybrid search
         # ChromaDB requires None instead of {} for no filters
         search_results = self.vector_store.hybrid_search(
@@ -258,15 +258,15 @@ class DenseRetriever:
             n_results=top_k,
             alpha=self.config.hybrid_alpha
         )
-        
+
         # Convert and filter by score
         results = []
         for sr in search_results:
             if sr.score >= min_score:
                 results.append(self._convert_search_result(sr))
-        
+
         return results
-    
+
     def _metadata_first_retrieve(
         self,
         query: str,
@@ -278,35 +278,35 @@ class DenseRetriever:
         if not metadata_filters:
             # Fall back to dense retrieval if no filters
             return self._dense_retrieve(query, top_k, min_score)
-        
+
         # First, get candidates by metadata
         metadata_results = self.vector_store.search_by_metadata(
             where=metadata_filters,
             n_results=top_k * 3  # Get more candidates
         )
-        
+
         if not metadata_results:
             logger.warning("No results found with metadata filters")
             return []
-        
+
         # Then rank by vector similarity
         embedding_result = self.embedding_service.embed_texts([query])
         query_embedding = embedding_result.embeddings[0]
-        
+
         # Re-search within filtered set
         search_results = self.vector_store.search(
             query_embedding=query_embedding,
             n_results=top_k,
             where=metadata_filters
         )
-        
+
         results = []
         for sr in search_results:
             if sr.score >= min_score:
                 results.append(self._convert_search_result(sr))
-        
+
         return results
-    
+
     def _multi_query_retrieve(
         self,
         query: str,
@@ -316,67 +316,67 @@ class DenseRetriever:
     ) -> Tuple[List[RetrievalResult], List[str]]:
         """
         Query expansion for better recall.
-        
+
         Generates multiple query variations and combines results.
         """
         # Generate expanded queries
         expanded_queries = self._expand_query(query)
-        
+
         logger.info(f"Expanded query into {len(expanded_queries)} variations")
-        
+
         # Retrieve for each query
         all_results = []
         for expanded_query in expanded_queries:
             embedding_result = self.embedding_service.embed_texts([expanded_query])
             query_embedding = embedding_result.embeddings[0]
-            
+
             search_results = self.vector_store.hybrid_search(
                 query_embedding=query_embedding,
                 where=metadata_filters or {},
                 n_results=top_k,
                 alpha=self.config.hybrid_alpha
             )
-            
+
             for sr in search_results:
                 if sr.score >= min_score:
                     all_results.append(self._convert_search_result(sr))
-        
+
         return all_results, expanded_queries
-    
+
     def _expand_query(self, query: str) -> List[str]:
         """
         Expand query into multiple variations.
-        
+
         For POC, uses simple rule-based expansion.
         In production, could use LLM for query rewriting.
         """
         expanded = [query]  # Original query
-        
+
         # Add question variations
         if not query.endswith("?"):
             expanded.append(f"{query}?")
-        
+
         # Add context variations for common hotel issues
         if "refund" in query.lower():
             expanded.append(f"cancellation policy for {query}")
             expanded.append(f"how to process {query}")
-        
+
         if "room" in query.lower():
             expanded.append(f"room management {query}")
             expanded.append(f"booking modification {query}")
-        
+
         if "checkout" in query.lower():
             expanded.append(f"late checkout policy {query}")
-        
+
         # Limit to max expanded queries
         return expanded[:self.config.max_expanded_queries]
-    
+
     def _convert_search_result(self, sr: SearchResult) -> RetrievalResult:
         """Convert SearchResult to RetrievalResult"""
         # Debug: Log metadata to see what we're getting
         logger.debug(f"Converting SearchResult - metadata keys: {list(sr.metadata.keys())}")
         logger.debug(f"Source field value: {sr.metadata.get('source', 'MISSING')}")
-        
+
         return RetrievalResult(
             chunk_id=sr.chunk_id,
             content=sr.content,
@@ -389,29 +389,29 @@ class DenseRetriever:
             timestamp=datetime.fromisoformat(sr.metadata["timestamp"])
             if "timestamp" in sr.metadata else None
         )
-    
+
     def _deduplicate_results(
         self,
         results: List[RetrievalResult]
     ) -> List[RetrievalResult]:
         """
         Remove duplicate chunks based on content similarity.
-        
+
         Keeps the highest scoring version of each unique chunk.
         """
         seen_ids = set()
         deduplicated = []
-        
+
         # Sort by score descending
         sorted_results = sorted(results, key=lambda r: r.score, reverse=True)
-        
+
         for result in sorted_results:
             if result.chunk_id not in seen_ids:
                 seen_ids.add(result.chunk_id)
                 deduplicated.append(result)
-        
+
         return deduplicated
-    
+
     def _rank_results(
         self,
         results: List[RetrievalResult],
@@ -420,7 +420,7 @@ class DenseRetriever:
     ) -> List[RetrievalResult]:
         """
         Re-rank results with metadata boosting.
-        
+
         Applies boost factors for exact metadata matches.
         """
         if not metadata_filters:
@@ -429,33 +429,33 @@ class DenseRetriever:
             for i, result in enumerate(sorted_results):
                 result.rank = i + 1
             return sorted_results
-        
+
         # Apply metadata boosting
         for result in results:
             boost = 1.0
-            
+
             # Boost for doc_type match
             if "doc_type" in metadata_filters:
                 if result.doc_type == metadata_filters["doc_type"]:
                     boost *= self.config.metadata_boost.get("doc_type", 1.0)
-            
+
             # Boost for domain match
             if "domain" in metadata_filters:
                 if result.domain == metadata_filters["domain"]:
                     boost *= self.config.metadata_boost.get("domain", 1.0)
-            
+
             # Apply boost to score
             result.score *= boost
-        
+
         # Sort by boosted score
         sorted_results = sorted(results, key=lambda r: r.score, reverse=True)
-        
+
         # Assign ranks
         for i, result in enumerate(sorted_results):
             result.rank = i + 1
-        
+
         return sorted_results
-    
+
     def retrieve_by_domain(
         self,
         query: str,
@@ -464,12 +464,12 @@ class DenseRetriever:
     ) -> List[RetrievalResult]:
         """
         Convenience method to retrieve by domain.
-        
+
         Args:
             query: User query
             domain: Domain to filter (billing, room_management, etc.)
             top_k: Number of results
-        
+
         Returns:
             List of retrieval results
         """
@@ -480,7 +480,7 @@ class DenseRetriever:
             top_k=top_k
         )
         return results
-    
+
     def retrieve_by_doc_type(
         self,
         query: str,
@@ -489,12 +489,12 @@ class DenseRetriever:
     ) -> List[RetrievalResult]:
         """
         Convenience method to retrieve by document type.
-        
+
         Args:
             query: User query
             doc_type: Document type (policy, booking, issue, resolution)
             top_k: Number of results
-        
+
         Returns:
             List of retrieval results
         """
@@ -505,7 +505,7 @@ class DenseRetriever:
             top_k=top_k
         )
         return results
-    
+
     def retrieve_recent(
         self,
         query: str,
@@ -514,24 +514,24 @@ class DenseRetriever:
     ) -> List[RetrievalResult]:
         """
         Retrieve recent documents (useful for issues and resolutions).
-        
+
         Args:
             query: User query
             days: Number of days to look back
             top_k: Number of results
-        
+
         Returns:
             List of retrieval results
         """
         # Note: This requires timestamp metadata in the vector store
         # For POC, we'll retrieve all and filter in memory
         results, _ = self.retrieve(query=query, top_k=top_k or 50)
-        
+
         # Filter by timestamp
         cutoff = datetime.now().timestamp() - (days * 24 * 60 * 60)
         recent_results = [
             r for r in results
             if r.timestamp and r.timestamp.timestamp() >= cutoff
         ]
-        
+
         return recent_results[:top_k or self.config.top_k]

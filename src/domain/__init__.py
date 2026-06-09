@@ -120,7 +120,7 @@ __all__ = [
     "RiskLevel",
     "Resolution",
     "ResolutionStatus",
-    
+
     # Interfaces
     "IRAGRetriever",
     "ISkillMatcher",
@@ -131,7 +131,7 @@ __all__ = [
     "IApprovalGateway",
     "IExecutor",
     "IOrchestrator",
-    
+
     # Exceptions
     "DomainException",
     "ValidationError",

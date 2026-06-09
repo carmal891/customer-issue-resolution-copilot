@@ -1,0 +1,46 @@
+# Customer Issue Resolution Copilot Configuration
+# TOML format configuration file
+# Note: Keys match .env format for compatibility
+
+# OpenAI API Configuration
+OPENAI_API_KEY = "your_openai_api_key_here"
+OPENAI_MODEL = "gpt-4o-mini"
+OPENAI_MODEL_NANO = "gpt-4o-nano"
+OPENAI_EMBEDDING_MODEL = "text-embedding-3-small"
+OPENAI_TEMPERATURE = 0.7
+OPENAI_MAX_TOKENS = 2000
+
+# Vector Store Configuration
+VECTOR_STORE_TYPE = "chromadb"
+CHROMADB_PATH = "./data/vector_db"
+CHROMADB_COLLECTION_KNOWLEDGE = "hotel_knowledge_base"
+CHROMADB_COLLECTION_SKILLS = "hotel_skills_registry"
+
+# RAG Configuration
+CHUNK_SIZE = 512
+CHUNK_OVERLAP = 50
+TOP_K_RETRIEVAL = 10
+TOP_K_RERANK = 5
+MIN_CONFIDENCE_THRESHOLD = 0.7
+
+# Reranking Configuration
+USE_RERANKING = true
+RERANKER_TYPE = "cross-encoder"
+
+# Approval Configuration
+APPROVAL_TIMEOUT_SECONDS = 300
+HIGH_RISK_REFUND_THRESHOLD = 100.0
+MEDIUM_RISK_REFUND_THRESHOLD = 50.0
+
+# TPAO Loop Configuration
+TPAO_MAX_ITERATIONS = 5
+TPAO_CONFIDENCE_THRESHOLD = 0.7
+
+# Logging Configuration
+LOG_LEVEL = "INFO"
+LOG_FORMAT = "json"
+LOG_FILE = "./logs/hotel-copilot.log"
+
+# Application Configuration
+ENVIRONMENT = "development"
+DEBUG = true
