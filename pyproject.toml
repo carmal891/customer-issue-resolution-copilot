@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "A self-learning AI agent for hotel reservation issue resolution"
 authors = ["Your Name <your.email@example.com>"]
 readme = "README.md"
+package-mode = false
 packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
