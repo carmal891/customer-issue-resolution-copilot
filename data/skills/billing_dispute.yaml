@@ -20,6 +20,10 @@ triggers:
     - "dispute this charge"
     - "overcharged for room"
     - "bill doesn't match quote"
+    - "charged twice for my stay"
+    - "credit card shows unrecognized charge"
+    - "double charged"
+    - "billing mistake"
   
   issue_types:
     - "billing_dispute"
@@ -340,7 +344,7 @@ performance_metrics:
   last_used: null
 
 tags:
-  - "billing"
-  - "dispute"
-  - "financial"
-  - "customer_service"
+  - "billing_error_resolution"
+  - "charge_verification"
+  - "payment_discrepancy"
+  - "invoice_correction"

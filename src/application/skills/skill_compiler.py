@@ -16,6 +16,7 @@ import re
 from src.domain.models.skill import Skill, SkillStatus
 from src.domain.models.issue import Issue
 from src.domain.models.resolution import Resolution
+from src.infrastructure.llm.llm_service import LLMService
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +69,8 @@ class SkillCompiler:
     def __init__(
         self,
         skills_dir: str = "data/skills",
-        draft_dir: str = "data/skills/drafts"
+        draft_dir: str = "data/skills/drafts",
+        llm_service: Optional[LLMService] = None
     ):
         """
         Initialize skill compiler.
@@ -76,9 +78,11 @@ class SkillCompiler:
         Args:
             skills_dir: Directory for approved skills
             draft_dir: Directory for draft skills awaiting review
+            llm_service: LLM service for generating rich descriptions (optional)
         """
         self.skills_dir = Path(skills_dir)
         self.draft_dir = Path(draft_dir)
+        self.llm_service = llm_service
 
         # Create directories if they don't exist
         self.draft_dir.mkdir(parents=True, exist_ok=True)
@@ -169,27 +173,230 @@ class SkillCompiler:
 
     def _generate_skill_id(self, trace: ReActTrace) -> str:
         """
-        Generate skill ID from trace.
-
-        Uses issue category and timestamp to create unique ID.
+        Generate meaningful skill ID from trace using LLM.
+        
+        Creates a snake_case ID that describes what the skill does.
+        Falls back to category-based ID if LLM is not available.
+        
+        Examples:
+        - late_checkout_request
+        - room_upgrade_processing
+        - billing_dispute_resolution
         """
-        category = trace.issue.metadata.get('category', 'general')
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        # Fallback if no LLM service
+        if not self.llm_service:
+            category = trace.issue.metadata.get('category', 'general')
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            category_clean = re.sub(r'[^a-z0-9_]', '_', category.lower())
+            return f"{category_clean}_skill_{timestamp}"
+        
+        try:
+            # Build context for ID generation
+            issue_summary = trace.issue.subject or trace.issue.body[:200]
+            tools_used = ", ".join(trace.tools_used[:2]) if trace.tools_used else "general actions"
+            
+            # Build LLM prompt for ID generation
+            id_prompt = f"""You are generating a concise, descriptive skill ID (filename) for a customer service skill.
 
-        # Sanitize category for ID
-        category_clean = re.sub(r'[^a-z0-9_]', '_', category.lower())
+**Customer Issue:** {issue_summary}
 
-        return f"{category_clean}_skill_{timestamp}"
+**Tools/Actions Used:** {tools_used}
+
+**Task:** Generate a short skill ID in snake_case format (2-4 words) that clearly indicates what this skill does.
+
+**Examples of good skill IDs:**
+- late_checkout_request
+- room_upgrade_processing
+- billing_dispute_resolution
+- amenity_request_fulfillment
+- cancellation_refund_processing
+- guest_complaint_handling
+
+**Requirements:**
+- Use snake_case (lowercase with underscores)
+- 2-4 words maximum
+- Be specific and descriptive
+- No timestamps or random characters
+- Focus on the ACTION or OUTCOME
+
+Generate ONLY the skill ID, nothing else."""
+
+            # Get LLM-generated ID
+            llm_response = self.llm_service.generate_simple(id_prompt)
+            skill_id = llm_response.content.strip().lower()
+            
+            # Clean up the ID (remove quotes, extra whitespace, ensure snake_case)
+            skill_id = skill_id.strip('"\'').strip()
+            skill_id = re.sub(r'[^a-z0-9_]', '_', skill_id)
+            skill_id = re.sub(r'_+', '_', skill_id)  # Remove multiple underscores
+            skill_id = skill_id.strip('_')  # Remove leading/trailing underscores
+            
+            # Validate ID (should be 2-4 words, roughly 10-40 chars)
+            word_count = len(skill_id.split('_'))
+            if word_count < 2 or word_count > 5 or len(skill_id) > 50 or len(skill_id) < 5:
+                logger.warning(f"LLM generated invalid skill ID ('{skill_id}'), using fallback")
+                category = trace.issue.metadata.get('category', 'general')
+                category_clean = re.sub(r'[^a-z0-9_]', '_', category.lower())
+                return f"{category_clean}_handler"
+            
+            logger.info(f"Generated LLM-powered skill ID: '{skill_id}'")
+            return skill_id
+            
+        except Exception as e:
+            logger.error(f"Failed to generate LLM skill ID: {e}, using fallback")
+            category = trace.issue.metadata.get('category', 'general')
+            category_clean = re.sub(r'[^a-z0-9_]', '_', category.lower())
+            return f"{category_clean}_handler"
 
     def _generate_skill_name(self, trace: ReActTrace) -> str:
-        """Generate human-readable skill name"""
-        category = trace.issue.metadata.get('category', 'General')
-        return f"{category} Handler (Auto-generated)"
+        """
+        Generate meaningful, human-readable skill name using LLM.
+        
+        Creates a concise name that captures the essence of what the skill does.
+        Falls back to simple name if LLM is not available.
+        """
+        # Fallback if no LLM service
+        if not self.llm_service:
+            category = trace.issue.metadata.get('category', 'General')
+            return f"{category} Handler (Auto-generated)"
+        
+        try:
+            # Build context for name generation
+            issue_summary = trace.issue.subject or trace.issue.body[:200]
+            tools_used = ", ".join(trace.tools_used[:3]) if trace.tools_used else "general actions"
+            
+            # Build LLM prompt for name generation
+            name_prompt = f"""You are generating a concise, professional name for a customer service skill.
+
+**Customer Issue:** {issue_summary}
+
+**Tools/Actions Used:** {tools_used}
+
+**Task:** Generate a short, descriptive skill name (3-6 words) that clearly indicates what this skill does.
+
+**Examples of good skill names:**
+- "Late Checkout Request Handler"
+- "Room Upgrade Processing"
+- "Billing Dispute Resolution"
+- "Amenity Request Fulfillment"
+- "Cancellation and Refund Processing"
+
+**Requirements:**
+- Use title case
+- Be specific and actionable
+- 3-6 words maximum
+- No generic terms like "Handler" unless necessary
+- Focus on the ACTION or OUTCOME
+
+Generate ONLY the skill name, nothing else."""
+
+            # Get LLM-generated name
+            llm_response = self.llm_service.generate_simple(name_prompt)
+            skill_name = llm_response.content.strip()
+            
+            # Clean up the name (remove quotes, extra whitespace)
+            skill_name = skill_name.strip('"\'').strip()
+            
+            # Validate name length (should be 3-6 words, roughly 15-50 chars)
+            word_count = len(skill_name.split())
+            if word_count < 2 or word_count > 8 or len(skill_name) > 80:
+                logger.warning(f"LLM generated invalid skill name ('{skill_name}'), using fallback")
+                category = trace.issue.metadata.get('category', 'General')
+                return f"{category} Handler"
+            
+            logger.info(f"Generated LLM-powered skill name: '{skill_name}'")
+            return skill_name
+            
+        except Exception as e:
+            logger.error(f"Failed to generate LLM skill name: {e}, using fallback")
+            category = trace.issue.metadata.get('category', 'General')
+            return f"{category} Handler"
 
     def _generate_description(self, trace: ReActTrace) -> str:
-        """Generate skill description from trace"""
-        issue_summary = trace.issue.title or trace.issue.description[:100]
-        return f"Auto-generated skill for handling: {issue_summary}"
+        """
+        Generate rich, meaningful skill description using LLM.
+        
+        Creates a description that includes:
+        - Problem summary
+        - Solution approach
+        - Key actions/tools used
+        - Policy context
+        - When to use this skill
+        
+        Falls back to simple description if LLM is not available.
+        """
+        # Fallback if no LLM service
+        if not self.llm_service:
+            issue_summary = trace.issue.subject or trace.issue.body[:100]
+            return f"Auto-generated skill for handling: {issue_summary}"
+        
+        try:
+            # Build context from trace
+            issue_context = f"""
+Issue Channel: {trace.issue.channel}
+Issue Subject: {trace.issue.subject or 'N/A'}
+Issue Body: {trace.issue.body[:300]}
+"""
+            
+            # Extract key information from trace steps
+            tools_used = ", ".join(trace.tools_used) if trace.tools_used else "None"
+            num_steps = len(trace.act_steps)
+            requires_approval = "Yes" if trace.approval_required else "No"
+            
+            # Get context from Think phase (RAG-retrieved policies)
+            policy_context = ""
+            if trace.think_steps:
+                for think_step in trace.think_steps:
+                    if 'output_data' in think_step and 'citations' in think_step['output_data']:
+                        citations = think_step['output_data']['citations']
+                        if citations:
+                            policy_context = f"Referenced policies: {', '.join([c.get('source_name', 'Unknown') for c in citations[:3]])}"
+                            break
+            
+            # Build LLM prompt for description generation
+            description_prompt = f"""You are generating a concise, meaningful description for a customer service skill that was automatically learned from a successful resolution.
+
+**Customer Issue:**
+{issue_context}
+
+**Resolution Details:**
+- Number of steps: {num_steps}
+- Tools used: {tools_used}
+- Requires approval: {requires_approval}
+- {policy_context}
+
+**Task:** Generate a 2-4 sentence skill description that includes:
+1. What customer problem this skill solves
+2. How it solves it (key actions)
+3. What tools/systems it uses
+4. Any important constraints or approval requirements
+
+**Example good description:**
+"Handles guest requests for extended checkout times beyond the standard 11 AM deadline. Checks room availability and housekeeping schedule, then processes late checkout approval with appropriate fees based on hotel policy. Uses lookup_booking and update_checkout_time tools. Requires manager approval for extensions beyond 2 PM."
+
+Generate a similar description for this skill. Be specific and actionable. Focus on WHAT it does and HOW it works."""
+
+            # Get LLM-generated description
+            llm_response = self.llm_service.generate_simple(description_prompt)
+            description = llm_response.content.strip()
+            
+            # Validate description length (should be 2-4 sentences, roughly 100-400 chars)
+            if len(description) < 50:
+                logger.warning(f"LLM generated too short description ({len(description)} chars), using fallback")
+                issue_summary = trace.issue.subject or trace.issue.body[:100]
+                return f"Auto-generated skill for handling: {issue_summary}"
+            
+            if len(description) > 600:
+                logger.warning(f"LLM generated too long description ({len(description)} chars), truncating")
+                description = description[:597] + "..."
+            
+            logger.info(f"Generated LLM-powered skill description ({len(description)} chars)")
+            return description
+            
+        except Exception as e:
+            logger.error(f"Failed to generate LLM description: {e}, using fallback")
+            issue_summary = trace.issue.subject or trace.issue.body[:100]
+            return f"Auto-generated skill for handling: {issue_summary}"
 
     def _extract_triggers(self, trace: ReActTrace) -> List[str]:
         """

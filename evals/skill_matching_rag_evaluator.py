@@ -113,6 +113,43 @@ class SkillMatchEvalSummary:
                     "avg_confidence": sum(r.match_confidence for r in cat_results) / len(cat_results)
                 }
 
+        # Add detailed test case results for manual review (similar to KB RAG format)
+        detailed_results = []
+        for i, result in enumerate(self.results, 1):
+            detailed_results.append({
+                "test_case_id": i,
+                "issue_description": result.issue_description,
+                "expected_skill": {
+                    "skill_id": result.expected_skill_id,
+                    "skill_name": result.expected_skill_name
+                },
+                "matched_skill": {
+                    "skill_id": result.matched_skill_id,
+                    "skill_name": result.matched_skill_name,
+                    "confidence": result.match_confidence,
+                    "score": result.match_score
+                },
+                "top_k_matches": [
+                    {
+                        "rank": j + 1,
+                        "skill_id": skill_id,
+                        "score": score
+                    }
+                    for j, (skill_id, score) in enumerate(zip(result.top_k_skill_ids, result.top_k_scores))
+                ],
+                "evaluation": {
+                    "correct_match": result.correct_match,
+                    "correct_in_top_3": result.correct_in_top_3,
+                    "correct_in_top_5": result.correct_in_top_5,
+                    "rank_of_correct": result.rank_of_correct,
+                    "false_positive": result.false_positive,
+                    "false_negative": result.false_negative,
+                    "passed": result.passed
+                },
+                "category": result.category,
+                "metadata": result.metadata
+            })
+
         return {
             "summary": {
                 "total_cases": self.total_cases,
@@ -138,10 +175,12 @@ class SkillMatchEvalSummary:
             },
             "meets_targets": {
                 "top_1_accuracy": self.top_1_accuracy >= 0.90,
-                "top_3_accuracy": self.top_3_accuracy >= 0.95
+                "top_3_accuracy": self.top_3_accuracy >= 0.95,
+                "overall": self.top_1_accuracy >= 0.90 and self.top_3_accuracy >= 0.95
             },
             "confidence_calibration": self.confidence_bins,
-            "category_breakdown": category_stats
+            "category_breakdown": category_stats,
+            "detailed_test_cases": detailed_results
         }
 
 

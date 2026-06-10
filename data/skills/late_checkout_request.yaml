@@ -20,6 +20,9 @@ triggers:
     - "extend checkout time"
     - "need extra time before checkout"
     - "late departure request"
+    - "check out at 2 PM instead of 11 AM"
+    - "stay in room until 3 PM"
+    - "late flight need extra time"
   
   issue_types:
     - "late_checkout_request"
@@ -234,7 +237,7 @@ performance_metrics:
   avg_approval_time_minutes: 0
 
 tags:
-  - "checkout"
-  - "booking_modification"
-  - "time_sensitive"
-  - "loyalty_benefits"
+  - "checkout_time_extension"
+  - "late_departure"
+  - "room_availability_dependent"
+  - "loyalty_tier_pricing"

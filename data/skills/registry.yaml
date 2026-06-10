@@ -1,4 +1,4 @@
-last_updated: '2026-06-10T01:41:27.780811'
+last_updated: '2026-06-10T17:36:41.023804'
 skills:
 - active: true
   category: checkout
@@ -95,6 +95,17 @@ skills:
   file_path: data/skills/skill_00bb2dc9.yaml
   name: I Want A Car To Handler
   skill_id: skill_00bb2dc9
+  success_rate: 0.0
+  trigger_embedding_id: null
+  usage_count: 0
+  version: '1.0'
+- active: true
+  category: general
+  created_at: '2026-06-10T17:36:41.023691'
+  domain: hotel_operations
+  file_path: data/skills/skill_9200a40e.yaml
+  name: I Would Like A Helicopter Handler
+  skill_id: skill_9200a40e
   success_rate: 0.0
   trigger_embedding_id: null
   usage_count: 0

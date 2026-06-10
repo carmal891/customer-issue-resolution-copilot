@@ -15,12 +15,11 @@ Collection Names:
 
 __version__ = "0.1.0"
 
-from evals.llm_judge import LLMJudge
-from evals.knowledge_base_rag_evaluator import KnowledgeBaseRAGEvaluator
+from evals.ragas_evaluator import RAGASEvaluator, RAGASTestCase
 from evals.skill_matching_rag_evaluator import SkillMatchingEvaluator
 
 __all__ = [
-    "LLMJudge",
-    "KnowledgeBaseRAGEvaluator",
+    "RAGASEvaluator",
+    "RAGASTestCase",
     "SkillMatchingEvaluator",
 ]

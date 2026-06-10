@@ -39,6 +39,86 @@
       "relevant_doc_ids": ["complaint_handling_policy", "cancellation_refund_policy"],
       "expected_answer_contains": ["verify charges", "review invoice", "manager approval", "documentation"],
       "difficulty": "medium"
+    },
+    {
+      "test_id": "kb_rag_006",
+      "category": "policy",
+      "question": "What accessibility features are available for guests with disabilities?",
+      "relevant_doc_ids": ["accessibility_policy"],
+      "expected_answer_contains": ["wheelchair accessible", "visual impairments", "hearing impairments", "service animals"],
+      "difficulty": "easy"
+    },
+    {
+      "test_id": "kb_rag_007",
+      "category": "policy",
+      "question": "How do loyalty program members earn and redeem points?",
+      "relevant_doc_ids": ["loyalty_program_policy"],
+      "expected_answer_contains": ["points", "tier", "benefits", "redemption"],
+      "difficulty": "medium"
+    },
+    {
+      "test_id": "kb_rag_008",
+      "category": "policy",
+      "question": "What security measures are in place to protect guest safety?",
+      "relevant_doc_ids": ["security_safety_policy"],
+      "expected_answer_contains": ["surveillance", "key card", "emergency", "staff training"],
+      "difficulty": "medium"
+    },
+    {
+      "test_id": "kb_rag_009",
+      "category": "procedure",
+      "question": "How should staff handle guest complaints about room cleanliness?",
+      "relevant_doc_ids": ["complaint_handling_policy"],
+      "expected_answer_contains": ["acknowledge", "apologize", "immediate action", "follow-up"],
+      "difficulty": "medium"
+    },
+    {
+      "test_id": "kb_rag_010",
+      "category": "policy",
+      "question": "What is the maximum late checkout time and what are the fees?",
+      "relevant_doc_ids": ["late_checkout_policy"],
+      "expected_answer_contains": ["maximum time", "fee", "availability", "housekeeping"],
+      "difficulty": "easy"
+    },
+    {
+      "test_id": "kb_rag_011",
+      "category": "policy",
+      "question": "Can guests cancel within 24 hours of check-in and still get a refund?",
+      "relevant_doc_ids": ["cancellation_refund_policy"],
+      "expected_answer_contains": ["24 hours", "refund", "penalty", "non-refundable"],
+      "difficulty": "medium"
+    },
+    {
+      "test_id": "kb_rag_012",
+      "category": "policy",
+      "question": "What are the requirements for requesting an accessible room?",
+      "relevant_doc_ids": ["accessibility_policy"],
+      "expected_answer_contains": ["advance notice", "documentation", "specific needs", "availability"],
+      "difficulty": "medium"
+    },
+    {
+      "test_id": "kb_rag_013",
+      "category": "policy",
+      "question": "How does the hotel handle emergency evacuations?",
+      "relevant_doc_ids": ["security_safety_policy"],
+      "expected_answer_contains": ["evacuation", "emergency exits", "assembly point", "staff procedures"],
+      "difficulty": "hard"
+    },
+    {
+      "test_id": "kb_rag_014",
+      "category": "policy",
+      "question": "What loyalty tier benefits include complimentary upgrades?",
+      "relevant_doc_ids": ["loyalty_program_policy", "room_upgrade_policy"],
+      "expected_answer_contains": ["tier", "upgrade", "complimentary", "availability"],
+      "difficulty": "hard"
+    },
+    {
+      "test_id": "kb_rag_015",
+      "category": "procedure",
+      "question": "What is the escalation process for unresolved guest complaints?",
+      "relevant_doc_ids": ["complaint_handling_policy"],
+      "expected_answer_contains": ["escalation", "manager", "timeline", "resolution"],
+      "difficulty": "hard"
     }
   ]
 }

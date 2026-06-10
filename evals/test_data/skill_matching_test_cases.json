@@ -65,7 +65,7 @@
       "test_type": "positive",
       "category": "billing",
       "issue_description": "I was charged twice for my stay. Can you fix this?",
-      "expected_skill_id": "billing_dispute_resolution",
+      "expected_skill_id": "billing_dispute",
       "expected_confidence": "high",
       "difficulty": "easy",
       "notes": "Clear billing error"
@@ -75,7 +75,7 @@
       "test_type": "positive",
       "category": "billing",
       "issue_description": "My credit card statement shows a charge I don't recognize from your hotel",
-      "expected_skill_id": "billing_dispute_resolution",
+      "expected_skill_id": "billing_dispute",
       "expected_confidence": "high",
       "difficulty": "medium",
       "notes": "Billing dispute with investigation needed"
@@ -165,7 +165,7 @@
       "test_type": "positive",
       "category": "billing",
       "issue_description": "There's an incorrect charge on my bill for minibar items I didn't use",
-      "expected_skill_id": "billing_dispute_resolution",
+      "expected_skill_id": "billing_dispute",
       "expected_confidence": "high",
       "difficulty": "medium",
       "notes": "Specific billing dispute"
@@ -245,7 +245,7 @@
       "test_type": "positive",
       "category": "billing",
       "issue_description": "I was charged for parking but I didn't use the parking garage",
-      "expected_skill_id": "billing_dispute_resolution",
+      "expected_skill_id": "billing_dispute",
       "expected_confidence": "high",
       "difficulty": "medium",
       "notes": "Specific service charge dispute"

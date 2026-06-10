@@ -1,8 +1,10 @@
 """
 RAG Retrieval Module
 
-Implements dense retrieval with metadata filtering, query expansion,
-and result ranking for the Customer Issue Resolution Copilot.
+Implements hybrid retrieval combining:
+- Dense retrieval (vector similarity)
+- Sparse retrieval (BM25 keyword matching)
+- Reciprocal Rank Fusion (RRF) for combining results
 
 This module is critical for hackathon scoring on retrieval quality.
 """
@@ -18,6 +20,11 @@ from src.infrastructure.vector_store.chromadb_adapter import (
     ChromaDBAdapter,
     SearchResult,
     DistanceMetric
+)
+from src.application.rag.bm25_retriever import (
+    BM25Retriever,
+    BM25Result,
+    reciprocal_rank_fusion
 )
 
 
@@ -127,11 +134,32 @@ class DenseRetriever:
         self.embedding_service = embedding_service
         self.vector_store = vector_store
         self.config = config or RetrievalConfig()
+        
+        # Initialize BM25 retriever for hybrid search
+        self.bm25_retriever: Optional[BM25Retriever] = None
+        self._bm25_indexed = False
 
         logger.info(
             f"Initialized DenseRetriever with strategy={self.config.strategy}, "
             f"top_k={self.config.top_k}"
         )
+    
+    def initialize_bm25(self, documents: List[Dict[str, Any]]) -> None:
+        """
+        Initialize BM25 index with documents.
+        
+        Args:
+            documents: List of dicts with keys: chunk_id, content, metadata
+        """
+        if not documents:
+            logger.warning("No documents provided for BM25 indexing")
+            return
+        
+        logger.info(f"Initializing BM25 index with {len(documents)} documents...")
+        self.bm25_retriever = BM25Retriever(k1=1.5, b=0.75)
+        self.bm25_retriever.index_documents(documents)
+        self._bm25_indexed = True
+        logger.info("BM25 index initialized successfully")
 
     def retrieve(
         self,
@@ -245,27 +273,70 @@ class DenseRetriever:
         top_k: int,
         min_score: float
     ) -> List[RetrievalResult]:
-        """Hybrid search combining vector similarity and metadata filtering"""
-        # Generate query embedding
+        """
+        True hybrid search combining:
+        1. Dense retrieval (vector similarity)
+        2. Sparse retrieval (BM25 keyword matching)
+        3. Reciprocal Rank Fusion (RRF) to combine results
+        """
+        # Step 1: Dense retrieval (vector similarity)
         embedding_result = self.embedding_service.embed_texts([query])
         query_embedding = embedding_result.embeddings[0]
 
-        # Perform hybrid search
-        # ChromaDB requires None instead of {} for no filters
-        search_results = self.vector_store.hybrid_search(
+        dense_search_results = self.vector_store.search(
             query_embedding=query_embedding,
-            where=metadata_filters if metadata_filters else None,
-            n_results=top_k,
-            alpha=self.config.hybrid_alpha
+            n_results=top_k * 2,  # Get more candidates for fusion
+            where=metadata_filters if metadata_filters else None
         )
-
-        # Convert and filter by score
-        results = []
-        for sr in search_results:
-            if sr.score >= min_score:
-                results.append(self._convert_search_result(sr))
-
-        return results
+        
+        dense_results = [
+            self._convert_search_result(sr)
+            for sr in dense_search_results
+            if sr.score >= min_score
+        ]
+        
+        # Step 2: Sparse retrieval (BM25) if available
+        if self._bm25_indexed and self.bm25_retriever:
+            sparse_results = self.bm25_retriever.search(
+                query=query,
+                top_k=top_k * 2,
+                metadata_filters=metadata_filters
+            )
+            
+            # Step 3: Combine with Reciprocal Rank Fusion
+            if sparse_results:
+                logger.debug(
+                    f"Hybrid search: {len(dense_results)} dense + "
+                    f"{len(sparse_results)} sparse results"
+                )
+                
+                fused_results = reciprocal_rank_fusion(
+                    dense_results=dense_results,
+                    sparse_results=sparse_results,
+                    k=60,
+                    weights=(0.7, 0.3)  # 70% dense, 30% sparse
+                )
+                
+                # Convert fused results back to RetrievalResult
+                results = []
+                for fused in fused_results[:top_k]:
+                    results.append(RetrievalResult(
+                        chunk_id=fused['chunk_id'],
+                        content=fused['content'],
+                        score=fused['rrf_score'],
+                        metadata=fused['metadata'],
+                        source=fused['metadata'].get('source', 'Unknown Source'),
+                        doc_type=fused['metadata'].get('doc_type', 'document'),
+                        domain=fused['metadata'].get('domain'),
+                        section=fused['metadata'].get('section'),
+                        timestamp=None
+                    ))
+                
+                return results
+        
+        # Fallback: Return dense results only if BM25 not available
+        logger.debug("BM25 not available, using dense retrieval only")
+        return dense_results[:top_k]
 
     def _metadata_first_retrieve(
         self,

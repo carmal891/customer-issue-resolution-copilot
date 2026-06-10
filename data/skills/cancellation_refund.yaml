@@ -20,6 +20,9 @@ triggers:
     - "cancellation request"
     - "can't make it need refund"
     - "cancel and get money back"
+    - "something came up can't make it"
+    - "need to cancel and get refund"
+    - "cancel reservation for next week"
   
   issue_types:
     - "cancellation_request"
@@ -309,7 +312,7 @@ performance_metrics:
   last_used: null
 
 tags:
-  - "cancellation"
-  - "refund"
-  - "financial"
-  - "policy_enforcement"
+  - "booking_cancellation"
+  - "refund_processing"
+  - "cancellation_policy_application"
+  - "payment_reversal"

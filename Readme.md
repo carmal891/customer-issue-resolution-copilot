@@ -208,7 +208,7 @@ To adapt this system to your own use case (e.g., IBM DataStage, IT operations, h
 ```bash
 # Add your domain-specific documents to data/mock/policies/
 # Examples:
-# - DataStage job documentation
+# - Software project documentation
 # - Error code reference guides
 # - Troubleshooting runbooks
 # - Historical incident reports
@@ -291,3 +291,36 @@ Built as a capstone project to demonstrate:
 **Current Status**: POC with hotel domain data  
 **Intended Use**: Generic troubleshooting framework for any operational domain  
 **Next Steps**: Executor Agent implementation, domain adapters, production integrations
+
+## Technology Stack
+
+| Layer | Component | Technology | Purpose |
+|-------|-----------|-----------|---------|
+| **Agent Framework** | Orchestration | **LangGraph** | Multi-agent state management and workflow |
+| **LLM** | Reasoning Engine | **GPT-5.4-mini** | Planning, generation, and decision-making |
+| **Embeddings** | Vector Representation | **OpenAI text-embedding-3-small** | Semantic search (1536-dim) |
+| **Vector Database** | Storage & Retrieval | **ChromaDB** | Local vector storage with persistence |
+| **Reranker** | Precision Layer | **cross-encoder/ms-marco-MiniLM-L-6-v2** | Context relevance scoring |
+| **Keyword Search** | Sparse Retrieval | **BM25** (rank-bm25) | Exact term matching |
+| **Fusion** | Result Combination | **Reciprocal Rank Fusion** (k=60) | Hybrid search merging |
+| **Evaluation** | Quality Metrics | **RAGAS + Custom LLM Judge** | RAG and agent performance |
+| **UI** | Interface | **Streamlit** | Human-in-the-loop approval interface |
+
+### Evaluation Results
+
+| Metric Category | Metric | Target | Achieved | Status |
+|----------------|--------|--------|----------|--------|
+| **Knowledge Base RAG** | Faithfulness | ≥0.85 | **0.993** | ✅ |
+| | Answer Relevancy | ≥0.90 | 0.767 | ⚠️ |
+| | Context Precision | ≥0.80 | 0.788 | ⚠️ |
+| | Context Recall | ≥0.90 | 0.200 | ❌ |
+| **Skills RAG** | Top-1 Accuracy | ≥0.90 | **1.000** | ✅ |
+| | Top-3 Accuracy | ≥0.95 | **1.000** | ✅ |
+| | Mean Reciprocal Rank | High | **1.000** | ✅ |
+
+**Key Achievements**:
+- 99.3% faithfulness (no hallucinations)
+- 100% skill matching accuracy
+- Hybrid search improved faithfulness from 0.40 → 0.99
+- Enriched embeddings achieved perfect skill matching
+

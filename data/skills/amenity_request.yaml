@@ -21,6 +21,9 @@ triggers:
     - "request wake up call"
     - "need iron and ironing board"
     - "request mini fridge"
+    - "send extra towels and pillows to room"
+    - "need crib for baby"
+    - "can I get more blankets"
   
   issue_types:
     - "amenity_request"
@@ -319,7 +322,7 @@ performance_metrics:
   avg_delivery_time_minutes: 0
 
 tags:
-  - "amenity"
-  - "room_service"
-  - "housekeeping"
-  - "guest_services"
+  - "in_room_amenities"
+  - "housekeeping_delivery"
+  - "guest_comfort_items"
+  - "room_supplies"

@@ -1,18 +1,32 @@
 # Customer Issue Resolution Copilot — System Design Document
 
-## One-Liner
+## Executive Summary
 
-A self-learning agent that turns scattered company knowledge into executable, human-approved skills where every novel task it handles becomes a reusable skill it never has to relearn
+A **domain-agnostic** self-learning agentic system that converts customer issues into executable, human-approved resolution workflows. While demonstrated in a hotel management context, the architecture is designed to be adaptable across industries including SaaS support, e-commerce, financial services, and enterprise IT operations.
+
+**Key Innovation**: Every novel task the system handles becomes a reusable skill it never has to relearn.
+
+**Domain Flexibility**: The core architecture (RAG pipelines, agent orchestration, skill compilation) is industry-agnostic. Adaptation requires only:
+- Domain-specific knowledge base (policies, procedures, documentation)
+- Custom tool implementations (API integrations, database operations)
+- Domain-appropriate skill definitions
+
+**Applicable Domains**:
+- **SaaS/Software**: Bug reports, feature requests, account issues, API troubleshooting
+- **E-commerce**: Order management, returns, shipping issues, payment disputes
+- **Financial Services**: Account inquiries, transaction disputes, compliance workflows
+- **Healthcare**: Patient inquiries, appointment scheduling, insurance verification
+- **Enterprise IT**: Helpdesk tickets, access provisioning, system troubleshooting
 
 ## 1. Problem Definition
 
-Support and operations teams often receive customer issues through fragmented channels such as email and Slack. Resolving these issues requires searching across policy documents, prior tickets, Slack threads, and tribal knowledge. This creates three recurring problems:
+Support and operations teams across industries face common challenges when resolving customer issues through fragmented channels. Whether handling hotel bookings, SaaS support tickets, or e-commerce orders, teams must search across policy documents, prior tickets, internal communications, and tribal knowledge. This creates three recurring problems:
 
 - Resolution quality depends too much on individual operator knowledge
 - Repetitive issues are solved repeatedly instead of becoming reusable workflows
 - Escalations are inconsistent, especially when an issue requires an operational action or engineering follow-up
 
-The proposed capstone focuses on a **Customer Issue Resolution Copilot**: a human-in-the-loop AI system that converts incoming customer issues into grounded resolution steps, human-approved actions, and reusable skills for future cases.
+This system provides a **domain-agnostic Customer Issue Resolution Copilot**: a human-in-the-loop AI system that converts incoming customer issues into grounded resolution steps, human-approved actions, and reusable skills for future cases—regardless of industry.
 
 ## 2. Goal and Hypothesis
 
@@ -112,22 +126,55 @@ A customer issue can be resolved more effectively when the system either reuses 
 
 ## 6. System Architecture
 
+### 6.1 High-Level Architecture
+
 ```mermaid
 flowchart TD
-    A[Customer issue from email or Slack] --> B[Coordinator Agent]
-    B --> C[RAG retrieval over company knowledge]
-    B --> D[Skill matcher]
-    C --> E[Retrieved context]
-    D --> F{Existing skill found}
-    F -->|Yes| G[Proposed skill steps]
-    F -->|No| H[ReAct-style loop]
-    H --> I[Draft plan and tool steps]
-    G --> J[Human approval layer]
-    I --> J
-    J --> K[Human executes approved action]
-    K --> L[Observe result]
-    L --> M[Compile reusable draft skill]
-    M --> N[Skills registry]
+    A[Customer Issue] --> B[Orchestrator Agent - LangGraph]
+    B --> C[Knowledge Base RAG]
+    B --> D[Skills RAG]
+    C --> E[Hybrid Search: Vector + BM25]
+    E --> F[Cross-Encoder Reranking]
+    D --> G{Skill Match?}
+    G -->|Yes| H[Execute Skill Workflow]
+    G -->|No| I[TPAO Loop - ReAct Agent]
+    I --> J[Think-Plan-Act-Observe]
+    H --> K[Approval Gateway]
+    J --> K
+    K -->|Approved| L[Executor Agent]
+    L --> M[Tool Execution]
+    M --> N[Skill Compiler]
+    N --> O[Update Skills Registry]
+```
+
+### 6.2 Technology Stack
+
+| Layer | Component | Technology | Purpose |
+|-------|-----------|-----------|---------|
+| **Agent Framework** | Orchestration | LangGraph | Multi-agent state management and workflow |
+| **LLM** | Reasoning Engine | GPT-5.4-mini | Planning, generation, and decision-making |
+| **Embeddings** | Vector Representation | OpenAI text-embedding-3-small (1536-dim) | Semantic search and matching |
+| **Vector Database** | Storage & Retrieval | ChromaDB | Local vector storage with persistence |
+| **Reranker** | Precision Layer | cross-encoder/ms-marco-MiniLM-L-6-v2 | Context relevance scoring |
+| **Keyword Search** | Sparse Retrieval | BM25 (rank-bm25) | Exact term matching |
+| **Fusion** | Result Combination | Reciprocal Rank Fusion (k=60) | Hybrid search merging |
+| **Evaluation** | Quality Metrics | RAGAS + Custom LLM Judge | RAG and agent performance |
+| **UI** | Interface | Streamlit | Human-in-the-loop approval interface |
+
+### 6.3 RAG Pipeline Architecture
+
+**Knowledge Base RAG**:
+```
+Query → Query Expansion → Parallel Retrieval:
+  ├─ Vector Search (OpenAI embeddings)
+  └─ BM25 Search (keyword matching)
+→ Reciprocal Rank Fusion → Cross-Encoder Reranking → Top-K Context → LLM Generation
+```
+
+**Skills RAG**:
+```
+Issue Description → Enriched Embedding (5-layer context) → Vector Search →
+Cross-Encoder Reranking → Confidence Scoring → Skill Selection
 ```
 
 ## 7. Major Components
@@ -470,7 +517,7 @@ This is intentionally deferred so the initial capstone remains feasible within o
 
 ## 19. Conclusion
 
-This capstone should be presented as a narrowly scoped but high-value POC for a **Customer Issue Resolution Copilot**. The innovation is not just answering questions from documents. It is the combination of:
+This capstone **Customer Issue Resolution Copilot** is not just answering questions from documents. It is the combination of:
 
 - grounded retrieval,
 - ReAct-style agentic handling of novel issues,

@@ -556,12 +556,12 @@ def render_submit_issue():
                                 compiled_skill_id=None
                             )
                         else:
-                            # No skill match at all - go directly to ReAct
+                            # No skill match at all - go directly to AI loop
                             st.write("**Skill Matching Results:**")
                             st.write("No skills matched the query.")
-                            st.warning("⚠️ No matching skill found. Using ReAct loop for novel task handling...")
+                            st.warning("⚠️ No matching skill found. Using AI ReAct loop for novel task handling...")
 
-                            # Use ReAct loop to generate plan - it returns a Resolution object
+                            # Use AI loop to generate plan - it returns a Resolution object
                             resolution = st.session_state.tpao_loop.execute(issue)
 
                             # Update resolution ID and status for consistency
@@ -1032,81 +1032,102 @@ Variations: ["early check-in request", "early access to room", "check in before 
                             import traceback
                             st.error(traceback.format_exc())
 
-                    if st.button("❌ Reject & Use ReAct", key=f"reject_{approval.request_id}", use_container_width=True):
-                        try:
-                            # Reject the approval
-                            st.session_state.approval_service.reject_request(
-                                request_id=approval.request_id,
-                                approver="manager@hotel.com",
-                                reason="Skill rejected - Using ReAct for novel task handling"
-                            )
-                            approval.status = ApprovalStatus.REJECTED
+                    # Create two columns for the buttons
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        if st.button("🤖 Use AI to Generate Skill", key=f"ai_generate_{approval.request_id}", use_container_width=True):
+                            try:
+                                # Reject the approval
+                                st.session_state.approval_service.reject_request(
+                                    request_id=approval.request_id,
+                                    approver="manager@hotel.com",
+                                    reason="Skill rejected - Using AI to generate new skill"
+                                )
+                                approval.status = ApprovalStatus.REJECTED
 
-                            # Find the original issue for this approval
-                            issue = None
-                            for iss in st.session_state.issues:
-                                if iss.issue_id == approval.issue_id:
-                                    issue = iss
-                                    break
+                                # Find the original issue for this approval
+                                issue = None
+                                for iss in st.session_state.issues:
+                                    if iss.issue_id == approval.issue_id:
+                                        issue = iss
+                                        break
 
-                            if issue:
-                                st.info("🔄 Skill rejected. Triggering ReAct loop for novel task handling...")
+                                if issue:
+                                    st.info("🔄 Skill rejected. Triggering AI loop for novel task handling...")
 
-                                # Use ReAct loop to generate new plan
-                                with st.spinner("🧠 ReAct loop generating new resolution plan..."):
-                                    tpao_resolution = st.session_state.tpao_loop.execute(issue)
+                                    # Use AI loop to generate new plan
+                                    with st.spinner("🧠 AI loop generating new resolution plan..."):
+                                        tpao_resolution = st.session_state.tpao_loop.execute(issue)
 
-                                    # Update resolution ID and mark as novel task
-                                    tpao_resolution.resolution_id = f"RES-{issue.issue_id}-ReAct"
-                                    tpao_resolution.status = ResolutionStatus.PENDING_APPROVAL
-                                    tpao_resolution.novel_task = True
-                                    tpao_resolution.skill_matched = False
+                                        # Update resolution ID and mark as novel task
+                                        tpao_resolution.resolution_id = f"RES-{issue.issue_id}-AI"
+                                        tpao_resolution.status = ResolutionStatus.PENDING_APPROVAL
+                                        tpao_resolution.novel_task = True
+                                        tpao_resolution.skill_matched = False
 
-                                    # Add to resolutions
-                                    st.session_state.resolutions.append(tpao_resolution)
+                                        # Add to resolutions
+                                        st.session_state.resolutions.append(tpao_resolution)
 
-                                    # Create new approval request for ReAct resolution
-                                    actions_list = []
-                                    for step in tpao_resolution.steps:
-                                        action_detail = {
-                                            "step": step.step_number,
-                                            "type": step.step_type,
-                                            "description": step.description,
-                                            "tool": step.tool_used if step.tool_used else "N/A"
-                                        }
-                                        actions_list.append(action_detail)
+                                        # Create new approval request for AI-generated resolution
+                                        actions_list = []
+                                        for step in tpao_resolution.steps:
+                                            action_detail = {
+                                                "step": step.step_number,
+                                                "type": step.step_type,
+                                                "description": step.description,
+                                                "tool": step.tool_used if step.tool_used else "N/A"
+                                            }
+                                            actions_list.append(action_detail)
 
-                                    tpao_approval = ApprovalRequest(
-                                        issue_id=issue.issue_id,
-                                        action_type="tpao_novel_task_resolution",
-                                        action_description=f"ReAct-generated resolution for: {issue.subject}",
-                                        risk_level=RiskLevel.MEDIUM,
-                                        proposed_changes={
-                                            "resolution_id": tpao_resolution.resolution_id,
-                                            "skill_used": "ReAct (Novel Task)",
-                                            "total_steps": len(tpao_resolution.steps),
-                                            "actions": actions_list,
-                                            "triggered_by": "skill_rejection"
-                                        }
-                                    )
+                                        tpao_approval = ApprovalRequest(
+                                            issue_id=issue.issue_id,
+                                            action_type="tpao_novel_task_resolution",
+                                            action_description=f"AI-generated resolution for: {issue.subject}",
+                                            risk_level=RiskLevel.MEDIUM,
+                                            proposed_changes={
+                                                "resolution_id": tpao_resolution.resolution_id,
+                                                "skill_used": "AI (Novel Task)",
+                                                "total_steps": len(tpao_resolution.steps),
+                                                "actions": actions_list,
+                                                "triggered_by": "skill_rejection"
+                                            }
+                                        )
 
-                                    # Update resolution with approval request ID
-                                    tpao_resolution.approval_request_id = tpao_approval.request_id
+                                        # Update resolution with approval request ID
+                                        tpao_resolution.approval_request_id = tpao_approval.request_id
 
-                                    # Add to session state
-                                    st.session_state.approvals.append(tpao_approval)
-                                    st.session_state.approval_service.approval_history.append(tpao_approval)
+                                        # Add to session state
+                                        st.session_state.approvals.append(tpao_approval)
+                                        st.session_state.approval_service.approval_history.append(tpao_approval)
 
-                                    st.success(f"✅ ReAct resolution created: {tpao_resolution.resolution_id}")
-                                    st.info(f"⏳ New approval request created: {tpao_approval.request_id}")
-                            else:
-                                st.warning("⚠️ Could not find original issue to trigger ReAct")
+                                        st.success(f"✅ AI resolution created: {tpao_resolution.resolution_id}")
+                                        st.info(f"⏳ New approval request created: {tpao_approval.request_id}")
+                                else:
+                                    st.warning("⚠️ Could not find original issue to trigger AI loop")
 
-                            st.rerun()
-                        except Exception as e:
-                            st.error(f"❌ Error: {str(e)}")
-                            import traceback
-                            st.error(traceback.format_exc())
+                                st.rerun()
+                            except Exception as e:
+                                st.error(f"❌ Error: {str(e)}")
+                                import traceback
+                                st.error(traceback.format_exc())
+                    
+                    with col2:
+                        if st.button("❌ Reject Completely", key=f"reject_complete_{approval.request_id}", use_container_width=True):
+                            try:
+                                # Reject the approval completely
+                                st.session_state.approval_service.reject_request(
+                                    request_id=approval.request_id,
+                                    approver="manager@hotel.com",
+                                    reason="Skill proposal rejected - No further action"
+                                )
+                                approval.status = ApprovalStatus.REJECTED
+                                st.success("✅ Skill proposal rejected completely")
+                                st.rerun()
+                            except Exception as e:
+                                st.error(f"❌ Error: {str(e)}")
+                                import traceback
+                                st.error(traceback.format_exc())
                 else:
                     if approval.approved_by:
                         st.write(f"**By:** {approval.approved_by}")

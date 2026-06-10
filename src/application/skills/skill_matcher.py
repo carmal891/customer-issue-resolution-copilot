@@ -170,6 +170,11 @@ class SkillMatcher:
                     {"active": {"$eq": True}}
                 ]}
             )
+            
+            # Safety check: ensure semantic_results is not None
+            if semantic_results is None:
+                logger.warning(f"Vector store search returned None for issue {issue.issue_id}")
+                semantic_results = []
 
             # 2b. Keyword search - get all active skills and score by keyword overlap
             all_skills = self.skill_registry.get_all_skills(active_only=True)

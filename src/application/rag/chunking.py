@@ -120,43 +120,228 @@ class SemanticChunker:
         metadata: Optional[Dict[str, Any]] = None
     ) -> List[Chunk]:
         """
-        Chunk policy documents using section-aware strategy.
-
-        Policy documents have clear section structure that should be preserved.
-        Each section becomes one or more chunks depending on size.
+        Chunk policy documents using hierarchical section-aware strategy.
+        
+        Strategy:
+        1. Extract major sections (## headers)
+        2. If section fits in chunk_size, keep as one chunk
+        3. Otherwise, extract sub-sections (### headers)
+        4. If sub-section fits, keep as one chunk
+        5. Otherwise, split with overlap while preserving section context
+        
+        This preserves semantic units and improves context recall.
         """
         chunks = []
-        sections = self._extract_sections(content)
-
-        for section_idx, section in enumerate(sections):
-            section_title = section.get('title', f"Section {section_idx + 1}")
-            section_content = section['content']
-
-            # If section is small enough, keep it as one chunk
-            if self._estimate_tokens(section_content) <= self.chunk_size:
+        major_sections = self._extract_major_sections(content)
+        
+        for major_idx, major_section in enumerate(major_sections):
+            major_title = major_section['title']
+            major_content = major_section['content']
+            major_size = self._estimate_tokens(major_content)
+            
+            # If major section fits in one chunk, keep it together
+            if major_size <= self.chunk_size:
+                chunk_content = f"## {major_title}\n\n{major_content}"
                 chunk = Chunk(
-                    content=section_content,
+                    content=chunk_content,
                     chunk_id=f"{document_id}_chunk_{len(chunks)}",
                     document_id=document_id,
                     document_type=DocumentType.POLICY,
-                    section_title=section_title,
-                    section_number=str(section_idx + 1),
+                    section_title=major_title,
+                    section_number=str(major_idx + 1),
                     metadata=metadata or {}
                 )
                 chunks.append(chunk)
             else:
-                # Split large section into multiple chunks with overlap
-                section_chunks = self._split_with_overlap(
-                    section_content,
-                    document_id,
-                    DocumentType.POLICY,
-                    section_title,
-                    str(section_idx + 1),
-                    len(chunks),
-                    metadata
+                # Split into sub-sections
+                sub_sections = self._extract_sub_sections(major_content)
+                
+                for sub_idx, sub_section in enumerate(sub_sections):
+                    sub_title = sub_section['title']
+                    sub_content = sub_section['content']
+                    sub_size = self._estimate_tokens(sub_content)
+                    
+                    # If sub-section fits in one chunk, keep it together
+                    if sub_size <= self.chunk_size:
+                        # Include major section context in chunk
+                        full_title = f"{major_title} - {sub_title}"
+                        chunk_content = f"## {major_title}\n### {sub_title}\n\n{sub_content}"
+                        chunk = Chunk(
+                            content=chunk_content,
+                            chunk_id=f"{document_id}_chunk_{len(chunks)}",
+                            document_id=document_id,
+                            document_type=DocumentType.POLICY,
+                            section_title=full_title,
+                            section_number=f"{major_idx + 1}.{sub_idx + 1}",
+                            metadata=metadata or {}
+                        )
+                        chunks.append(chunk)
+                    else:
+                        # Split with overlap, preserving section context
+                        section_chunks = self._split_with_context_overlap(
+                            content=sub_content,
+                            document_id=document_id,
+                            major_title=major_title,
+                            sub_title=sub_title,
+                            section_number=f"{major_idx + 1}.{sub_idx + 1}",
+                            start_chunk_idx=len(chunks),
+                            metadata=metadata
+                        )
+                        chunks.extend(section_chunks)
+        
+        return chunks
+    
+    def _extract_major_sections(self, content: str) -> List[Dict[str, Any]]:
+        """
+        Extract major sections (## headers) from markdown content.
+        
+        Returns:
+            List of dicts with 'title' and 'content' keys
+        """
+        sections = []
+        current_section = None
+        lines = content.split('\n')
+        
+        for line in lines:
+            # Detect major section header (## but not ###)
+            if line.strip().startswith('## ') and not line.strip().startswith('### '):
+                # Save previous section
+                if current_section and current_section['content']:
+                    current_section['content'] = '\n'.join(current_section['content'])
+                    sections.append(current_section)
+                
+                # Start new section
+                title = line.strip().replace('## ', '').strip()
+                current_section = {
+                    'title': title,
+                    'content': []
+                }
+            elif current_section is not None:
+                # Add line to current section
+                current_section['content'].append(line)
+        
+        # Add final section
+        if current_section and current_section['content']:
+            current_section['content'] = '\n'.join(current_section['content'])
+            sections.append(current_section)
+        
+        # If no sections found, treat entire document as one section
+        if not sections:
+            sections = [{'title': 'Document', 'content': content}]
+        
+        return sections
+    
+    def _extract_sub_sections(self, content: str) -> List[Dict[str, Any]]:
+        """
+        Extract sub-sections (### headers) from content.
+        
+        Returns:
+            List of dicts with 'title' and 'content' keys
+        """
+        sub_sections = []
+        current_sub = None
+        lines = content.split('\n')
+        
+        for line in lines:
+            # Detect sub-section header (###)
+            if line.strip().startswith('### '):
+                # Save previous sub-section
+                if current_sub and current_sub['content']:
+                    current_sub['content'] = '\n'.join(current_sub['content'])
+                    sub_sections.append(current_sub)
+                
+                # Start new sub-section
+                title = line.strip().replace('### ', '').strip()
+                current_sub = {
+                    'title': title,
+                    'content': []
+                }
+            elif current_sub is not None:
+                # Add line to current sub-section
+                current_sub['content'].append(line)
+        
+        # Add final sub-section
+        if current_sub and current_sub['content']:
+            current_sub['content'] = '\n'.join(current_sub['content'])
+            sub_sections.append(current_sub)
+        
+        # If no sub-sections found, treat entire content as one sub-section
+        if not sub_sections:
+            sub_sections = [{'title': 'Content', 'content': content}]
+        
+        return sub_sections
+    
+    def _split_with_context_overlap(
+        self,
+        content: str,
+        document_id: str,
+        major_title: str,
+        sub_title: str,
+        section_number: str,
+        start_chunk_idx: int,
+        metadata: Optional[Dict[str, Any]] = None
+    ) -> List[Chunk]:
+        """
+        Split content with overlap while preserving section context.
+        
+        Key improvement: Always include section headers in each chunk
+        so context is preserved even when content is split.
+        """
+        sentences = re.split(r'(?<=[.!?])\s+', content)
+        chunks = []
+        current_chunk = []
+        current_size = 0
+        
+        for sentence in sentences:
+            sentence_size = self._estimate_tokens(sentence)
+            
+            if current_size + sentence_size > self.chunk_size and current_chunk:
+                # Create chunk with section context
+                chunk_content = f"## {major_title}\n### {sub_title}\n\n" + ' '.join(current_chunk)
+                
+                chunk = Chunk(
+                    content=chunk_content,
+                    chunk_id=f"{document_id}_chunk_{start_chunk_idx + len(chunks)}",
+                    document_id=document_id,
+                    document_type=DocumentType.POLICY,
+                    section_title=f"{major_title} - {sub_title}",
+                    section_number=section_number,
+                    metadata=metadata or {}
                 )
-                chunks.extend(section_chunks)
-
+                chunks.append(chunk)
+                
+                # Calculate overlap (keep last N sentences)
+                overlap_sentences = []
+                overlap_size = 0
+                for s in reversed(current_chunk):
+                    s_size = self._estimate_tokens(s)
+                    if overlap_size + s_size <= self.overlap_size:
+                        overlap_sentences.insert(0, s)
+                        overlap_size += s_size
+                    else:
+                        break
+                
+                current_chunk = overlap_sentences + [sentence]
+                current_size = self._estimate_tokens(' '.join(current_chunk))
+            else:
+                current_chunk.append(sentence)
+                current_size += sentence_size
+        
+        # Add final chunk
+        if current_chunk and current_size >= self.min_chunk_size:
+            chunk_content = f"## {major_title}\n### {sub_title}\n\n" + ' '.join(current_chunk)
+            
+            chunk = Chunk(
+                content=chunk_content,
+                chunk_id=f"{document_id}_chunk_{start_chunk_idx + len(chunks)}",
+                document_id=document_id,
+                document_type=DocumentType.POLICY,
+                section_title=f"{major_title} - {sub_title}",
+                section_number=section_number,
+                metadata=metadata or {}
+            )
+            chunks.append(chunk)
+        
         return chunks
 
     def _chunk_conversation(

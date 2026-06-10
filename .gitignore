@@ -66,8 +66,13 @@ logs/
 
 # Vector Database
 data/vector_db/
+data/vector_store/
 *.db
 *.sqlite
+
+# Evaluation Results
+evals/results/
+evals/reports/
 
 # Temporary files
 tmp/

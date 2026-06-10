@@ -68,7 +68,7 @@ class RAGConfig:
 
     # Vector store config
     vector_store_path: str = "./data/vector_store"
-    collection_name: str = "hotel_skills"  # Use same collection as skill indexing
+    collection_name: str = "hotel_knowledge"  # Knowledge base collection for policies
     distance_metric: DistanceMetric = DistanceMetric.COSINE
 
     # Retrieval config
@@ -87,9 +87,9 @@ class RAGConfig:
     include_metadata: bool = True
     group_by_source: bool = False
 
-    # Chunking config
-    chunk_size: int = 512
-    chunk_overlap: int = 100
+    # Chunking config (optimized for semantic coherence)
+    chunk_size: int = 800      # Larger chunks preserve complete semantic units
+    chunk_overlap: int = 200   # More overlap preserves context between chunks
 
 
 @dataclass
@@ -373,7 +373,19 @@ class RAGPipeline:
             embeddings=embeddings
         )
 
-        logger.info("Indexing complete")
+        # Initialize BM25 index for hybrid search
+        logger.info("Initializing BM25 index for hybrid search...")
+        bm25_documents = [
+            {
+                'chunk_id': chunk.chunk_id,
+                'content': chunk.content,
+                'metadata': chunk.metadata
+            }
+            for chunk in sanitized_chunks
+        ]
+        self.retriever.initialize_bm25(bm25_documents)
+
+        logger.info("Indexing complete (vector + BM25)")
 
     # ========== QUERYING METHODS ==========
 

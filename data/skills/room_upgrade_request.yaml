@@ -20,6 +20,9 @@ triggers:
     - "room upgrade request"
     - "can I get a nicer room"
     - "upgrade to premium room"
+    - "celebrating anniversary want better room"
+    - "upgrade to suite"
+    - "what are my room upgrade options"
   
   issue_types:
     - "room_upgrade_request"
@@ -257,7 +260,7 @@ performance_metrics:
   last_used: null
 
 tags:
-  - "room_upgrade"
-  - "booking_modification"
-  - "upsell"
-  - "loyalty_benefits"
+  - "room_category_upgrade"
+  - "suite_upgrade"
+  - "premium_room_upsell"
+  - "special_occasion_accommodation"
