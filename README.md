@@ -2,6 +2,12 @@
 
 > **A self-learning agent that turns scattered company knowledge into executable, human-approved skills where every novel task it handles becomes a reusable skill it never has to relearn**
 
+## 🚀 Live Demo
+
+**Try it now:** [https://customer-issue-resolution-copilot-nky5bbcaaoifn8gmbdrz3g.streamlit.app/](https://customer-issue-resolution-copilot-nky5bbcaaoifn8gmbdrz3g.streamlit.app/)
+
+Experience the system in action with pre-loaded hotel management scenarios. Test skill matching, TPAO reasoning, and human-in-the-loop approval workflows.
+
 ## Vision: A Generic Troubleshooting Framework
 
 This project is designed as a **domain-agnostic customer issue resolution copilot** that can be adapted to any operational context. The core innovation is a system that:
