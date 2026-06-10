@@ -191,14 +191,16 @@ class SkillMatcher:
                 logger.info(f"No skill triggers found for issue {issue.issue_id}")
                 return []
 
-            # Step 4: Use merged candidates directly (already prepared)
-            candidates = merged_candidates
+            # Step 4: Limit to top 3 candidates before reranking for better precision
+            # This focuses the reranker on the most promising candidates
+            candidates = merged_candidates[:3]
+            logger.info(f"Limited to top {len(candidates)} candidates before reranking")
 
             if not candidates:
                 logger.info(f"No active skills found for issue {issue.issue_id}")
                 return []
 
-            # Step 4: Re-rank candidates using cross-encoder (if available)
+            # Step 5: Re-rank candidates using cross-encoder (if available)
             if self.reranker:
                 try:
                     # Use cross-encoder to score pairs directly
@@ -226,6 +228,17 @@ class SkillMatcher:
             # Step 5: Create matches using pre-calculated hybrid scores
             matches = []
             seen_skills = set()
+
+            # Log all candidates for debugging with FULL trigger text
+            logger.info(f"[Skill Matching] Found {len(candidates)} candidates for query: '{reformulated_text}'")
+            logger.info("="*80)
+            for idx, cand in enumerate(candidates[:5], 1):  # Log top 5 with full details
+                logger.info(f"\n#{idx}: {cand['skill'].name}")
+                logger.info(f"  Score: {cand.get('semantic_score', 0.0):.4f}")
+                logger.info(f"  Domain: {cand['skill'].metadata.get('domain', 'N/A') if cand['skill'].metadata else 'N/A'}")
+                logger.info(f"  Trigger Patterns: {cand['skill'].triggers[:3]}")  # Show first 3 triggers
+                logger.info(f"  Full Indexed Text: {cand['trigger_text'][:300]}...")  # Show more of the indexed text
+            logger.info("="*80)
 
             for i, candidate in enumerate(candidates):
                 skill_id = candidate['skill_id']

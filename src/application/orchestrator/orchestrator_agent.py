@@ -646,7 +646,7 @@ class OrchestratorAgent:
             state["error"] = f"Novel path error: {e}"
             return state
 
-    def _prepare_approval_node(self, state: OrchestratorState) -> OrchestratorState:
+    def _prepare_approval_node(self, state: OrchestratorState) -> :
         """
         Node: Prepare approval request.
 

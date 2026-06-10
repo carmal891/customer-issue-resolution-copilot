@@ -1,0 +1,90 @@
+# TPAO Loop RAG Test Queries
+# These queries test the Knowledge Base RAG system (policies, procedures, historical tickets)
+# Format: Query | Expected Policy/Document | Category | Complexity
+
+# ============================================================================
+# POLICY RETRIEVAL TESTS (10 queries)
+# ============================================================================
+
+1. What is your cancellation policy for bookings made 3 days before check-in? | cancellation_refund_policy.md | policy_cancellation | medium
+2. Can I get a full refund if I cancel my non-refundable booking? | cancellation_refund_policy.md | policy_cancellation | medium
+3. What are the requirements for wheelchair accessible rooms? | accessibility_policy.md | policy_accessibility | easy
+4. How do I file a complaint about my stay? | complaint_handling_policy.md | policy_complaint | easy
+5. What time is late checkout and is there a fee? | late_checkout_policy.md | policy_checkout | easy
+6. What are the criteria for getting a free room upgrade? | room_upgrade_policy.md | policy_upgrade | medium
+7. Do you have security cameras in the hotel? | security_safety_policy.md | policy_security | easy
+8. What loyalty program benefits do platinum members get? | loyalty_program_policy.md | policy_loyalty | medium
+9. Can I bring my service dog to the hotel? | accessibility_policy.md | policy_accessibility | easy
+10. What happens if I lose my room key? | security_safety_policy.md | policy_security | easy
+
+# ============================================================================
+# MULTI-POLICY REASONING TESTS (5 queries)
+# ============================================================================
+
+11. I'm a gold member and need to cancel 5 days before check-in, what refund do I get? | cancellation_refund_policy.md, loyalty_program_policy.md | multi_policy | hard
+12. Can I get a late checkout and room upgrade as a platinum member? | late_checkout_policy.md, room_upgrade_policy.md, loyalty_program_policy.md | multi_policy | hard
+13. I have a complaint about billing and want to cancel my booking | complaint_handling_policy.md, cancellation_refund_policy.md | multi_policy | hard
+14. What accessibility features do you have and can I request them during booking? | accessibility_policy.md | policy_accessibility | medium
+15. If I'm upgraded to a suite, can I still get late checkout for free? | room_upgrade_policy.md, late_checkout_policy.md | multi_policy | hard
+
+# ============================================================================
+# PROCEDURAL QUERIES (5 queries)
+# ============================================================================
+
+16. How do I check in early if I arrive before 3 PM? | check_in_procedure | procedure | medium
+17. What's the process for reporting a maintenance issue in my room? | maintenance_procedure | procedure | easy
+18. How do I add an extra guest to my reservation? | booking_modification_procedure | procedure | medium
+19. What should I do if the fire alarm goes off? | emergency_procedure, security_safety_policy.md | procedure | easy
+20. How do I request a receipt for my stay? | checkout_procedure | procedure | easy
+
+# ============================================================================
+# EDGE CASES & COMPLEX SCENARIOS (5 queries)
+# ============================================================================
+
+21. I booked a non-refundable room but have a medical emergency, can I get a refund? | cancellation_refund_policy.md | edge_case | hard
+22. The hotel overbooked and I don't have a room, what are my options? | overbooking_policy | edge_case | hard
+23. I was charged for minibar items I didn't consume, how do I dispute this? | billing_dispute_procedure | edge_case | medium
+24. Can I extend my stay if I'm already checked in? | booking_extension_procedure | edge_case | medium
+25. What compensation do I get if my room isn't ready at check-in time? | service_guarantee_policy | edge_case | hard
+
+# ============================================================================
+# NEGATIVE TESTS (Should retrieve relevant policy but answer "not covered")
+# ============================================================================
+
+26. Can I bring my pet parrot to the hotel? | pet_policy (if exists) or accessibility_policy.md | negative | medium
+27. Do you offer airport shuttle service? | transportation_services (if exists) | negative | easy
+28. Can I host a party in my room? | guest_conduct_policy (if exists) | negative | medium
+29. What's your policy on smoking in rooms? | smoking_policy (if exists) or security_safety_policy.md | negative | easy
+30. Can I get a discount if I book for a month? | long_term_stay_policy (if exists) | negative | medium
+
+# ============================================================================
+# EXPECTED BEHAVIOR
+# ============================================================================
+
+# For queries 1-20: Should retrieve correct policy/procedure and provide accurate answer
+# For queries 21-25: Should retrieve relevant policies and reason through edge cases
+# For queries 26-30: Should retrieve closest policy and explain if not explicitly covered
+
+# ============================================================================
+# EVALUATION CRITERIA
+# ============================================================================
+
+# Faithfulness: Answer must be grounded in retrieved documents (≥0.85)
+# Answer Relevancy: Answer must address the question (≥0.90)
+# Context Precision: Retrieved docs must be relevant (≥0.80)
+# Context Recall: All relevant docs must be retrieved (≥0.90)
+
+# ============================================================================
+# TESTING INSTRUCTIONS
+# ============================================================================
+
+# 1. Use "Ask a Question" feature in Streamlit UI
+# 2. Enter each query and observe:
+#    - Which policies/documents are retrieved
+#    - Quality of the generated answer
+#    - Whether answer is grounded in retrieved context
+# 3. Check logs for:
+#    - Retrieval strategy used (HYBRID, DENSE, etc.)
+#    - Number of chunks retrieved
+#    - Reranking scores
+#    - Query reformulation (if TPAO loop is active)

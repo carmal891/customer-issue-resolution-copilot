@@ -135,7 +135,7 @@ flowchart TD
     B --> D[Skills RAG]
     C --> E[Hybrid Search: Vector + BM25]
     E --> F[Cross-Encoder Reranking]
-    D --> G{Skill Match?}
+    D --> G{Skill Match on human approval?}
     G -->|Yes| H[Execute Skill Workflow]
     G -->|No| I[TPAO Loop - ReAct Agent]
     I --> J[Think-Plan-Act-Observe]
@@ -525,3 +525,54 @@ This capstone **Customer Issue Resolution Copilot** is not just answering questi
 - and conversion of successful traces into reusable skills.
 
 That framing keeps the project realistic, aligned with the judging rubric, and differentiated from a generic support chatbot. A future phase can extend this into a minimal multi-agent system by introducing an Execution Agent for approved actions.
+## 12. Security & Guardrails
+
+The system implements six layers of regex-based guardrails (zero external dependencies) to ensure safe and responsible AI operations:
+
+### 12.1 PII Detection & Masking (`pii_detector.py`)
+**Technology:** Regex pattern matching with Luhn algorithm for credit card validation  
+**Detects:** Credit cards, SSN, emails, phone numbers, passports, driver's licenses, DOB, addresses, room numbers, booking references  
+**Action:** Automatic masking (e.g., `****-****-****-1234`) and blocking for sensitive PII (credit cards, multiple sensitive items)
+
+### 12.2 Prompt Injection Detection (`guardrails_ai_injection_detector.py`)
+**Technology:** Compiled regex patterns with threat categorization  
+**Detects:** 
+- Instruction override ("ignore all instructions")
+- Role manipulation ("you are now a...")
+- System prompt leaks ("show me your system prompt")
+- Jailbreak attempts ("DAN mode", "bypass restrictions")
+- Data exfiltration ("export all customer records")
+- Malicious tool calls (SQL injection, script injection)
+
+**Scoring:** 0.0-1.0 risk score with configurable threshold (default: 0.5)
+
+### 12.3 Confidence Checking (`confidence_checker.py`)
+**Technology:** Score-based thresholds with conflict detection  
+**Levels:** HIGH (>0.7), MEDIUM (0.3-0.7), LOW (<0.3), NONE (no results)  
+**Action:** Escalates to human when confidence is insufficient for action risk level
+
+### 12.4 Tool Input Validation (`tool_validator.py`)
+**Technology:** Rule-based validation with regex patterns  
+**Validates:** Type checking, range validation, length validation, pattern matching, allowed values, custom validators  
+**Example Rules:**
+- Booking ID: `^BK[0-9]{5}$`
+- Refund amount: $0.01 - $10,000
+- Email: RFC-compliant regex
+
+### 12.5 Rate Limiting (`tool_validator.py`)
+**Technology:** Time-windowed call tracking  
+**Limits:** Per-minute, per-hour, per-day thresholds per tool  
+**Example:** `process_refund` limited to 10/min, 100/hour, 500/day
+
+### 12.6 Approval Enforcement (`approval_enforcer.py`)
+**Technology:** Token-based authorization with replay prevention  
+**Enforces:** Mandatory approval for financial transactions, booking modifications, access control changes  
+**Validation:** Status check (APPROVED only), expiry validation (30-min default), one-time use (prevents replay attacks)
+
+### Implementation Details
+- **Location:** `src/application/guardrails/`
+- **Dependencies:** Python standard library only (regex, datetime, collections)
+- **Pattern:** Singleton instances for efficiency
+- **Performance:** Compiled regex patterns, O(n) complexity
+- **Test Coverage:** 50+ test scenarios in `tests/guardrails_test_cases.txt`
+

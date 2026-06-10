@@ -17,7 +17,7 @@ For rapid prototyping and demonstration, this POC uses **hotel operations data**
 
 - **IT Operations** - Troubleshooting infrastructure issues, incident response, runbook automation
 - **Healthcare** - Patient issue resolution, appointment scheduling, insurance claims
-- **IBM DataStage Projects** - ETL pipeline troubleshooting, job failure analysis, performance optimization
+- **Software Projects** - DB issues, ETL pipeline troubleshooting, job failure analysis, performance optimization
 - **DevOps** - CI/CD pipeline failures, deployment issues, configuration management
 - **Customer Support** - Product issues, billing disputes, account management
 - **HR Operations** - Onboarding, benefits administration, policy questions
@@ -30,7 +30,7 @@ The original motivation for this project was to create a copilot for **software 
 - **Skills**: Automated diagnostics, log analysis, configuration validation, remediation procedures, restart workflows
 - **Executor Agent**: Executes approved remediation actions (restart services, update configs, rollback changes, notify teams)
 
-Examples include ETL tools (IBM DataStage, Informatica), middleware platforms (MuleSoft, Apache Kafka), databases (Oracle, PostgreSQL), and cloud services (AWS, Azure, GCP).
+Examples include ETL tools (Informatica), middleware platforms (MuleSoft, Apache Kafka), databases (Oracle, PostgreSQL), and cloud services (AWS, Azure, GCP).
 
 The hotel POC demonstrates the same patterns with more accessible domain knowledge, making it easier to understand and evaluate the system's capabilities.
 
@@ -201,7 +201,7 @@ customer-issue-resolution-copilot/
 
 ## Adapting to Your Domain
 
-To adapt this system to your own use case (e.g., IBM DataStage, IT operations, healthcare):
+To adapt this system to your own use case (e.g., Software production projects, IT operations, healthcare):
 
 ### 1. Replace Knowledge Base
 
@@ -221,7 +221,7 @@ Edit `src/domain/models/` to reflect your domain entities:
 - Update `Issue` model with domain-specific fields
 - Customize `Context` for your use case
 
-### 3. Implement Domain Tools
+### 3. Implemnt Domain Tools
 
 Create tools in `src/application/tools/mock_tools.py`:
 - Replace hotel tools (lookup_booking, process_refund) with your tools
@@ -323,4 +323,18 @@ Built as a capstone project to demonstrate:
 - 100% skill matching accuracy
 - Hybrid search improved faithfulness from 0.40 → 0.99
 - Enriched embeddings achieved perfect skill matching
+
+
+## 🛡️ Security & Guardrails
+
+Comprehensive safety mechanisms protect against misuse and ensure responsible AI operations:
+
+1. **PII Detection & Masking** - Detects and masks sensitive data (credit cards, SSN, emails, phone numbers, addresses)
+2. **Prompt Injection Detection** - Blocks malicious prompts (instruction override, jailbreaks, data exfiltration)
+3. **Confidence Checking** - Validates RAG retrieval quality before proceeding
+4. **Tool Input Validation** - Validates parameters (types, ranges, formats, patterns)
+5. **Rate Limiting** - Prevents abuse with per-tool rate limits
+6. **Approval Enforcement** - Requires human approval for consequential actions
+
+**Implementation:** `src/application/guardrails/` | **Test Cases:** `tests/guardrails_test_cases.txt` (50+ scenarios)
 

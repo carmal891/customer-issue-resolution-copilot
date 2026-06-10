@@ -26,8 +26,6 @@ class PIIType(str, Enum):
     ADDRESS = "address"
     ROOM_NUMBER = "room_number"  # Hotel-specific
     BOOKING_REFERENCE = "booking_reference"  # Hotel-specific
-
-
 @dataclass
 class PIIMatch:
     """A detected PII entity."""
@@ -95,10 +93,7 @@ class PIIDetector:
             (r'\b(?:Room|Rm|Suite|Ste)[\s#]?([0-9]{3,4})\b', 0.95),
             (r'\b([0-9]{3,4})\s*(?:room|rm)\b', 0.90),
         ],
-        PIIType.BOOKING_REFERENCE: [
-            # Booking reference patterns (e.g., BK-2024-001, CONF123456)
-            (r'\b(?:BK|CONF|RES|BOOKING)[-\s]?[0-9]{4,10}\b', 0.95),
-        ],
+        # BOOKING_REFERENCE removed - not sensitive PII, needed for business operations
     }
 
     # Sensitive PII types that should trigger blocking
@@ -110,16 +105,16 @@ class PIIDetector:
 
     # Masking strategies per PII type
     MASKING_STRATEGIES = {
-        PIIType.CREDIT_CARD: lambda v: f"****-****-****-{v[-4:]}" if len(v) >= 4 else "****",
-        PIIType.EMAIL: lambda v: f"{v[0]}***@{v.split('@')[1]}" if '@' in v else "***@***.com",
-        PIIType.PHONE: lambda v: f"***-***-{v[-4:]}" if len(v) >= 4 else "***-****",
-        PIIType.SSN: lambda v: "***-**-****",
-        PIIType.PASSPORT: lambda v: f"{v[:2]}*****" if len(v) >= 2 else "*****",
-        PIIType.DRIVERS_LICENSE: lambda v: f"{v[0]}*****" if len(v) >= 1 else "*****",
-        PIIType.DATE_OF_BIRTH: lambda v: "**/**/****",
-        PIIType.ADDRESS: lambda v: "*** [ADDRESS REDACTED] ***",
-        PIIType.ROOM_NUMBER: lambda v: "Room ***",
-        PIIType.BOOKING_REFERENCE: lambda v: f"{v.split('-')[0] if '-' in v else v[:2]}-****",
+        PIIType.CREDIT_CARD: lambda v: f"xxxx-xxxx-xxxx-{v[-4:]}" if len(v) >= 4 else "xxxx",
+        PIIType.EMAIL: lambda v: f"{v[0]}xxx@{v.split('@')[1]}" if '@' in v else "xxx@xxx.com",
+        PIIType.PHONE: lambda v: f"xxx-xxx-{v[-4:]}" if len(v) >= 4 else "xxx-xxxx",
+        PIIType.SSN: lambda v: "xxx-xx-xxxx",
+        PIIType.PASSPORT: lambda v: f"{v[:2]}xxxxx" if len(v) >= 2 else "xxxxx",
+        PIIType.DRIVERS_LICENSE: lambda v: f"{v[0]}xxxxx" if len(v) >= 1 else "xxxxx",
+        PIIType.DATE_OF_BIRTH: lambda v: "xx/xx/xxxx",
+        PIIType.ADDRESS: lambda v: "xxx [ADDRESS REDACTED] xxx",
+        PIIType.ROOM_NUMBER: lambda v: "Room xxx",
+        PIIType.BOOKING_REFERENCE: lambda v: f"{v.split('-')[0] if '-' in v else v[:2]}-xxxx",
     }
 
     def __init__(self):

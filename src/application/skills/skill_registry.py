@@ -366,42 +366,20 @@ class SkillRegistry:
                 logger.warning(f"No triggers for skill {skill_id}")
                 return False
 
-            # Enrich trigger text with comprehensive context for better semantic matching
-            # This creates a rich embedding that captures:
-            # 1. Skill identity (name, description)
-            # 2. Trigger patterns (semantic variations)
-            # 3. Workflow steps (what the skill actually does)
-            # 4. Domain context (booking, billing, amenity, etc.)
+            # Create HIGHLY focused trigger text - ONLY name, description, and trigger patterns
+            # Removed: workflow steps, domain, tags
+            # This makes embeddings maximally focused on user intent matching
             
-            # Build enriched text with multiple context layers
             enriched_parts = []
             
-            # Layer 1: Core identity
-            enriched_parts.append(f"Skill Name: {skill.name}")
+            # Layer 1: Skill identity
+            enriched_parts.append(f"Skill: {skill.name}")
             enriched_parts.append(f"Description: {skill.description}")
             
-            # Layer 2: Domain and category context
-            if skill.metadata:
-                domain = skill.metadata.get('domain', '')
-                if domain:
-                    enriched_parts.append(f"Domain: {domain}")
-            
-            # Layer 3: Trigger patterns (user intent variations)
+            # Layer 2: Trigger patterns (user intent variations) - MOST IMPORTANT
             enriched_parts.append(f"User Requests: {', '.join(skill.triggers)}")
             
-            # Layer 4: Workflow summary (what the skill does)
-            if skill.steps:
-                step_descriptions = [step.description for step in skill.steps[:5]]  # First 5 steps
-                workflow_summary = ". ".join(step_descriptions)
-                enriched_parts.append(f"Workflow: {workflow_summary}")
-            
-            # Layer 5: Tags for additional context
-            if skill.metadata and 'tags' in skill.metadata:
-                tags = skill.metadata.get('tags', [])
-                if tags:
-                    enriched_parts.append(f"Related Topics: {', '.join(tags)}")
-            
-            # Combine all layers into rich embedding text
+            # Combine into highly focused embedding text
             enriched_trigger_text = ". ".join(enriched_parts)
             
             logger.debug(f"Enriched trigger text for {skill_id} ({len(enriched_trigger_text)} chars): {enriched_trigger_text[:200]}...")

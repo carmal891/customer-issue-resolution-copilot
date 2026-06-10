@@ -213,12 +213,29 @@ Provide your analysis in 2-3 sentences."""
             
             self.logger.info(f"[Think] LLM Analysis: {analysis[:200]}...")
             
-            # Build RAG query based on LLM analysis and issue
-            query_parts = [state.issue.body, analysis]
-            if state.observations:
-                query_parts.append(f"Previous observations: {' '.join(state.observations[-2:])}")
+            # Query reformulation: Rephrase the issue clearly for better retrieval
+            reformulation_prompt = f"""Rephrase this customer issue in 1-2 clear, concise sentences that capture the core request.
+Focus on what the customer needs, not unnecessary details.
+
+Customer Issue: {state.issue.body}
+
+Return ONLY the rephrased query, nothing else.
+Example Input: "I want to book a cab for tomorrow evening trip"
+Example Output: "Guest needs transportation service to arrange a cab for tomorrow evening."
+"""
             
-            query = " ".join(query_parts)
+            self.logger.info(f"[Think] Query reformulation prompt: {reformulation_prompt}")
+            
+            reformulation_response = self.llm_service.generate_simple(reformulation_prompt)
+            rephrased_query = reformulation_response.content.strip()
+            
+            self.logger.info(f"[Think] LLM rephrased query: {rephrased_query}")
+            
+            # Build RAG query - use rephrased version with subject if available
+            query = rephrased_query
+            if state.issue.subject:
+                query = f"{state.issue.subject}. {query}"
+                self.logger.info(f"[Think] Final query with subject: {query}")
             
             # Retrieve context from RAG
             # Simple filter: just get policy documents (all our indexed docs are policies)

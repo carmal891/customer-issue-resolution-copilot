@@ -189,22 +189,26 @@ class DenseRetriever:
 
         # Select retrieval strategy
         if self.config.strategy == RetrievalStrategy.DENSE:
+            logger.info(f"[Retrieval] Using DENSE retrieval strategy (vector similarity only)")
             results = self._dense_retrieve(query, top_k, min_score)
             expanded_queries = []
 
         elif self.config.strategy == RetrievalStrategy.HYBRID:
+            logger.info(f"[Retrieval] Using HYBRID retrieval strategy (vector + BM25 + RRF)")
             results = self._hybrid_retrieve(
                 query, metadata_filters, top_k, min_score
             )
             expanded_queries = []
 
         elif self.config.strategy == RetrievalStrategy.METADATA_FIRST:
+            logger.info(f"[Retrieval] Using METADATA_FIRST retrieval strategy")
             results = self._metadata_first_retrieve(
                 query, metadata_filters, top_k, min_score
             )
             expanded_queries = []
 
         elif self.config.strategy == RetrievalStrategy.MULTI_QUERY:
+            logger.info(f"[Retrieval] Using MULTI_QUERY retrieval strategy (query expansion)")
             results, expanded_queries = self._multi_query_retrieve(
                 query, metadata_filters, top_k, min_score
             )

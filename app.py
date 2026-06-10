@@ -123,33 +123,57 @@ if 'initialized' not in st.session_state:
 @st.cache_resource(show_spinner=False)
 def initialize_system_components():
     """Initialize all system components (cached for performance)."""
+    import shutil
+    
     logger.info("Starting system initialization...")
 
-    # Initialize RAG Pipeline
-    logger.info("Initializing RAG Pipeline...")
-    rag_pipeline = RAGPipeline()
+    # STEP 1: Clear vector database
+    logger.info("="*80)
+    logger.info("CLEARING VECTOR DATABASE")
+    logger.info("="*80)
+    vector_store_path = Path("data/vector_store")
+    if vector_store_path.exists():
+        logger.info(f"Removing existing vector store at: {vector_store_path}")
+        shutil.rmtree(vector_store_path)
+        logger.info("✅ Vector store cleared successfully")
+    else:
+        logger.info("No existing vector store found - starting fresh")
 
-    # Index policy documents from data/mock directory
-    logger.info("Indexing policy documents...")
+    # STEP 2: Initialize RAG Pipeline (creates new vector store)
+    logger.info("\n" + "="*80)
+    logger.info("INITIALIZING RAG PIPELINE")
+    logger.info("="*80)
+    rag_pipeline = RAGPipeline()
+    logger.info("✅ RAG Pipeline initialized with fresh vector store")
+
+    # STEP 3: Index policy documents from data/mock directory
+    logger.info("\n" + "="*80)
+    logger.info("INDEXING KNOWLEDGE BASE (Policies, Procedures, Tickets)")
+    logger.info("="*80)
     data_dir = Path("data/mock")
     if data_dir.exists():
         index_stats = rag_pipeline.index_documents(
             data_dir=data_dir,
-            clear_existing=False  # Don't clear - skills are already indexed
+            clear_existing=False  # Already cleared above
         )
-        logger.info(f"Indexed {index_stats.get('num_documents', 0)} documents, {index_stats.get('num_chunks', 0)} chunks")
+        logger.info(f"✅ Indexed {index_stats.get('num_documents', 0)} documents, {index_stats.get('num_chunks', 0)} chunks")
     else:
-        logger.warning("Policy documents directory not found")
+        logger.warning("⚠️ Policy documents directory not found")
 
-    # Initialize Skill Registry
-    logger.info("Loading Skill Registry...")
+    # STEP 4: Initialize Skill Registry
+    logger.info("\n" + "="*80)
+    logger.info("INITIALIZING SKILL REGISTRY")
+    logger.info("="*80)
     skill_registry = SkillRegistry(
         embedding_service=rag_pipeline.embedding_service,
         vector_store=rag_pipeline.vector_store
     )
+    logger.info("✅ Skill Registry initialized")
 
-    # Load and index skills from YAML files
-    logger.info("Loading and indexing skills from YAML files...")
+    # STEP 5: Load and index skills from YAML files
+    logger.info("\n" + "="*80)
+    logger.info("INDEXING SKILLS (Trigger Patterns)")
+    logger.info("="*80)
     skill_ids = list(skill_registry._metadata.keys())
     logger.info(f"Found {len(skill_ids)} skills in registry to load and index")
 
@@ -161,22 +185,22 @@ def initialize_system_components():
             skill = skill_registry._load_skill_from_file(skill_file)
 
             if skill:
-                logger.info(f"Loaded: {skill.skill_id} ({skill.name}) with {len(skill.steps)} steps")
+                logger.info(f"  Loading: {skill.skill_id} ({skill.name}) with {len(skill.steps)} steps")
 
                 # Index the skill triggers
                 result = skill_registry.index_skill_triggers(skill.skill_id)
                 if result:
                     indexed_count += 1
-                    logger.info(f"Indexed {skill.skill_id}")
+                    logger.info(f"  ✅ Indexed {skill.skill_id}")
                 else:
-                    logger.warning(f"Failed to index {skill.skill_id}")
+                    logger.warning(f"  ⚠️ Failed to index {skill.skill_id}")
             else:
-                logger.error(f"Failed to load {skill_id}")
+                logger.error(f"  ❌ Failed to load {skill_id}")
 
         except Exception as e:
-            logger.warning(f"Failed to load/index skill {skill_id}: {e}")
+            logger.warning(f"  ⚠️ Failed to load/index skill {skill_id}: {e}")
 
-    logger.info(f"Indexed {indexed_count}/{len(skill_ids)} skill triggers")
+    logger.info(f"\n✅ Indexed {indexed_count}/{len(skill_ids)} skill triggers")
 
     # Initialize Tool Registry
     logger.info("Setting up Tool Registry...")
@@ -413,14 +437,9 @@ def render_submit_issue():
                     # ============================================================
                     pii_detector = get_pii_detector()
 
-                    # Check subject for PII
-                    masked_subject, subject_pii = pii_detector.detect_and_mask(subject)
-
-                    # Check description for PII
+                    # Only check description for PII (not subject)
                     masked_description, desc_pii = pii_detector.detect_and_mask(description)
-
-                    # Combine all PII findings
-                    all_pii = subject_pii + desc_pii
+                    masked_subject = subject  # Subject is not masked
 
                     # Check if request should be blocked due to excessive PII
                     should_block_pii, pii_reason = pii_detector.should_block_request(description)
@@ -431,11 +450,11 @@ def render_submit_issue():
                         st.warning("⚠️ Your request contains excessive sensitive information. Please remove sensitive data and try again.")
                         return
 
-                    # Show PII masking info if any PII was detected
-                    if all_pii:
-                        st.warning(f"🔒 **PII Detected and Masked:** {len(all_pii)} sensitive item(s) found")
+                    # Show PII masking info if any PII was detected in description
+                    if desc_pii:
+                        st.warning("🔒 **PII Detected and Masked**")
                         with st.expander("View Masked PII Details"):
-                            for pii_match in all_pii:
+                            for pii_match in desc_pii:
                                 st.write(f"- **{pii_match.pii_type.value}**: {pii_match.masked_value} (confidence: {pii_match.confidence:.2f})")
 
                     # ============================================================
@@ -481,16 +500,18 @@ def render_submit_issue():
                     # Create issue with default values for removed fields
                     issue = Issue(
                         issue_id=f"ISS-{len(st.session_state.issues) + 1:04d}",
-                        channel="email",  # Default channel
+                        channel=IssueChannel.EMAIL,  # Default channel
                         subject=masked_subject,  # Use masked subject
                         body=masked_description,  # Use masked description
-                        issue_type="other",  # Default type (valid enum value)
-                        priority="medium",  # Default priority
+                        issue_type=None,  # Will be inferred by system
+                        priority=IssuePriority.MEDIUM,  # Default priority
                         guest_email=guest_id if guest_id else None,
                         booking_id=booking_id if booking_id else None,
+                        expected_skill=None,  # For evaluation purposes
+                        expected_resolution=None,  # For evaluation purposes
                         metadata={
-                            "pii_detected": len(all_pii) > 0,
-                            "pii_count": len(all_pii),
+                            "pii_detected": len(desc_pii) > 0,
+                            "pii_count": len(desc_pii),
                             "injection_threats_detected": len(subject_injection.threats_detected) + len(desc_injection.threats_detected)
                         }
                     )
@@ -511,13 +532,8 @@ def render_submit_issue():
                         # Step 1: Try to match existing skill using the initialized skill matcher
                         matches = st.session_state.skill_matcher.match_skill(issue, top_k=3)
 
-                        # Display all matches for transparency
+                        # Use top matched skill (regardless of confidence)
                         if matches:
-                            st.write("**Skill Matching Results:**")
-                            for i, match in enumerate(matches, 1):
-                                confidence_emoji = "🟢" if match.confidence == "high" else "🟡" if match.confidence == "medium" else "🔴"
-                                st.write(f"{i}. {match.skill.name}: {confidence_emoji} {match.confidence} (score: {match.score:.3f})")
-
                             # NEW APPROACH: Always use top matched skill (regardless of confidence)
                             # Human will approve/reject in the Approvals page
                             matched_skill = matches[0].skill
@@ -556,12 +572,10 @@ def render_submit_issue():
                                 compiled_skill_id=None
                             )
                         else:
-                            # No skill match at all - go directly to AI loop
-                            st.write("**Skill Matching Results:**")
-                            st.write("No skills matched the query.")
-                            st.warning("⚠️ No matching skill found. Using AI ReAct loop for novel task handling...")
+                            # No skill match at all - go directly to ReAct loop
+                            st.warning("⚠️ No matching skill found. Using AI for novel task handling...")
 
-                            # Use AI loop to generate plan - it returns a Resolution object
+                            # Use ReAct loop to generate plan - it returns a Resolution object
                             resolution = st.session_state.tpao_loop.execute(issue)
 
                             # Update resolution ID and status for consistency
@@ -585,7 +599,7 @@ def render_submit_issue():
                         approval = ApprovalRequest(
                             issue_id=issue.issue_id,
                             action_type="skill_execution" if resolution.skill_used else "novel_task_resolution",
-                            action_description=f"Execute {'skill: ' + resolution.skill_used if resolution.skill_used else 'novel task resolution'} for issue: {masked_subject}",
+                            action_description=f"Execute {'skill: ' + resolution.skill_used if resolution.skill_used else 'novel task resolution'} for issue: {issue.body}",
                             risk_level=RiskLevel.MEDIUM,  # Default medium risk
                             proposed_changes={
                                 "resolution_id": resolution.resolution_id,
@@ -1036,7 +1050,7 @@ Variations: ["early check-in request", "early access to room", "check in before 
                     col1, col2 = st.columns(2)
                     
                     with col1:
-                        if st.button("🤖 Use AI to Generate Skill", key=f"ai_generate_{approval.request_id}", use_container_width=True):
+                        if st.button("🤖 Use AI ReAct Loop to Generate Skill", key=f"ai_generate_{approval.request_id}", use_container_width=True):
                             try:
                                 # Reject the approval
                                 st.session_state.approval_service.reject_request(
@@ -1054,10 +1068,10 @@ Variations: ["early check-in request", "early access to room", "check in before 
                                         break
 
                                 if issue:
-                                    st.info("🔄 Skill rejected. Triggering AI loop for novel task handling...")
+                                    st.info("🔄 Skill rejected. Triggering AI ReAct loop for novel task handling...")
 
-                                    # Use AI loop to generate new plan
-                                    with st.spinner("🧠 AI loop generating new resolution plan..."):
+                                    # Use ReAct loop to generate new plan
+                                    with st.spinner("🧠 AI ReAct loop generating new resolution plan..."):
                                         tpao_resolution = st.session_state.tpao_loop.execute(issue)
 
                                         # Update resolution ID and mark as novel task
@@ -1113,7 +1127,7 @@ Variations: ["early check-in request", "early access to room", "check in before 
                                 st.error(traceback.format_exc())
                     
                     with col2:
-                        if st.button("❌ Reject Completely", key=f"reject_complete_{approval.request_id}", use_container_width=True):
+                        if st.button("❌ Reject", key=f"reject_complete_{approval.request_id}", use_container_width=True):
                             try:
                                 # Reject the approval completely
                                 st.session_state.approval_service.reject_request(

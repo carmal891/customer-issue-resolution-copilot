@@ -1,7 +1,7 @@
 skill_id: "amenity_request"
 version: "1.0"
 name: "Amenity Request Handler"
-description: "Handles guest requests for additional amenities, services, or room items"
+description: "Handles guest requests for additional amenities, housekeeping services, or room items"
 
 metadata:
   domain: "guest_services"
@@ -14,17 +14,18 @@ metadata:
 
 triggers:
   semantic_patterns:
-    - "need extra towels"
-    - "request additional pillows"
+    - "request of cleaning"
+    - "change towels or bedsheets"
     - "can I get room service"
     - "need more toiletries"
     - "request wake up call"
     - "need iron and ironing board"
     - "request mini fridge"
-    - "send extra towels and pillows to room"
+    - "Additional accessories required (towels/bedsheets)"
     - "need crib for baby"
-    - "can I get more blankets"
-  
+    - "arrange a taxi/cab service"
+    - "spa services"
+
   issue_types:
     - "amenity_request"
     - "room_service_request"
