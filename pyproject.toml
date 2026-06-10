@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "AI-powered customer issue resolution system with agentic workflows"
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
+package-mode = false
 packages = [{include = "src"}, {include = "evals"}]
 
 [tool.poetry.dependencies]
